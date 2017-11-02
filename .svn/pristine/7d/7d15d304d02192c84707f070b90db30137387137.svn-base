@@ -1,0 +1,13 @@
+ydzy_jx_info:
+    pattern:  /info/{category}/{id}
+    defaults: { _controller: YdzyJxBundle:Default:info }
+#############################################
+#推送的时候点击推送信息跳转的页面
+#############################################
+ydzy_jx_pushtml:
+    pattern:  /pushtml/{pid}
+    defaults: { _controller: YdzyJxBundle:Jx:pushtml }
+ydzy_jx_xqxinwen:
+    pattern:  /xqxinwen
+    defaults: { _controller: YdzyJxBundle:Jx:xqxinwen }    
+    

@@ -1,0 +1,19 @@
+﻿<div>
+	<h2>API Test</h2>
+</div>
+
+<div>
+	<ul>
+		<li style="margin-bottom:5px"><a href="recommended" target="page">推荐</a></li>
+		<li style="margin-bottom:5px"><a href="news" target="page">资讯</a></li>
+		<li style="margin-bottom:5px"><a href="market" target="page">拍卖行情</a></li>
+		<li style="margin-bottom:5px"><a href="preshow" target="page">拍卖预展</a></li>
+		<li style="margin-bottom:5px"><a href="publish" target="page">发布</a></li>
+		<li style="margin-bottom:5px"><a href="user" target="page">用户</a></li>
+		<li style="margin-bottom:5px"><a href="bbs" target="page">论坛帖子</a></li>
+		<li style="margin-bottom:5px"><a href="manage" target="page">管理员</a></li>
+		<li style="margin-bottom:5px"><a href="image" target="page">图片上传</a></li>
+		<li style="margin-bottom:5px"><a href="file" target="page">文件上传</a></li>
+		<li style="margin-bottom:5px"><a href="leaveword" target="page">意见反馈</a></li>
+	</ul>
+</div>

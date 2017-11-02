@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html class="">
+		<head>
+				<title>顶级豪宅</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+	    	<script src="{{ asset('bundles/lzh/js/zy_control.js')}}"></script>
+	    	<script src="{{ asset('bundles/lzh/js/zy_click.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/zy_anim.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/selling.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-ui.js')}}"></script>
+				
+		</head>
+		<body style="background:#f0f0f0;position:relative;">
+				<div class="ln_a" style="">    <!-- 搜索经纪人 ln_ -->
+						<div class="le_a" style="display:none;">				
+								<div class="le_b">		<!-- download App 通用-->
+										<div class="le_c">
+												<img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width='100%'/>
+										</div>
+										<div class="ld_e">
+												<div class="le_f">标题该软件是...</div>
+												<div class="le_g">该软件是丽兹行...</div>
+												<div class="le_h uba uc-a">下载软件</div>
+										</div>
+								</div>	
+						</div>
+				</div>
+				<div class="lb_a uba">				<!-- 原筛选 -->
+						<div class="lb_b" onclick="AreaAsc('lb_b');">
+								<div class="lb_d">
+										<div class="lb_e">面积</div>
+										<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_21.png')}}" width="80%" style="margin-top:3px;"></div>
+								</div>	
+						</div>
+						<div class="lb_c" onclick="priceAsc('lb_c');">
+								<div class="lb_d">
+										<div class="lb_e">价格</div>
+										<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_22.png')}}" width="80%" style="margin-top:3px;"></div>
+								</div>	
+						</div>
+				</div>
+				<div class="lztopa">
+		<!--		<div id="lb_g">  	<!-- 遍历数据 通用(修改) 
+								<div class="la_f ubb">				
+										<div class="la_h">
+												<div class="la_g"><img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width="100%" height="100%"></div>
+												<div class="la_i">
+														<div class="la_j ulev1" style="margin-top:-22px;">回龙观-园区元-啊</div>
+														<div class="la_j">回龙观-园区元-啊</div>
+														<div class="la_k">
+																<div class="la_m1">2室2厅</div>
+																<div class="la_m2">100平米</div>
+																<div class="la_m3">1300/月</div>
+														</div>
+														<div class="la_l">
+																<div class="la_n uba uc-a">学区房</div>
+																<div class="la_n uba uc-a" style="margin-left:15px;">随时看房</div>
+														</div>
+												</div>
+										</div>
+								</div>
+						</div>
+			-->		
+				</div>
+				<script>
+						var toparea_sort = "";
+						var sell_price_sort = "";
+						var StartNum = "0";
+						function gettophouse(){
+								//alert(toparea_sort+"--"+sell_price_sort)
+								var HL2json = {
+										"bd_id":"",
+								 	  "bbd_id":"",
+								 	  "area_min":"",
+								 	  "area_max":"",
+								 	  "sell_price_min":"",
+								 	  "sell_price_max":"",
+								 	  "bedroom_num":"",
+								 	  "special":"",
+								 	  "keyword":"",
+								 	  "category":"",
+								 	  "community":"",
+								 	  "agent_id":"",      			//经纪人的ID
+								 	  "area_sort":toparea_sort,		//面积顺序 0从大到小  1从小到大
+								 	  "sell_price_sort":sell_price_sort, //售价顺序0从大到小  1从小到大
+								 	  "start":StartNum,		//开始
+								 	  "num":"10"		//条数
+							  };
+							  $.ajax({
+							      type: "POST",
+							      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/top/retrieveByFilter",
+							      data: $.toJSON(HL2json),
+							      dataType: 'json',
+							      success: function(data){
+							      		var la_list2 = "";
+		   		        			for(var i=0;i<data.length;i++){
+					        			la_list2 += "<div class='la_f ubb' onclick='gototop("+data[i].landz_id+")'><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+							           		+data[i].pic+
+							           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1' style='margin-top:0px;height:25px;'>"
+							           		+data[i].title+
+							           		"</div><div class='la_j' style='height:25px;'>"+data[i].BUSINESS_DISTRICT_NAME+"&nbsp;&nbsp;&nbsp;&nbsp;"+data[i].COMMUNITY_NAME+"</div><div class='la_k'><div class='la_m1'>"
+							           		+data[i].bedroom_num+
+							           		"室"
+								           	+data[i].hall_num+
+								           	"厅</div><div class='la_m2'>"
+								           	+data[i].area+
+								           	"平米</div><div class='la_m3' style='color:red;'>"
+								           	+data[i].sell_price+
+								           	"万</div></div><div class='la_l' style='height:20px;line-height:20px;font-size:14px;'>";
+								           	if(data[i].fytd){					//处理 南北通透  地暖 公园景观 湖景
+								           			var la_strs1= new Array(); 
+																la_str1=data[i].fytd.split(";");
+																var la_temp3 = "";
+																for (j=0;j<la_str1.length - 1 ;j++ ) 
+																{ 
+																		if(j>3){
+																				break;
+																		}else{
+																				la_temp3 += "<div class='la_n uba uc-a' style='color:#321344;height:20px;line-height:20px;font-size:14px;'>"+la_str1[j]+"</div>";
+																		}
+																		//la_temp3 += "<div class='la_n uba uc-a' style='color:#321344;'>"+la_str1[j]+"</div>";
+																} 		
+								           	}
+							           		la_list2 += la_temp3+"</div></div></div></div>";
+						        		}
+						           	$(".lztopa").append(la_list2);
+								    },
+								    error: function(){}
+								});	
+						}
+						gettophouse();
+						function AreaAsc(obj){
+								$(".lb_c .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+								if(toparea_sort == ""){
+										toparea_sort = "0";
+										sell_price_sort = "";
+										$(".lztopa").html("");
+										$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+										gettophouse();
+								}else if(toparea_sort == "0"){
+										toparea_sort = "1";
+										sell_price_sort = "";
+										$(".lztopa").html("");
+										$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+										gettophouse();	
+								}else if(toparea_sort == "1"){
+										toparea_sort = "0";
+										sell_price_sort = "";
+										$(".lztopa").html("");
+										$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+										gettophouse();	
+								}		
+						}
+						function priceAsc(obj){
+								$(".lb_b .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+								if(sell_price_sort == ""){
+										sell_price_sort = "0";
+										toparea_sort = "";
+										$(".lztopa").html("");
+										$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+										gettophouse();	
+								}else if(sell_price_sort == "0"){
+										sell_price_sort = "1";
+										toparea_sort = "";
+										$(".lztopa").html("");
+										$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+										gettophouse();	
+								}else if(sell_price_sort == "1"){
+										sell_price_sort = "0";
+										toparea_sort = "";
+										$(".lztopa").html("");
+										$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+										gettophouse();	
+								}			
+						}
+						function gototop(obj){
+								window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/topinfo/"+obj;
+						}
+						$(window).scroll(function(){
+								var scrollTop = $(this).scrollTop();
+								var scrollHeight = $(document).height();
+								var windowHeight = $(this).height();
+								if(scrollTop + windowHeight == scrollHeight){
+										$(".Mag").css("display","block");
+												sleepThree();
+										var tempnum = parseInt(StartNum);
+										StartNum = tempnum+10;
+										gettophouse();
+								}	
+						});
+						function sleepThree(){
+										setTimeout(function(){
+												$(".Mag").css("display","none");
+								    },500);	
+								}
+				</script>	
+				<div class="Mag uc-a" style="display:none;position:position:fixed;bottom:0px;z-index:8888;height:45px;width:70%;margin-left:15%;line-height:45px;text-align:center;">加载更多...</div>
+		
+		</body>	
+</html>

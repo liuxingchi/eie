@@ -1,0 +1,112 @@
+<?php ?><!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>万吉工程机械交易网</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('bundles/jxbundle/css/bootstrap.css') }}" rel="stylesheet">
+	<!-- Custom styles for this template -->
+    <link href="{{ asset('bundles/jxbundle/css/grid.css') }}" rel="stylesheet">
+	<link href="{{ asset('bundles/jxbundle/css/bootstrap-datetimepicker.min.css') }}" rel="stylesheet">
+	<script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/jquery-ui-1.8.23.custom/js/jquery-1.8.0.min.js') }}"></script>
+    <script src="{{ asset('bundles/jxbundle/js/my.js') }}"></script>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/jquery.json-2.3.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/functions.js') }}"></script>
+    <script src="{{ asset('bundles/jxbundle/js/bootstrap.min.js') }}"></script>
+	<script src="{{ asset('bundles/jxbundle/js/bootstrap-datetimepicker.js') }}"></script>
+	<script src="{{ asset('bundles/jxbundle/js/locales/bootstrap-datetimepicker.zh-CN.js') }}"></script>
+	
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+
+  <body>
+  <div id="container" class="container">
+	<br/>
+	<div class="col-sm-12" style="height:46px;padding:0;margin-bottom:6px;" > <!--导航顶部图片-->
+		<div class="col-sm-3" align="left" style="padding-left:0px">
+			<a href="{{url('user_index')}}"><img src="{{ asset('bundles/jxbundle/images/logo.png') }}"/></a>
+		</div>
+		<div class="col-sm-4">
+		</div>
+		<div class="col-sm-5" align="right" style="padding-right:20px">
+			<a href="#Modal" data-toggle="modal" ><img src="{{ asset('bundles/jxbundle/images/header_right.png') }}"/></a>
+		</div>
+    </div>			<!--导航顶部图片结束-->
+  
+  <!--导航-->
+  <div id="nav" class="col-sm-12" style="font-size:16px;font-family:微软雅黑;color:#fff;line-height:42px;height:42px; padding-top:0px; background-image:url({{ asset('bundles/jxbundle/images/nav_bg.png') }}); background-size:100%; background-repeat:no-repeat;">
+  		<ul style="list-style-type:none; padding:0;" id="nav_ul">
+            <li class="current_page_item"><a href="{{url('jx_index')}}">二手工程机械交易</a></li>
+            <li>|</li>
+            <li><a href="{{url('jx_rent')}}">工程机械租赁</a></li>
+            <li>|</li>
+            <li><a href="{{url('jx_driver')}}">工程机械招聘</a></li>
+            <li>|</li>
+            <li><a href="{{url('jx_recommend')}}">热门机械</a></li>
+            <li>|</li>
+            <li><a href="{{url('jx_myfollow')}}">我的关注</a></li>
+            </ul>
+            <div id="nav_right" style="float:right;margin-right:2px;line-height:25px;"></div>
+        
+       
+  </div> <!--导航结束-->
+  
+{% block body %}{% endblock %}
+ 
+ 
+ <div class="col-sm-12" style=" padding-top:60px;" id="footer"><!--footer-->
+   <img src="{{ asset('bundles/jxbundle/images/hr.png') }}"/>
+   <br><br>
+   <p align="center"><a href="{{url('jx_job')}}">人才招聘</a> | 联系我们 | <a href="{{url('jx_wanji')}}">用户协议</a> | 友情链接 </p>
+	<p align="center">客服热线/ 虚假信息举报：400-620-9008     邮箱：service@anjuke.com    Copyright © 2007-2013 www.anjuke.com All Rights Reserved ICP号：沪 B2-20090008</p>
+  <!-- <p align="center">
+   <img src="http://pages.anjukestatic.com/img/icon/gongshang_125_60.png"/>
+   <img src="http://pages.anjukestatic.com/img/icon/police.png"	/>
+   </p>-->
+   <br><br>
+   </div> <!--footer结束--> 
+   
+   
+   
+</div> <!--container结束-->
+<!-- Modal -->
+<div class="modal" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;margin:200px auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">万吉工程交易网 <span style="font-size:8px;">扫描二维码下载相应版本</span></h4>
+      </div>
+      <div class="modal-body" id="myalert_content">
+        
+        <ul style="height:210px;">
+        <li style="text-align:center;float:left;"><img id="android" width=200 src="/bundles/jxbundle/images/apk.png" /><br /><span style="color:#b40202;">android/ios版本</li>
+        <li style="text-align:center;float:right;"><img width=200 src="{{ asset('bundles/jxbundle/images/weixin.jpg') }}" /><br /><span style="color:#b40202;">微信公众号</li>
+        </ul>
+      </div>
+      
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->  
+   
+   
+  </body>
+</html>

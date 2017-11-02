@@ -1,0 +1,92 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script src="{{ asset('js/ajaxfileupload.js') }}"></script> 
+<script>
+
+function reloadList(){
+	$("#sortable").html("");
+  	ajaxPost(
+            '/app_dev.php/api/user/allSystemMessage',
+            {},
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+                	
+					$("#sortable").append("<tr><td>"+data[i].content+"</td><td>"+data[i].creation_date+"</td></tr>"); 
+		      }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+
+$(function(){
+
+reloadList();
+
+
+});//function 主函数结束
+
+
+function push(){
+	var content = $("#content").val();
+	if(!content){
+		$("#alertMessage").html("发送内容不能为空！！");
+		$("#alert").show();
+		setTimeout("$('#alert').hide()", 5000);
+		return false;
+		}
+	var json = {
+			  'content':content,
+			  'title':$("#title").val()
+			};
+   ajaxPost(
+          '/app_dev.php/api/user/pushall',
+          json,
+          function(data, textStatus){
+	        	  $("#alertMessage").html("消息发送成功！");
+	      		  $("#alert").show();
+	      		  reloadList();
+	      		  setTimeout("$('#alert').hide()", 5000);
+				},
+          function(XMLHttpRequest, textStatus, errorThrown){}
+      );
+}
+
+
+
+
+</script>
+ <div id="alert" class="bs-example bs-example-standalone" data-example-id="dismissible-alert-js" style="display: none;">
+    <div class="alert alert-warning alert-dismissible fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong><span id="alertMessage"></span></strong>
+    </div>
+  </div> 
+  
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+    
+
+	  <div class="form-group">
+	    <label class="col-sm-1 control-label" style="line-height: 39px;">标题</label>
+	    <div class="col-sm-2">
+	      <input type="text" class="form-control" id="title" placeholder="推送标题">
+	    </div>
+	    <label class="col-sm-1 control-label" style="line-height: 39px;">内容</label>
+	    <div class="col-sm-5">
+	      <input type="text" class="form-control" id="content" placeholder="要推送的内容，字数控制在20字之内">
+	    </div>
+	    <div class="col-sm-3">
+	     <button type="submit" class="btn btn-default" onclick="push()">发送</button>
+	     <a href="pusharticle" type="button" class="btn btn-default">推送文章</a>
+	    </div>
+	  </div>
+  
+  	
+  </div>
+  
+  <div class="col-sm-12" id="" style="margin-top:40px; padding:0;">
+  	<table class="table table-hover" id="sortable"></table>
+  </div>
+</div> <!--content结束-->
+
+
+{% endblock %}

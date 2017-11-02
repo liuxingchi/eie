@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html class="">
+		<head>
+				<title>豪宅列表</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="width=device-width, initial-scale=1, user-sca	lable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+<!--				<script src="{{ asset('bundles/lzh/js/selling.js')}}"></script>   -->
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-ui.js')}}"></script>
+				
+		</head>
+		<body style="background:#f0f0f0;">
+				<div class="ln_a" style="display:none;">    
+						<div class="le_a uc-a" style="background:#fff;">				
+								<div class="le_b">		<!-- download App 通用-->
+										<div class="le_c">
+												<img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width='100%'/>
+										</div>
+										<div class="ld_e">
+												<div class="le_f">标题该软件是...</div>
+												<div class="le_g">该软件是丽兹行...</div>
+												<div class="le_h uba uc-a">下载软件</div>
+										</div>
+								</div>	
+						</div>
+				</div>		
+				<div id="HL1" class="HL1">{{ ln_all_keyword }}</div>
+				<div id="HL2" class="HL1">{{ ln_all_buszone1 }}</div>
+				<div id="HL3" class="HL1">{{ ln_all_buszone2 }}</div>
+				<div id="HL4" class="HL1">{{ ln_all_minprice }}</div>
+				<div id="HL5" class="HL1">{{ ln_all_maxprice }}</div>
+				<div id="HL6" class="HL1">{{ ln_all_minarea }}</div>
+				<div id="HL7" class="HL1">{{ ln_all_maxarea }}</div>
+				<div id="HL8" class="HL1">{{ ln_all_roomnum }}</div>
+				<div id="HL9" class="HL1">{{ ln_all_special }}</div>
+				<div id="HL10" class="HL1">{{ ln_all_category }}</div>   
+				<div id="HL13" class="HL1">{{ HouseType_Type }}</div>
+				<div class="lb_a uba">				<!-- 原筛选 -->
+						<div class="lb_b" onclick="AreaAort('lb_b');">
+								<div class="lb_d">
+										<div class="lb_e" style="font-size:15px">面积</div>
+										<div class="lb_f" style="width:15px;margin-left:6px;margin-top:2px;"><img src="{{ asset('bundles/lzh/css/img/lzh_21.png')}}" width="80%"></div>
+								</div>	
+						</div>
+						<div class="lb_c" onclick="PriceSort('lb_c');">
+								<div class="lb_d">
+										<div class="lb_e" style="font-size:15px">价格</div>
+										<div class="lb_f" style="width:15px;margin-left:6px;margin-top:2px;"><img src="{{ asset('bundles/lzh/css/img/lzh_22.png')}}" width="80%"></div>
+								</div>	
+						</div>
+				</div>
+				<div class="HL11" style="height:30px;width:96%;margin-left:2%;line-height:30px;font-size:15px;"></div>   <!-- 显示查询条数 -->
+				
+				<div class="HL12"></div>																								<!-- 循环数据 -->
+				<script>
+								var StartNum = "0";
+								var area_sort = 0;
+								var sell_price_sort = 0;
+								if($("#HL2").html() == "不限"){
+										var bbd_id = "";
+								}else{
+										var bbd_id = $("#HL2").html();	
+								}
+								if($("#HL6").html() == "不限"){
+										var area_min = "";
+								}else{
+										var area_min = $("#HL6").html();	
+								}
+								if($("#HL7").html() == "不限"){
+										var area_max = "";
+								}else{
+										var area_max = $("#HL7").html();	
+								}
+								if($("#HL4").html() == "不限"){
+										var sell_price_min = "";
+								}else{
+										var sell_price_min = $("#HL4").html();	
+								}
+								if($("#HL5").html() == "不限"){
+										var sell_price_max = "";
+								}else{
+										var sell_price_max = $("#HL5").html();	
+								}
+								if($("#HL8").html() == "不限"){
+										var bedroom_num = "";
+								}else{
+										var bedroom_num = $("#HL8").html();	
+								}
+								if($("#HL9").html() == "不限"){
+										var special = "";
+								}else{
+										var special = $("#HL9").html();	
+								}
+								if($("#HL1").html() == "不限"){
+										var keyword = "";
+								}else{
+										var keyword = $("#HL1").html();	
+								}
+								if($("#HL10").html() == "不限"){
+										var category = "";
+								}else{
+										var category = $("#HL10").html();	
+								}
+								if($("#HL3").html() == "不限"){
+										var community = "";
+								}else{
+										var community = $("#HL3").html();	
+								}
+								var HouseType_Type = $("#HL13").html();	
+								
+						//alert("进入搜索之后的类表页");
+						//alert("一级商圈ID："+bbd_id+"最小面积："+area_min+"最大面积："+area_max+"最小价格："+sell_price_min+"最大价格"+sell_price_max+"居室："+bedroom_num+"特色："+special+"关键字："+keyword+"类别："+category+"二级商圈ID："+community+"豪宅的类型："+HouseType_Type);
+						if(HouseType_Type == 2){		//在售豪宅
+								lzh_IsSelling();
+						}else if(HouseType_Type == 3){		//顶级豪宅
+								lzh_TopHouses();
+						}else if(HouseType_Type == 1){			//待租豪宅
+								lzh_IsRenting();
+						}
+						function SellTail(obj){				//跳转到在售的详情页
+								window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/sellinfo/"+obj;
+						}
+						function TopTail(obj){				//跳转到顶级的详情页
+								window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/topinfo/"+obj;
+						}
+						function RentTail(obj){				//跳转到待租的详情页
+								window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/rentinfo/"+obj;
+						}
+						function lzh_IsRenting(){
+								var HL5json = {
+								 	  "bbd_id":bbd_id,									//商圈1
+								 	  "area_min":area_min,							//最小面积
+								 	  "area_max":area_max,							//最大面积
+								 	  "rent_price_min":sell_price_min,	//最小价格
+								 	  "rent_price_max":sell_price_max,	//	最大价格
+								 	  "bedroom_num":bedroom_num,				//居室
+								 	  "special":special,			//特色
+								 	  "keyword":keyword,			//关键字
+								 	  "category":category,    //类型
+								 	  "community":community	//商圈2
+							  };	
+							  $.ajax({
+						        type: "POST",
+						        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/rent/retrieveByFilterNum",
+						        data: $.toJSON(HL5json),
+						        dataType: 'json',
+						        success: function(data){
+						        		$(".HL11").html("为您搜索到"+data+"套房源");
+						        		var HL6json = {
+												 	  "bbd_id":bbd_id,
+												 	  "area_min":area_min,
+												 	  "area_max":area_max,
+												 	  "rent_price_min":sell_price_min,
+												 	  "rent_price_max":sell_price_max,
+												 	  "bedroom_num":bedroom_num,
+												 	  "special":special,
+												 	  "keyword":keyword,
+												 	  "category":category,
+												 	  "community":community,
+												 	  "agent_id":"",      			//经纪人的ID
+												 	  "area_sort":area_sort,		//面积顺序 0从大到小  1从小到大
+												 	  "sell_price_sort":sell_price_sort, //售价顺序0从大到小  1从小到大
+												 	  "start":StartNum,		//开始
+												 	  "num":10			//条数
+											  };
+											  $.ajax({
+											      type: "POST",
+											      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/rent/retrieveByFilter",
+											      data: $.toJSON(HL6json),
+											      dataType: 'json',
+											      success: function(data){
+											      		var la_list2 = "";
+					     		        			for(var i=0;i<10;i++){
+											        			la_list2 += "<div class='la_f ubb' onclick='RentTail("+data[i].landz_id+")'><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+											           		+data[i].pic+
+											           		"' width='100%' height='100%'></div><div class='la_i' style='margin-top:-6px;'><div class='la_j ulev1' style='height:25px;'>"
+											           		+data[i].title+
+											           		"</div><div class='la_k' style='height:25px;'>商圈："+data[i].BUSINESS_DISTRICT_NAME+"</div><div class='la_k'><div class='la_m1'>"
+											           		+data[i].bedroom_num+
+											           		"室"
+												           	+data[i].hall_num+
+												           	"厅</div><div class='la_m2'>"
+												           	+data[i].area+
+												           	"㎡</div><div class='la_m3' style='color:red;'>"
+												           	+data[i].rent_price+
+												           	"元</div></div><div class='la_l'>";
+												           	if(data[i].fytd){					//处理 南北通透  地暖 公园景观 湖景
+												           			
+												           			var la_strs1= new Array(); 
+																				la_str1=data[i].fytd.split(";");
+																				var la_temp4 = "";
+																				var la_temp3 = "";
+																				for (var j=0;j<la_str1.length - 1 ;j++ )   //la_str1.length - 1
+																				{ 	
+																						if(j>3){
+																								break;
+																						}else{
+																								la_temp3 += "<div class='la_n uba uc-a' style='color:#321344;'>"+la_str1[j]+"</div>";
+																						}
+																				} 		
+												           	}
+											           		la_list2 += la_temp3+"</div></div></div></div>";
+										        		}
+										        		//$(".HL12").html("");
+										           	$(".HL12").append(la_list2);
+												    },
+												    error: function(){}
+												});	
+										}	
+								})	
+						}
+						function lzh_IsSelling(){   //在售豪宅
+								var HL1json = {
+								 	  "bbd_id":bbd_id,									//商圈1
+								 	  "area_min":area_min,							//最小面积
+								 	  "area_max":area_max,							//最大面积
+								 	  "sell_price_min":sell_price_min,	//最小价格
+								 	  "sell_price_max":sell_price_max,	//	最大价格
+								 	  "bedroom_num":bedroom_num,				//居室
+								 	  "special":special,			//特色
+								 	  "keyword":keyword,			//关键字
+								 	  "category":category,    //类型
+								 	  "community":community	//商圈2
+							  };
+						    $.ajax({
+						        type: "POST",
+						        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/sell/retrieveByFilterNum",
+						        data: $.toJSON(HL1json),
+						        dataType: 'json',
+						        success: function(data){
+						        		$(".HL11").html("为您搜索到"+data+"套房源");
+						        		var HL2json = {
+												 	  "bbd_id":bbd_id,
+												 	  "area_min":area_min,
+												 	  "area_max":area_max,
+												 	  "sell_price_min":sell_price_min,
+												 	  "sell_price_max":sell_price_max,
+												 	  "bedroom_num":bedroom_num,
+												 	  "special":special,
+												 	  "keyword":keyword,
+												 	  "category":category,
+												 	  "community":community,
+												 	  "agent_id":"",      			//经纪人的ID
+												 	  "area_sort":area_sort,		//面积顺序 0从大到小  1从小到大
+												 	  "sell_price_sort":sell_price_sort, //售价顺序0从大到小  1从小到大
+												 	  "start":StartNum,		//开始
+												 	  "num":10			//条数
+											  };
+											  $.ajax({
+											      type: "POST",
+											      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/sell/retrieveByFilter",
+											      data: $.toJSON(HL2json),
+											      dataType: 'json',
+											      success: function(data){
+											      		var la_list2 = "";
+					     		        			for(var i=0;i<10;i++){
+									        					la_list2 += "<div class='la_f ubb' onclick='SellTail("+data[i].landz_id+")'><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+											           		+data[i].pic+
+											           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1'>"
+											           		+data[i].title+
+											           		"</div><div class='la_k'><div class='la_m1'>"
+											           		+data[i].bedroom_num+
+											           		"室"
+												           	+data[i].hall_num+
+												           	"厅</div><div class='la_m2'>"
+												           	+data[i].area+
+												           	"㎡</div><div class='la_m3' style='color:red;'>"
+												           	+data[i].sell_price+
+												           	"万</div></div><div class='la_l'>";
+												           	if(data[i].fytd){					//处理 南北通透  地暖 公园景观 湖景
+												           			
+												           			var la_strs1= new Array(); 
+																				la_str1=data[i].fytd.split(";");
+																				var la_temp4 = "";
+																				var la_temp3 = "";
+																				for (var j=0;j<la_str1.length - 1 ;j++ )   //la_str1.length - 1
+																				{ 	
+																						if(j>3){
+																								break;
+																						}else{
+																								la_temp3 += "<div class='la_n uba uc-a' style='color:#321344;'>"+la_str1[j]+"</div>";
+																						}
+																				} 		
+												           	}
+											           		la_list2 += la_temp3+"</div></div></div></div>";
+										        		}
+										           	$(".HL12").append(la_list2);
+												    },
+												    error: function(){}
+												});	
+										},
+							      error: function(){}
+						    });	
+						}
+						$(window).scroll(function(){
+								var scrollTop = $(this).scrollTop();
+								var scrollHeight = $(document).height();
+								var windowHeight = $(this).height();
+								if(scrollTop + windowHeight == scrollHeight){
+										var tempnum = parseInt(StartNum);
+										StartNum = tempnum+10;
+										if(HouseType_Type == 2){
+												lzh_IsSelling();
+										}
+										if(HouseType_Type == 3){
+												lzh_TopHouses();
+										}
+										if(HouseType_Type == 1){
+												lzh_IsRenting();
+										}
+								}	
+						});
+						function AreaAort(obj){
+								if(HouseType_Type == 2){
+										if(area_sort == 0){
+												area_sort = 1;
+										}else{
+												area_sort = 0;	
+										}
+										$(".HL12").html("");
+										lzh_IsSelling();
+								}
+								if(HouseType_Type == 3){
+										if(area_sort == 0){
+												area_sort = 1;
+										}else{
+												area_sort = 0;	
+										}
+										$(".HL12").html("");
+										lzh_TopHouses();
+								}
+								if(HouseType_Type == 1){
+										if(area_sort == 0){
+												area_sort = 1;
+										}else{
+												area_sort = 0;	
+										}
+										$(".HL12").html("");
+										lzh_IsRenting();
+								}
+						}
+						function PriceSort(obj){
+								if(HouseType_Type == 2){
+										if(sell_price_sort == 0){
+												sell_price_sort = 1;
+										}else{
+												sell_price_sort = 0;	
+										}
+										$(".HL12").html("");
+										lzh_IsSelling();
+								}
+								if(HouseType_Type == 3){
+										if(sell_price_sort == 0){
+												sell_price_sort = 1;
+										}else{
+												sell_price_sort = 0;	
+										}
+										$(".HL12").html("");
+										lzh_TopHouses();
+								}
+								if(HouseType_Type == 1){
+										if(sell_price_sort == 0){
+												sell_price_sort = 1;
+										}else{
+												sell_price_sort = 0;	
+										}
+										$(".HL12").html("");
+										lzh_IsRenting();
+								}
+						}
+						function lzh_TopHouses(){					//顶级豪宅
+								var HL3json = {
+								 	  "bbd_id":bbd_id,									//商圈1
+								 	  "area_min":area_min,							//最小面积
+								 	  "area_max":area_max,							//最大面积
+								 	  "sell_price_min":sell_price_min,	//最小价格
+								 	  "sell_price_max":sell_price_max,	//	最大价格
+								 	  "bedroom_num":bedroom_num,				//居室
+								 	  "special":special,			//特色
+								 	  "keyword":keyword,			//关键字
+								 	  "category":category,    //类型
+								 	  "community":community	//商圈2
+							  };	
+							  $.ajax({
+						        type: "POST",
+						        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/top/retrieveByFilterNum",
+						        data: $.toJSON(HL3json),
+						        dataType: 'json',
+						        success: function(data){
+						        		$(".HL11").html("为您搜索到"+data+"套房源");
+						        		var HL4json = {
+												 	  "bbd_id":bbd_id,
+												 	  "area_min":area_min,
+												 	  "area_max":area_max,
+												 	  "sell_price_min":sell_price_min,
+												 	  "sell_price_max":sell_price_max,
+												 	  "bedroom_num":bedroom_num,
+												 	  "special":special,
+												 	  "keyword":keyword,
+												 	  "category":category,
+												 	  "community":community,
+												 	  "agent_id":"",      			//经纪人的ID
+												 	  "area_sort":area_sort,		//面积顺序 0从大到小  1从小到大
+												 	  "sell_price_sort":sell_price_sort, //售价顺序0从大到小  1从小到大
+												 	  "start":StartNum,		//开始
+												 	  "num":10			//条数
+											  };
+											  $.ajax({
+											      type: "POST",
+											      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/top/retrieveByFilter",
+											      data: $.toJSON(HL4json),
+											      dataType: 'json',
+											      success: function(data){
+											      		var la_list2 = "";
+					     		        			for(var i=0;i<10;i++){
+									        					la_list2 += "<div class='la_f ubb' onclick='TopTail("+data[i].landz_id+")'><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+											           		+data[i].pic+
+											           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1'>"
+											           		+data[i].title+
+											           		"</div><div class='la_k'><div class='la_m1'>"
+											           		+data[i].bedroom_num+
+											           		"室"
+												           	+data[i].hall_num+
+												           	"厅</div><div class='la_m2'>"
+												           	+data[i].area+
+												           	"㎡</div><div class='la_m3' style='color:red;'>"
+												           	+data[i].sell_price+
+												           	"万</div></div><div class='la_l'>";
+												           	if(data[i].fytd){					//处理 南北通透  地暖 公园景观 湖景
+												           			
+												           			var la_strs1= new Array(); 
+																				la_str1=data[i].fytd.split(";");
+																				var la_temp4 = "";
+																				var la_temp3 = "";
+																				for (j=0;j<la_str1.length-1 ;j++ ) 
+																				{ 
+																						if(j>3){
+																								break;
+																						}else{
+																								la_temp3 += "<div class='la_n uba uc-a' style='color:#321344;'>"+la_str1[j]+"</div>";
+																						}
+																				} 		
+												           	}
+											           		la_list2 += la_temp3+"</div></div></div></div>";
+										        		}
+										        		//$(".HL12").html("");
+										           	$(".HL12").append(la_list2);
+												    },
+												    error: function(){}
+												});	
+										}
+								})	
+						}
+				</script>
+		</body>	
+</html>

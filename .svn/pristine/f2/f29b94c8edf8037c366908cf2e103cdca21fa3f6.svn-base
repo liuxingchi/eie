@@ -1,0 +1,204 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}.
+<link href="{{ asset('js/datetimepicker/css/bootstrap-datetimepicker.css') }}" rel="stylesheet">
+<script type="text/javascript" src="{{ asset('js/datetimepicker/js/bootstrap-datetimepicker.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js') }}"></script>
+{# <script type="text/javascript" src="{{ asset('js/ckeditor/ckeditor.js') }}"></script>#}
+<script type="text/javascript" src="{{ asset('js/swfupload.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/swfupload.queue.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/fileprogress.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/handlers.js') }}"></script>
+<script>
+var swfu;
+
+window.onload = function() {
+      var settings = {
+        flash_url : "{{ asset('js/swfupload.swf') }}",//swfupload.swf文件的绝对或相对地址
+        upload_url: "{{url('Ydzyfile_image_upload')}}",  //处理上传文件的服务器端页面的url地址
+        file_post_name : "imageFile",//用普通的文件域上传文件时的name属性
+        file_size_limit : "100 MB",
+        file_types : "*.jpg;*.jpeg;*.gif;*.png;*.bmp;",
+        file_types_description : "All Files",//指定在文件选取窗口中显示的文件类型描述，起一个提示和说明的作用吧
+        file_upload_limit : 10,  //指定最多能上传多少个文件
+        file_queue_limit : 0,//指定文件上传队列里最多能同时存放多少个文件
+        custom_settings : {
+          progressTarget : "fsUploadProgress"
+        },
+        debug: false,
+
+        // Button settings
+        button_image_url: "{{ asset('images/upload_btn.png') }}",
+        button_width: "137",
+        button_height: "34",
+        button_placeholder_id: "spanButtonPlaceHolder",//指定一个dom元素的id,该dom元素在swfupload实例化后会被Flash按钮代替
+        button_text: '',//指定Flash按钮上的文字，也可以是html代码
+        button_text_style: "",
+        button_text_left_padding: 0,
+        button_text_top_padding: 0,
+        
+        file_queued_handler : fileQueued,//fileQueued事件侦听函数
+		file_queue_error_handler : fileQueueError,
+		file_dialog_complete_handler : fileDialogComplete,
+		upload_start_handler : uploadStart,
+		upload_progress_handler : uploadProgress,
+		upload_error_handler : uploadError,
+		upload_success_handler : uploadSuccess,//文件上传成功后触发的事件处理函数
+		upload_complete_handler : uploadComplete,
+		queue_complete_handler : queueComplete
+      };
+      swfu = new SWFUpload(settings);
+};
+
+		
+function fileDialogComplete(selectedNum, queuedNum) {
+	if (queuedNum > 0) {//选择并添加到上传队列的文件数大于0
+		this.startUpload();//开始上传
+	}
+}
+
+$(function(){
+	    var json = {
+				"preshow_id": {{ id }}
+				};
+		ajaxPost(
+	            'api/preshow/info',
+	            json,
+	            function(data, textStatus){
+	            	$("#content").html(data.content);
+	            	$("#title").val(data.title);
+	            	$("#auctiontime").val(data.auctiontime);
+	            	$("#showtime").val(data.showtime);
+	            	$("#endtime").val(data.endtime);
+	            	$("#showtimel").val(data.showtime);
+	            	$("#endtimel").val(data.endtime);
+	            	$("#auctiontimel").val((data.auctiontime));
+	            	$("#auctionaddress").val(data.auctionaddress);
+	            	$("#showaddress").val(data.showaddress);
+	            	$("#firstImageUrl").val(data.image_url);
+	            	var urlHtmls="";
+	            	$.each(data.images,function(i,v){
+	            		urlHtmls+="<div id='image_"+v.id+"' style='width:200px;float:left;text-align:center;'><img width='200' height='200' src='"+v.url+"'><br><button type='button' class='btn btn-sm default' onclick='doDelete("+v.id+")'>删除</button></div>";
+	            		var image_url = $('#image_url').val();
+						$('#image_url').val(image_url+","+v.id);
+	            	});
+	            	$("#goodsImageUrls").html(urlHtmls);
+	            	},
+	            function(XMLHttpRequest, textStatus, errorThrown){  
+					    alert("出现错误，请重试");
+				}
+	        );
+	    //loadWannaBuyerList(0);
+
+	//CKEDITOR.replace( 'content' );
+	$(".form_datetime").datetimepicker({
+		pickerPosition: "bottom-left",
+        language:  'zh-CN',
+        weekStart: 1,
+        todayBtn:  1, 
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 0,
+        forceParse: 0
+    });
+})
+function doDelete(pic_id){
+	if (confirm("确定删除吗？")){
+		var image_url = $('#image_url').val();
+		$('#image_url').val(image_url.replace(','+pic_id, ""));
+		$('#image_'+pic_id).remove();
+		
+	}
+	
+}
+function dopost(){
+		//var content=CKEDITOR.instances.content.getData();
+      var json = {
+    	      "id":{{ id }},
+    		  "content":$("#content").val(),
+    		  "title":$("#title").val(),
+    		  "showtime":getDateToUnix($("#showtime").val()),
+    		  "showaddress":$("#showaddress").val(),
+    		  "auctiontime":getDateToUnix($("#auctiontime").val()),
+    		  "endtime":getDateToUnix($("#endtime").val()),
+    		  "auctionaddress":$("#auctionaddress").val(),
+    		  "image_ids":$("#image_url").val().substring(1)
+    	     };
+ 	
+     ajaxPost(
+              'app_dev.php/api/preshow/update',
+              json,
+              function(data, textStatus){
+             	 window.location.href="../preshow";
+                  },
+              function(XMLHttpRequest, textStatus, errorThrown){
+                	  
+               }
+          );
+}
+
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+            
+                  <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" class="form-control" id="title"/>
+                  </div>
+                  <div class="form-group">
+                    <label>预展时间</label>
+                    <div class="input-group date form_datetime col-sm-4" data-date="" data-date-format="yyyy-mm-dd hh:ii" data-link-field="showtime" data-link-format="yyyy-mm-dd hh:ii">
+			         <input class="form-control" size="16" id="showtimel" type="text" value="">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+			         </div>
+					<input type="hidden" id="showtime" value="" />
+                  </div>
+                  <div class="form-group">
+                    <label>预展地址</label>
+                    <input type="text" class="form-control" id="showaddress"/>
+                  </div>
+                <div class="form-group">
+                    <label>拍卖时间</label>
+                     <div class="input-group date form_datetime col-sm-4" data-date="" data-date-format="yyyy-mm-dd hh:ii" data-link-field="auctiontime" data-link-format="yyyy-mm-dd hh:ii">
+			         <input class="form-control" id="auctiontimel" size="16" type="text" value="">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+			         </div>
+					<input type="hidden" id="auctiontime" value="" />
+                  </div>
+                  <div class="form-group">
+                    <label>拍卖地址</label>
+                    <input type="text" class="form-control" id="auctionaddress"/>
+                  </div>
+                  <div class="form-group">
+                    <label>拍卖信息</label>
+                    <textarea class="form-control" name="content" id="content" placeholder="详情（必填）"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>结束时间</label>
+                     <div class="input-group date form_datetime col-sm-4" data-date="" data-date-format="yyyy-mm-dd hh:ii" data-link-field="endtime" data-link-format="yyyy-mm-dd hh:ii">
+			         <input class="form-control" size="16" id="endtimel" type="text" value="">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+			         </div>
+					<input type="hidden" id="endtime" value="" />
+                  </div>
+                  <div class="form-group">
+                    <label>图片</label>
+                    <div id="spanButtonPlaceHolder"></div>
+                    <div class="col-sm-12" style="padding:0;" id="fsUploadProgress"></div>
+                    <input type="hidden" class="form-control" id="firstImageUrl" placeholder="firstImageUrl"/>
+                    <input type="hidden" class="form-control" id="image_url" placeholder="image_url"/>
+                    <input type="hidden" class="form-control" id="image_url1" placeholder="image_url1"/>
+                    <input type="hidden" class="form-control" id="image_url2" placeholder="image_url2"/>
+                    <div class="col-sm-12" id="goodsImageUrls"></div>
+                  </div>
+                  <div id="radio"></div><br>
+                  <button onclick="dopost()" class="btn btn-default">保存</button>
+           
+          
+  </div>
+  	
+  
+</div> <!--content结束-->
+
+
+{% endblock %}

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+		<head>
+				<title>待租豪宅</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-tab.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-input.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-img.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-list.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-btn.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-box.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-color.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-res.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+	    	<script src="{{ asset('bundles/lzh/js/zy_control.js')}}"></script>
+	    	<script src="{{ asset('bundles/lzh/js/zy_click.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/zy_anim.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/selling.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				
+				<script src="{{ asset('bundles/lzh/js/jquery-ui.js')}}"></script>
+				<style>
+				/* 
+			 	 * la_  表示在售豪宅列表页
+			   * 
+			   * */
+				
+				</style>
+				<script type="text/javascript">
+						
+				</script>
+		</head>
+	
+		<body>
+				
+				<div class="lza_a" style="">								<!-- 待租豪宅列表页 -->
+			
+						
+				<!--				<div class="toggler" style="display:none;position:absolute;left:130px;top:500px;">     
+										<div id="effect" class="ui-widget-content ui-corner-all" style="font-size:30px;">
+											
+												<p id="dialog" style="font-size:30px;">
+													
+												</p>
+										</div>
+								</div>   
+						
+						<div class="lzb_a uba" ontouchstart="SearchSubmit()" style="height:50px;width:50px;">
+								提交
+						</div>   -->
+						<div class="lza_b">   				<!-- 上面四个筛选 -->
+		<!--						<div id="la_a" ontouchstart="la_aclick('la_a');" class="lza_d"><div>商圈<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}"></div></div>
+								<div id="la_b" ontouchstart="la_aclick('la_b');" class="lza_c"><div>面积<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}"></div></div>
+								<div id="la_c" ontouchstart="la_aclick('la_c');" class="lza_c"><div>租金<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}"></div></div>
+								<div id="la_d" ontouchstart="la_aclick('la_d');" class="lza_c"><div>房型<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}"></div></div>
+				-->	
+							<div id="la_a" ontouchstart="la_aclick('la_a');" class="lza_d"><div>商圈<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}"></div></div>
+							<div id="la_b" ontouchstart="la_aclick('la_b');" class="lza_c"><div>均价<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}"></div></div>
+							<div id="la_c" ontouchstart="la_aclick('la_c');" class="lza_c"><div>年代<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}"></div></div>
+						</div>
+						<div id="la_e">					<!-- 列表 ub-re-->		
+		<!--				<div class="la_f ubb">				
+										<div class="la_h">
+												<div class="la_g"><img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width="100%" height="100%"></div>
+												<div class="la_i">
+														<div class="la_j ulev1">回龙观-园区元-啊</div>
+														<div class="la_k">
+																<div class="la_m1">2室2厅</div>
+																<div class="la_m2">100平米</div>
+																<div class="la_m3">1300/月</div>
+														</div>
+														<div class="la_l">
+																<div class="la_n uba uc-a">学区房</div>
+																<div class="la_n uba uc-a" style="margin-left:15px;">随时看房</div>
+														</div>
+												</div>
+										</div>
+								</div>  -->
+						</div>
+						<div class="la_o ub-ab">      <!-- 筛选条件的div -->
+							<!--	<div class="la_p">
+										<!-- <div class="la_r">不不限不限不限不限不不限不限不限限</div>  -->
+							<!--	</div>
+								<div class="la_q">
+								<!--		<div class="la_s ubb">
+												<div class="la_t">朝阳阿斯达打算打阿斯达是的撒撒打算</div>
+												<div class="la_u"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%" /></div>		
+									
+						<!--				</div>	-->
+						<!--		</div>-->
+						</div>  
+				</div>
+				
+				<!-- 待租豪宅搜索页s 页面-->	
+				<div class="lzb_a"  style="">
+						<div class="lb_a uba">				<!-- 原筛选 -->
+								<div class="lb_b">
+										<div class="lb_d">
+												<div class="lb_e">面积</div>
+												<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_21.png')}}" width="100%"></div>
+										</div>	
+								</div>
+								<div class="lb_c">
+										<div class="lb_d">
+												<div class="lb_e">面积</div>
+												<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_22.png')}}" width="100%"></div>
+										</div>	
+								</div>
+						</div>
+						
+						
+						
+						<div id="lb_g">  	<!-- 遍历数据 通用-->	 
+								<div class="la_f ubb">				
+										<div class="la_h">
+												<div class="la_g"><img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width="100%" height="100%"></div>
+												<div class="la_i">
+														<div class="la_j ulev1">回龙观-园区元-啊</div>
+														<div class="la_k">
+																<div class="la_m1">2室2厅</div>
+																<div class="la_m2">100平米</div>
+																<div class="la_m3">1300/月</div>
+														</div>
+														<div class="la_l">
+																<div class="la_n uba uc-a">学区房</div>
+																<div class="la_n uba uc-a" style="margin-left:15px;">随时看房</div>
+														</div>
+												</div>
+										</div>
+								</div>
+						</div>
+						
+						<div id="lb_g">  	<!-- 遍历数据 通用(修改)-->	 
+								<div class="la_f ubb">				
+										<div class="la_h">
+												<div class="la_g"><img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width="100%" height="100%"></div>
+												<div class="la_i">
+														<div class="la_j ulev1" style="margin-top:-22px;">回龙观-园区元-啊</div>
+														<div class="la_j">回龙观-园区元-啊</div>
+														<div class="la_k">
+																<div class="la_m1">2室2厅</div>
+																<div class="la_m2">100平米</div>
+																<div class="la_m3">1300/月</div>
+														</div>
+														<div class="la_l">
+																<div class="la_n uba uc-a">学区房</div>
+																<div class="la_n uba uc-a" style="margin-left:15px;">随时看房</div>
+														</div>
+												</div>
+										</div>
+								</div>
+						</div>
+						
+				</div>
+				
+				<!-- 成交记录页面 与带看记录是一个页面写成-->	
+				
+				<div class="lzc_a" style="">
+						<div class='lc_a'>    		<!-- 循环 -->	
+								<div class='lc_b uc-t'>
+										<div class='lc_c'>面积</div>
+										<div class='lc_d'>2000平米</div>
+								</div>
+								<div class='lc_b'>
+										<div class='lc_c'>户型</div>
+										<div class='lc_d'>3室1厅</div>
+								</div>
+								<div class='lc_b'>
+										<div class='lc_c'>楼层</div>
+										<div class='lc_d'>6层</div>
+								</div>
+								<div class='lc_b'>
+										<div class='lc_c'>朝向</div>
+										<div class='lc_d'>350万</div>
+								</div>
+								<div class='lc_b'>
+										<div class='lc_c'>单价</div>
+										<div class='lc_d'>55555</div>
+								</div>
+								<div class='lc_b uc-b'>
+										<div class='lc_c'>总价</div>
+										<div class='lc_d'>1000万</div>
+								</div>			
+						</div> 
+				</div>
+				
+				
+				<!-- 带看记录记录页面   display:none;  -->	
+				
+				<div class="lzc_a" style="">
+						<div class='lc_a'>    		<!-- 循环 -->	
+								<div class='lc_b uc-t'>
+										<div class='lc_c'>2014-5-16</div>
+										<div class='lc_d'>5次</div>
+								</div>
+								<div class='lc_b uc-b'>
+										<div class='lc_c'>李志鹏</div>
+										<div class='lc_d'>15210530994</div>
+								</div>			
+						</div> 
+				</div>
+				
+				
+				<!-- 顾问资料页面   display:none;  -->	
+				<div class="lzd_a uba" style="">
+						<div class="ld_a">
+								<div class="ld_b">
+										<div class="ld_c">
+												<img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width='100%'/>
+												<div class="ld_d">呵呵</div>
+										</div>
+										<div class="ld_e">
+												<div class="ld_f">学历：</div><div class="ld_f1">大专</div>
+												<div class="ld_f">语言：</div><div class="ld_f2">汉语/英语/日语</div>
+												<div class="ld_f">工作地点：</div><div class="ld_f3">大专</div>
+												<div class="ld_f">职位级别：</div><div class="ld_f4">大专</div>
+												<div class="ld_f">熟悉商圈：</div><div class="ld_f5">大专</div>
+												<div class="ld_f">熟悉小区：</div><div class="ld_f6">大专</div>
+										</div>
+								</div>	
+						</div>
+						<div class="lb_a" style="border-bottom:1px solid #cac8c8;">			<!-- 取自顶级豪宅部分 -->
+								<div class="lb_b">
+										<div class="lb_d" style="margin-left:25%;width:140px;">
+												<div class="lb_e" style="width:70px;">在售房源 </div>
+												<div class="lb_f">2套</div>
+										</div>	
+								</div>
+								<div class="lb_c">
+										<div class="lb_d" style="margin-left:25%;width:140px;">
+												<div class="lb_e" style="width:70px;">待租房源 </div>
+												<div class="lb_f">2套</div>
+										</div>		
+								</div>
+						</div>
+						<div id="lb_g">  	<!-- 遍历数据  通用-->	 
+								<div class="la_f ubb">				
+										<div class="la_h">
+												<div class="la_g"><img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width="100%" height="100%"></div>
+												<div class="la_i">
+														<div class="la_j ulev1">回龙观-园区元-啊</div>
+														<div class="la_k">
+																<div class="la_m1">2室2厅</div>
+																<div class="la_m2">100平米</div>
+																<div class="la_m3">1300/月</div>
+														</div>
+														<div class="la_l">
+																<div class="la_n uba uc-a">学区房</div>
+																<div class="la_n uba uc-a" style="margin-left:15px;">随时看房</div>
+														</div>
+												</div>
+										</div>
+								</div>
+						</div>
+				</div>
+				
+				
+				<!-- 登陆页 -->
+				<div class="lze_a" style="">
+						<div class="le_a">
+								<div class="le_b">
+										<div class="le_c">
+												<img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width='100%'/>
+										</div>
+										<div class="ld_e">
+												<div class="le_f">标题该软件是...</div>
+												<div class="le_g">该软件是丽兹行...</div>
+												<div class="le_h uba uc-a">下载软件</div>
+										</div>
+								</div>	
+						</div>
+						<div class="le_i">
+								<div class="le_j">我是经纪人</div>
+								<div class="lf_l" style="">
+										<div class="lf_l1" style="width:15%;">&nbsp;&nbsp;&nbsp;&nbsp;账号</div>  <!-- 记得换  焦点事件 -->
+										<input id="" type="text" value="请输入手机号" style="outline:none;color:#ccc;border:0px;height:100%;width:67%;font-size:20px;" onblur="GetFocus1(this);" onfocus="LoseFocus1(this);"/>	
+								</div>
+								
+								<div class="lf_l">
+										<div class="lf_l1"  style="width:15%;">&nbsp;&nbsp;&nbsp;&nbsp;密码</div>
+										<input id="" type="text" value="请输入手机号" style="outline:none;color:#ccc;border:0px;height:100%;width:67%;font-size:20px;" onblur="GetFocus1(this);" onfocus="LoseFocus1(this);"/>	
+								</div>
+							
+							
+								<div class="le_m uba uc-a" style="">登陆</div>
+								<div class="le_n" style="">注册</div>
+						</div>
+						<div class="le_o uc-a uba">
+								<div class="le_p ubb">
+										<div class="le_q">我的收藏</div>
+										<div class="le_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+								<div class="le_p ubb">
+										<div class="le_q">我的分享</div>
+										<div class="le_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+								<div class="le_p">
+										<div class="le_q">浏览历史</div>
+										<div class="le_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+						</div>
+				</div>
+				
+				<!-- 注册页   -->
+				<div class="lf_i" style="">
+						<div class="lf_l" style="">
+								<div class="lf_l1">&nbsp;&nbsp;&nbsp;&nbsp;手机号</div>
+								<input id="lf_phonenumber" type="text" value="请输入手机号" style="outline:none;color:#ccc;border:0px;height:100%;width:67%;font-size:20px;" onblur="GetFocus1(this);" onfocus="LoseFocus1(this);"/>	
+						</div>
+						<div class="lf_l2" style="">	
+								<div class="lf_l3"> 
+										<div class="lf_l1" style="width:35%;">&nbsp;&nbsp;&nbsp;&nbsp;验证码</div>
+										<input id="lf_code" type="text" value="请输入验证码" style="outline:none;color:#ccc;border:0px;height:100%;width:57%;font-size:20px;" onblur="GetFocus2(this);" onfocus="LoseFocus2(this);"/>	
+								</div>
+								<div class="lf_l4 uc-a" style="font-size:16px;"> 
+										获取验证码
+								</div>
+						</div>
+						<div class="lf_l" style="">
+								<div class="lf_l1">&nbsp;&nbsp;&nbsp;&nbsp;密码</div>
+								<input id="lf_password" type="password" value="" style="outline:none;color:#ccc;border:0px;height:100%;width:67%;font-size:20px;"/>	
+						</div>
+						<div class="lf_l" style="">
+								<div class="lf_l1" style="width:35%;">&nbsp;&nbsp;&nbsp;&nbsp;确认密码</div>
+								<input id="le_re_password" type="password" value="" style="outline:none;color:#ccc;border:0px;height:100%;width:59%;font-size:20px;"/>	
+						</div>
+						
+						<div class="lf_m uc-a" style="" onclick="lf_submit();">注册</div>
+				</div>
+				
+				<!-- 房源变动内容  -->
+				<div class="lg_a" style="">
+						<div class='lg_b ubb'>
+								<div class='lg_c'>回龙观-云趣园-区</div>
+								<div class='lg_d'>该地方放假<span style="color:red;">带看记录</span>已经有所变化</div>		
+						</div>
+				</div>
+				
+				
+				<!-- 更多页面  -->
+				<div style="">
+						<div class="lh_o uba" style="">
+								<div class="lh_p ubb">
+										<div class="lh_q">检查更新</div>
+										<div class="lh_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+								<div class="lh_p">
+										<div class="lh_q">给我评分</div>
+										<div class="lh_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+						</div>
+						
+						
+						<div class="lh_o uba"  style="margin-top:35px;">
+								<div class="lh_p ubb">
+										<div class="lh_q">意见反馈</div>
+										<div class="lh_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+								<div class="lh_p ubb">
+										<div class="lh_q">关于我们</div>
+										<div class="lh_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+								<div class="lh_p ubb">
+										<div class="lh_q">检查更新</div>
+										<div class="lh_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+								<div class="lh_p">
+										<div class="lh_q">给我评分</div>
+										<div class="lh_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+						</div>
+				</div>
+				
+				
+				<!-- 豪宅顾问 -->
+			
+				
+				
+				<!-- 我的分享 -->
+				<div class="lj_a" style="">
+						<div id="lb_g">  	<!-- 遍历数据  通用-->	 
+								<div class="la_f ubb">				
+										<div class="la_h">
+												<div class="la_g"><img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width="100%" height="100%"></div>
+												<div class="la_i">
+														<div class="la_j ulev1">回龙观-园区元-啊</div>
+														<div class="la_k">
+																<div class="la_m1">2室2厅</div>
+																<div class="la_m2">100平米</div>
+																<div class="la_m3">1300/月</div>
+														</div>
+														<div class="la_l">
+																<div class="la_n uba uc-a">学区房</div>
+																<div class="la_n uba uc-a" style="margin-left:15px;">随时看房</div>
+														</div>
+												</div>
+										</div>
+								</div>
+						</div>
+				</div>
+				
+				<!-- 我的收藏 -->
+				<div class="lk_a" style="">
+						<div class="lk_b ubb">
+								<div class="lk_c" style="float:left;height:70px;width:50%;">房源</div>
+								<div class="lk_d" style="margin-left:-1px;float:left;height:70px;width:50%;border-left:1px solid red;">楼盘</div>
+						</div>
+						<div class="lk_e">
+								<div id="lb_g">  	<!-- 遍历数据  通用-->	 
+										<div class="la_f ubb">				
+												<div class="la_h">
+														<div class="la_g"><img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width="100%" height="100%"></div>
+														<div class="la_i">
+																<div class="la_j ulev1">回龙观-园区元-啊</div>
+																<div class="la_k">
+																		<div class="la_m1">2室2厅</div>
+																		<div class="la_m2">100平米</div>
+																		<div class="la_m3">1300/月</div>
+																</div>
+																<div class="la_l">
+																		<div class="la_n uba uc-a">学区房</div>
+																		<div class="la_n uba uc-a" style="margin-left:15px;">随时看房</div>
+																</div>
+														</div>
+												</div>
+										</div>
+								</div>
+						</div>
+						
+						
+				</div>
+				<script>
+						firstget();	
+				</script>
+		</body>	
+</html>
+
+

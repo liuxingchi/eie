@@ -1,0 +1,14 @@
+parameters:
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: eie
+    database_user: root
+    database_password: ydzy2wsx
+    mailer_transport: smtp
+    mailer_host: smtp.qq.com
+    mailer_user: 1397030474@qq.com
+    mailer_password: lxc+912-
+    locale: zh_CN
+    secret: 10a7a10f33a7f7baf50fc849868ae10b934
+    database_path: null

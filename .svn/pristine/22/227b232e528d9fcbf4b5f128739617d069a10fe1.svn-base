@@ -1,0 +1,82 @@
+<?php
+
+namespace Ydzy\ApiBundle\Service;
+
+use Symfony\Component\HttpFoundation\Request;
+use Httpful\Response;
+
+class Login
+{
+	public function dbconnect(){
+	   $con = mysql_connect("localhost","root","ydzy2wsx");
+	   if (!$con)
+    	  {
+    	  die('Could not connect: ' . mysql_error());
+    	  }
+	
+	   mysql_select_db('eie', $con);
+	}
+	public function checkLogin(Request $request)
+   {   
+   	   $this->dbconnect();
+       $current = time();
+       $token = $request->headers->get('token');
+       $sql = "select user_id from token where token='$token'";
+       $result = mysql_query($sql);
+       $num = mysql_num_rows($result);
+       if(!$num){
+          return null; 
+       }else{
+           $id = mysql_result($result, 0);
+           mysql_query("update user set last_login=$current where id = $id");
+           return $id;
+       }
+   }
+   
+   public function returnMark(Request $request)
+   {
+   	
+   	$id = $this->checkLogin($request);
+   	$sql = "select mark from user where id=$id";
+   	$result = mysql_query($sql);
+   	$num = mysql_num_rows($result);
+   	if(!$num){
+   		return null;
+   	}else{
+   		$mark = mysql_result($result, 0);
+   		return $mark;
+   	}
+   }
+   
+   public function returnGrade(Request $request)
+   {
+    $session = $request->getSession();
+    $vip3_during = $session->get('vip3_during');
+    $vip5_during = $session->get('vip5_during');
+    $current = time();
+    
+   	$id = $this->checkLogin($request);
+   	$sql = "select grade,buy_date from user where id=$id";
+   	$result = mysql_query($sql);
+   	$num = mysql_num_rows($result);
+   	if(!$num){
+   		return null;
+   	}else{
+   	    $grade = mysql_result($result, 0,'grade');
+   		if($grade==0){return $grade;}
+   		
+   		$buy_date = mysql_result($result, 0,'buy_date');
+   		//echo "buy_date".date("Y-m-d H:i:s",$buy_date);
+   		$end_date_vip3 = $buy_date+$vip3_during*24*60*60;
+   		//echo "end_date_vip3".date("Y-m-d H:i:s",$end_date_vip3);
+   		$end_date_vip5 = $buy_date+$vip5_during*24*60*60;
+   		if(($end_date_vip3<=$current)||($end_date_vip5<=$current)){
+   		    mysql_query("update user set buy_date=0,grade=0 where id = $id");
+   		   return 0;
+   		}else{
+   		    return $grade;
+   		}
+   	}
+   }
+
+}

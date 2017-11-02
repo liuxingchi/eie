@@ -1,0 +1,135 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+var KEYWORD = "";
+var START = 0;
+var TOP = 0;
+</script>
+<script src="{{ asset('bundles/jxbundle/js/page.js') }}"></script>
+<script>
+
+function reloadList(current){
+	$("#order_list").html("");
+	var current = current;
+	userpage(current);
+  	
+  	$.ajax({
+		   type: "get",
+		   url: "/app_dev.php/api/master/retrieveByFilter?start="+START+"&num=1000&top="+TOP+"&keyword="+KEYWORD,
+		   success: function(data,textStatus){
+			   for(var i=0;i<data.length;i++){
+				    $("#userlist").append("<option>"+data[i].username+"</option>");
+				   }
+			   /* for(var i=0;i<data.length;i++){
+				   
+				   $("#order_list").append("<tr><td>"+data[i].username+"</td><td>"+data[i].truename+"</td><td>"+data[i].phone+"</td><td>"+data[i].email+"</td><td>"+data[i].roleid+"<select class='select' class='form-control'></select></td></tr>"); 
+		      }//结束循环*/
+			   ajaxPost(
+			             'app_dev.php/api/link/rolelist',
+			             {},
+			             function(data, textStatus){
+			            	 for(var i=0;i<data.length;i++){
+			  				    $("#rolelist").append("<option>"+data[i].name+"</option>");
+			  		      }//结束循环
+			                 },
+			             function(XMLHttpRequest, textStatus, errorThrown){}
+			         ); 
+		         
+		   },
+		   error: function(XMLHttpRequest, textStatus, errorThrown) {
+		    	  switch(XMLHttpRequest.status)
+		  		{
+		  			case 400: //没数据
+		  				break;
+		  			default:
+		  				alert('加载数据出现错误，请重试');
+		  		}
+			}	
+		   
+		});	
+}
+
+$(function(){
+reloadList(0);
+//搜索
+$("#search_btn").click(function(){
+	var keyword = $("#search_box").val();
+	KEYWORD = keyword;
+	reloadList(0);
+	});
+
+document.getElementById("search_box").onkeyup = function(e){
+				var me = this;
+				e = e|| window.event;
+				var keycode = e.keyCode;
+				if(keycode === 13){
+				var keyword = $("#search_box").val();
+				KEYWORD = keyword;
+				reloadList("",0);
+				}
+			};
+
+});//function 主函数结束
+function totop(id){
+	var json = {
+			"id":id,
+			"top":"1"
+			};
+	ajaxPost(
+            'app_dev.php/api/master/update',
+            json,
+            function(data, textStatus){
+            	$("#top"+id).html("<a href='#' onclick='untop("+id+")'>取消</a>");
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+function untop(id){
+	var json = {
+			"id":id,
+			"top":"0"
+			};
+	ajaxPost(
+            'app_dev.php/api/master/update',
+            json,
+            function(data, textStatus){
+            	$("#top"+id).html("<a href='#' onclick='totop("+id+")'>推荐</a>");
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+function pushnews(id){
+	$('#push').modal();
+	$('#push_btn').attr("onclick","push("+id+");");
+}
+function push(id){
+	var json = {
+			"uid":id,
+			"content":$("#pushmessage").val()
+			};
+	ajaxPost(
+            'app_dev.php/api/link/pushone',
+            json,
+            function(data, textStatus){
+                //先执行推送操作
+          	     alert("发送成功");
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+	$('#push').modal('hide');
+}
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+  <div class="col-sm-4"><select id="userlist" class="form-control col-sm-4"></select></div>
+   <div class="col-sm-4"><select id='rolelist' class='form-control'></select></div>
+   <div class="col-sm-1"><button onclick="saverole()" class="btn btn-default">保存</button></div>
+</div> <!--content结束-->
+
+{% endblock %}

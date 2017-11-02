@@ -1,0 +1,136 @@
+user_index:
+    pattern:  /
+    defaults: { _controller: YdzyUserBundle:Default:index }
+user_download:
+    pattern:  /download
+    defaults: { _controller: YdzyApiBundle:Version:download }
+user_default_profile:
+    pattern:  /userprofile
+    defaults: { _controller: YdzyUserBundle:Default:profile }
+
+user_default_login:
+    pattern:  /userlogin
+    defaults: { _controller: YdzyUserBundle:Default:login }
+
+user_default_loginform:
+    pattern:  /login
+    defaults: { _controller: YdzyUserBundle:Default:LoginRedirect }
+
+user_default_menulist:
+    pattern:  /menulist
+    defaults: { _controller: YdzyUserBundle:Default:menulist }
+
+user_default_addrole:
+    pattern:  /addrole
+    defaults: { _controller: YdzyUserBundle:Default:addrole }
+user_default_delFos:
+    pattern:  /delFos
+    defaults: { _controller: YdzyUserBundle:Default:delFos }
+user_default_delrole:
+    pattern:  /delrole
+    defaults: { _controller: YdzyUserBundle:Default:delrole }
+user_default_updaterole:
+    pattern:  /updaterole
+    defaults: { _controller: YdzyUserBundle:Default:updaterole }
+user_default_roleinfo:
+    pattern:  /roleinfo
+    defaults: { _controller: YdzyUserBundle:Default:roleinfo }
+user_default_userprofilebyid:
+    pattern:  /userprofilebyid
+    defaults: { _controller: YdzyUserBundle:Default:userprofile }
+user_default_rolelist:
+    pattern:  /rolelist
+    defaults: { _controller: YdzyUserBundle:Default:rolelist }
+
+user_default_active:
+    pattern:  /active
+    defaults: { _controller: YdzyUserBundle:Default:active }
+
+user_default_deactive:
+    pattern:  /deactive
+    defaults: { _controller: YdzyUserBundle:Default:deactive }
+
+user_default_changeprofile:
+    pattern:  /changeprofile
+    defaults: { _controller: YdzyUserBundle:Default:ChangeProfile }
+user_default_changeprofilebyid:
+    pattern:  /changeprofilebyid
+    defaults: { _controller: YdzyUserBundle:Default:ChangeProfileById }
+
+
+user_default_blind:
+    pattern:  /blind
+    defaults: { _controller: YdzyUserBundle:Default:blind }
+  
+user_default_employer:
+    pattern:  /employer
+    defaults: { _controller: YdzyUserBundle:Default:employer }
+
+user_default_getAllUserByRole:
+    pattern:  /getAllUserByRole
+    defaults: { _controller: YdzyUserBundle:Default:getAllUserByRole }
+    
+user_default_register:
+    pattern:  /register
+    defaults: { _controller: YdzyUserBundle:Default:Register }
+    
+user_default_adminregister:
+    pattern:  /adminregister
+    defaults: { _controller: YdzyUserBundle:Default:AdminRegister }
+
+user_default_getpasswordtoken:
+    pattern:  /getpasswordtoken
+    defaults: { _controller: YdzyUserBundle:Default:GetPasswordToken }
+
+user_default_changepassword:
+    pattern:  /userchangepassword
+    defaults: { _controller: YdzyUserBundle:Default:changepassword }
+user_default_validate:
+    pattern:  /validate
+    defaults: { _controller: YdzyUserBundle:Default:validate }
+user_default_imgvalidate:
+    pattern:  /imgvalidate
+    defaults: { _controller: YdzyUserBundle:Default:imgvalidate }
+user_default_createimgvalidate:
+    pattern:  /createimgvalidate
+    defaults: { _controller: YdzyUserBundle:Default:createimgvalidate }
+user_default_forgetpassword:
+    pattern:  /forgetpassword
+    defaults: { _controller: YdzyUserBundle:Default:ForgetPassword }
+user_default_userlist:
+    pattern:  /userlist
+    defaults: { _controller: YdzyUserBundle:Default:userlist }
+user_default_sendmail:
+    pattern:  /sendMail
+    defaults: { _controller: YdzyUserBundle:Default:sendMail }
+user_default_deluser:
+    pattern:  /deluser
+    defaults: { _controller: YdzyUserBundle:Default:delUser }
+user_default_undeluser:
+    pattern:  /undeluser
+    defaults: { _controller: YdzyUserBundle:Default:undelUser }
+
+
+
+
+
+
+#fosuserbundle    
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"
+
+fos_user_profile:
+    resource: "@FOSUserBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+fos_user_register:
+    resource: "@FOSUserBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@FOSUserBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@FOSUserBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile

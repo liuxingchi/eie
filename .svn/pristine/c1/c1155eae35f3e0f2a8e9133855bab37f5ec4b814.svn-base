@@ -1,0 +1,212 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %} {% block body
+%}
+<script>
+var START = 0;
+var PAY = "0";
+var WAY = "0";
+</script>
+<style>
+.postmoney {
+	display: none;
+}
+
+.btn_down {
+	float: right;
+}
+</style>
+<script>
+
+function reloadList(current){
+	$("#list").html("");
+	var current = current;
+	
+  	
+	var current = current;
+	//page(current);
+  	var json = {
+  		  	'start':START,
+  		  	'num':20
+			};
+  	ajaxPost(
+            'app_dev.php/api/publish/categoryAllList',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+            		$("#list").append("<div class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>"+data[i].name+"<button type='button' class='btn btn-default btn-xs' style='float:right;' onclick='showModal("+data[i].id+")'>增加选项</button><button type='button' class='btn btn-default btn-xs' style='float:right;' onclick='delCategory("+data[i].id+")'>删除选项</button></h3></div><div class='panel-body' id='category"+data[i].id+"'></div></div>"); 
+                	for(var j=0;j<data[i].list.length;j++){
+                	 $("#category"+data[i].id).append(data[i].list[j].name+"<span style='padding-left:20px;'><a href='#' onclick='delAppeal("+data[i].list[j].id+")'>删除</a></span><br>"); 
+                	}
+        		 }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function showModal(id){
+	$("#btnCreate").attr("onClick","addSecondAppeal("+id+")");
+	$("#addSecondAppeal").modal("show");
+}
+function showModalAgain(){
+	$("#btnCreate").attr("onClick","addAppeal()");
+	$("#addSecondAppeal").modal("show");
+}
+
+function addAppeal(){
+	if(!$("#appeal_val").val()){
+			alert("请填写类型");
+			return false;
+		}
+	var json = {
+			"appeal":$("#appeal_val").val()
+			};
+	ajaxPost(
+            'app_dev.php/api/publish/addAppeal',
+            json,
+            function(data, textStatus){
+            	 window.location.reload();
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function delCategory(id){
+	
+	var json = {
+			"id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/publish/delCategory',
+            json,
+            function(data, textStatus){
+            	 window.location.reload();
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function addSecondAppeal(id){
+	if(!$("#appeal_val").val()){
+			alert("请填写类型");
+			return false;
+		}
+	var json = {
+			"id":id,
+			"appeal":$("#appeal_val").val()
+			};
+	ajaxPost(
+            'app_dev.php/api/publish/addSecondAppeal',
+            json,
+            function(data, textStatus){
+            	document.location.reload();
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function delAppeal(id){
+	var json = {
+			"id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/publish/delAppeal',
+            json,
+            function(data, textStatus){
+            	document.location.reload();
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+
+$(function(){
+	$("#my").popover("show");
+	$(".btn_up").click(
+			function(){
+				$(".btn_up").addClass('btn-default');
+				$(".btn_up").removeClass('btn-primary');
+				$(this).removeClass('btn-default');
+				$(this).addClass('btn-primary');
+				}
+			);
+	$(".btn_left").click(function(){
+		   $(".btn_right").removeClass('active');
+		   $(".btn_left").addClass('active');
+		});
+	$(".btn_right").click(function(){
+		  $(".btn_left").removeClass('active');	
+		  $(".btn_right").addClass('active');  
+		});
+	$(".btn_down").click(
+			function(){
+				$(".btn_down").addClass('btn-default');
+				$(".btn_down").removeClass('btn-primary');
+				$(this).removeClass('btn-default');
+				$(this).addClass('btn-primary');
+				}
+			);
+reloadList(0);
+});
+function status(id){
+	//alert(id);将此提现记录的申请者的账户里的钱进行改变
+	var json = {
+			"id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/money/status',
+            json,
+            function(data, textStatus){
+            	$("#status"+id).html("已打款");
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+</script>
+
+
+
+<button type="button" class="btn btn_down col-sm-1 btn-default"
+onclick='showModalAgain()'">增加分类</button>
+
+<div class="col-sm-12" id="" style="margin-top: 15px; padding: 0;">
+	<div style="padding-top: 20px;" class="col-sm-12" id="list"></div>
+
+</div>
+
+
+
+
+
+</div>
+<!--content结束-->
+
+
+<!-- Modal -->
+<div class="modal fade" id="addSecondAppeal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">创建诉求类型</h4>
+      </div>
+      <div class="modal-body" id="myModalContent">
+      
+      <form class="form-horizontal">
+          <div class="form-group">
+            <div class="col-sm-12">
+              
+              <input type="text" class="form-control" id="appeal_val" placeholder="输入诉求类型">
+            </div>
+          </div>
+          
+         
+          <div class="form-group">
+            <div class="col-sm-12">
+              <button type="submit" class="btn btn-default" id="btnCreate">确认</button>
+            </div>
+          </div>
+      </form>
+    
+	    
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

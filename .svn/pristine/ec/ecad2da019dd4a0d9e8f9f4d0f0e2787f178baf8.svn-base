@@ -1,0 +1,150 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script src="{{ asset('js/ajaxfileupload.js') }}"></script> 
+				<script>	
+						var imglist = '';
+						function ajaxFileUpload()
+						{
+								clearUserInfo();
+								$.ajaxFileUpload
+								(
+										{
+												url:'/app_dev.php/admin/version/createversion',
+												secureuri:false,
+												fileElementId:'imageFile',
+												dataType:'json',
+												success: function (data, status)
+												{	
+														var obj = data;
+														imglist = obj.uploadId;
+														$("#imgs").html("<div class='imgsum' style='float:left;height:150px;width:150px;margin-left:15px;'>"+obj.uploadFile+"</div>"); 
+														
+												},
+												error: function (data, status,e)
+												{
+														alert(e);
+														showHint($('#hint'), 'msg', '上传失败', 0);
+												}
+										}
+								)
+								return false;
+						}
+						
+						var json = {  //进入页面显示最新版本信息
+								
+						};
+						ajaxPost(
+								'app_dev.php/api/version',
+								json,
+								function(data, textStatus){
+										var vid = data.vid;
+										imglist = vid;
+										var url = data.url;
+										$("#imgs").html("<div class='imgsum' style='float:left;height:150px;width:150px;margin-left:15px;'>"+url+"</div>"); 
+										
+										var versionCode = data.versionCode;
+										$('#version').val(versionCode);
+										var versionName = data.versionName;
+										$('#vname').val(versionName);
+										var releaseNotes = data.releaseNotes;
+										$('#descri').val(releaseNotes);
+								},
+								function(XMLHttpRequest, textStatus, errorThrown){
+										showHint($('#hint'), 'msg', '显示版本信息失败', 1);
+								}
+						);
+						function doPost(){
+							if(!$('#version').val()){
+							     alert("版本号未填");
+							     return false;
+								}else if(!$('#vname').val()){
+								    alert("版本名称未填");
+								    return false;
+									}else if(!$('#descri').val()){
+										alert("版本描述未填");
+										return false;
+										}
+								var json = {
+										version:$('#version').val(),
+										vname:$('#vname').val(),
+										descri:$('#descri').val(),
+										versionid:imglist
+										
+								};
+								ajaxPost(
+										'app_dev.php/admin/version/addversion',
+										json,
+										function(data, textStatus){
+												alert('更改信息成功');
+										},
+										function(XMLHttpRequest, textStatus, errorThrown){
+												alert('更改信息失败');
+										}
+								);	
+						} 
+						
+						
+						function clearUserInfo()
+						{
+								$('#version').val('');
+								$('#vname').val('');
+								$('#descri').val('');
+								imglist = "";
+						}
+				</script>
+		</head>
+
+		<body>
+				
+				<div class="box">
+									
+						<table border="0">
+								<tr>
+
+										
+										<input type="file" name="imageFile" id="imageFile" /> 
+										<button class="submit" id="buttonUpload" onclick="return ajaxFileUpload();" value="提交">提交</button>
+								</tr>
+								<tr id="imgs" style="height:40px;">
+										
+								</tr>
+								<tr>
+										<td align="right" class="bold">版本号</td>
+										<td align="left"><input id="version" class="easyui-validatebox" style="width:176px" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/></td>
+								</tr>
+								<tr>
+										<td align="right" class="bold">版本名称</td>
+										<td align="left"><input id="vname" class="easyui-validatebox" style="width:176px"/></td>
+								</tr>
+								<tr>
+										<td align="right" class="bold">版本描述</td>
+										<td align="left"><textarea id="descri" class="easyui-validatebox" style="height:150px;width:176px"></textarea></td>
+								</tr>
+								<tr>
+										<td align="center" colspan="2">
+												<button onclick="doPost()">添加</button>
+										</td>
+								</tr>
+								
+								
+								
+								
+								
+								
+						</table><br><br>
+						<style>
+						ul{list-style:none;} 
+						ul li{float:left;padding-right:15px;}
+						ul li img{width:50px;}
+						</style>
+						<ul>
+								<li><img src='{{ asset('images/1.jpg') }}'/></li>
+								<li><img src='{{ asset('images/2.jpg') }}'/></li>
+								<li><img src='{{ asset('images/3.jpg') }}'/></li>
+								<li><img src='{{ asset('images/4.png') }}'/></li>
+								<li><img src='{{ asset('images/5.png') }}'/></li>
+								<li><img src='{{ asset('images/6.jpg') }}'/></li>
+								<li><img src='{{ asset('images/7.jpg') }}'/></li>
+						</ul>
+				</div>
+{% endblock %}

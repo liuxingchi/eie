@@ -1,0 +1,296 @@
+{% extends 'YdzyJxBundle:Jx:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<script type="text/javascript" src="{{ asset('bundles/jxbundle/js/swfupload.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/jxbundle/js/swfupload.queue.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/jxbundle/js/fileprogress.js') }}"></script>
+<script type="text/javascript" src="{{ asset('bundles/jxbundle/js/handlers.js') }}"></script>
+<script>
+var swfu;
+
+    window.onload = function() {
+      var settings = {
+        flash_url : "{{ asset('bundles/jxbundle/js/swfupload.swf') }}",
+        upload_url: "{{url('Ydzyfile_image_upload')}}",  
+        file_post_name : "imageFile",
+        file_size_limit : "100 MB",
+        file_types : "*.jpg;*.jpeg;*.gif;*.png;*.bmp;",
+        file_types_description : "All Files",
+        file_upload_limit : 1,  //配置上传个数
+        file_queue_limit : 0,
+        custom_settings : {
+          progressTarget : "fsUploadProgress"
+        },
+        debug: false,
+
+        // Button settings
+        button_image_url: "{{ asset('bundles/jxbundle/images/upload_btn.png') }}",
+        button_width: "137",
+        button_height: "34",
+        button_placeholder_id: "spanButtonPlaceHolder",
+        button_text: '',
+        button_text_style: "",
+        button_text_left_padding: 0,
+        button_text_top_padding: 0,
+        
+        file_queued_handler : fileQueued,
+		file_queue_error_handler : fileQueueError,
+		file_dialog_complete_handler : fileDialogComplete,
+		upload_start_handler : uploadStart,
+		upload_progress_handler : uploadProgress,
+		upload_error_handler : uploadError,
+		upload_success_handler : uploadSuccess,
+		upload_complete_handler : uploadComplete,
+		queue_complete_handler : queueComplete
+      };
+
+      swfu = new SWFUpload(settings);
+       };
+
+		
+		function fileDialogComplete(selectedNum, queuedNum) {
+			if (queuedNum > 0) {//选择并添加到上传队列的文件数大于0
+				this.startUpload();//开始上传
+				$("#image_url").val("");
+			}
+		}
+
+$(function(){ 
+loadnav();
+$(".form_date").datetimepicker({
+        language:  'zh-CN',
+        weekStart: 1,
+        todayBtn:  1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+
+  var json = {};
+
+  ajaxPost(
+    'app_dev.php/api/area/retrievePro',
+    json,
+    function(data, textStatus){
+      //alert(data.length);
+      for(var i=0;i<data.length;i++){
+            $("#province").append("<option value='"+data[i].id+"'>"+data[i].area+"</option>");
+        }//结束循环
+	  
+    },
+    function(XMLHttpRequest, textStatus, errorThrown){
+		alert("出现错误，稍后请重试");
+    }
+  );
+  $("#province").live("change",function(){
+  	var province = $("#province").val();
+		var json = { "pro_id": province};
+
+		  ajaxPost(
+			'app_dev.php/api/area/retrieveCityJson',
+			json,
+			function(data, textStatus){
+			  $('#city').empty();
+			  for(var i=0;i<data.length;i++){
+				
+				$("#city").append("<option value='"+data[i].id+"'>"+data[i].area+"</option>");
+				
+				
+			  }//结束循环
+			  
+			},
+			function(XMLHttpRequest, textStatus, errorThrown){
+				
+			  alert("城市出现错误，请刷新重试");
+			}
+		  );
+  
+  });
+  		
+	$("#save").click(function(){
+		var category_id = $("#category").val();
+		var brand_model = $("#brand_model").val().toUpperCase();
+		var workyears_max = $("#workyears").val();
+		var salary = $("#salary").val();
+		var province = $("#province").val();
+		var city = $("#city").val();
+		var description = $("#description").val();
+		if($("#image_url").val()==""){
+			$('#myalert').modal('show');
+			$('#myalert_content').html("请至少上传一张图片");
+			return false;
+			}else{
+		var image_url = $("#image_url").val().substr(1);
+			}
+	  if(category_id==undefined){
+        $('#myalert').modal('show');
+        $('#myalert_content').html("必须选择机种");
+        return false;
+      }else if(brand_model==""){
+        $('#myalert').modal('show');
+        $('#myalert_content').html("必须填写机型");
+        return false;
+      }
+      
+      var json = {
+		image_url:image_url,
+        category:category_id,
+        mark:"0",
+		salary:salary,
+        province_id:province,
+        city_id:city,
+        workyears_max:workyears_max,
+        description:description,
+        model:brand_model
+        };
+    ajaxPost(
+      'api/driver/create',
+      json,
+      function(data, textStatus){
+        $('#myalert').modal('show');
+        $('#myalert_content').html("保存成功");
+        window.location.href="{{url('jx_driver')}}";
+      },
+      function(XMLHttpRequest, textStatus, errorThrown){
+		
+		switch(XMLHttpRequest.status)
+		{
+			case 403:
+				$('#myalert').modal('show');
+        		$('#myalert_content').html("未登录，请登录后再进行操作");
+				break;
+			default:
+				$('#myalert').modal('show');
+        		$('#myalert_content').html("保存失败，请稍后重试");	
+		}
+		
+        
+      }
+    );
+
+	});
+	
+});
+	
+</script>
+  <div class="col-sm-12" style="margin-top:30px; padding:0;">
+  
+	<div class="col-sm-12" id="selector" style="padding:0; height:35px;">
+      <ul id="publish_selector">
+        <a href="{{url('jx_publish_sale')}}"><li class="col-sm-4" style="padding:0;background-color:#ededed;font-size:14px;font-weight:bold;">二手机械发布<div style=" float:right;width:5px;background-color:#FFF; height:35px;"></div></li></a>
+        <a href="{{url('jx_publish_rent')}}"><li class="col-sm-4" style="padding:0;background-color:#ededed; font-size:14px;font-weight:bold;"><div style="float:left;width:2px;background-color:#FFF; height:35px;"></div>机械出租发布<div style=" float:right;width:2px;background-color:#FFF; height:35px;"></div></li></a>
+        <a href="{{url('jx_publish_driver')}}"><li class="col-sm-4" style="padding:0;background-color:#b40202;font-size:14px;color:#FFF;font-weight:bold;"><div style="float:left;width:5px;background-color:#FFF; height:35px;"></div>招聘信息发布</li></a>
+      </ul>
+    </div> <!--发布selector结束-->
+  
+  <div class="col-sm-12" style="padding:0; margin-top:20px;" id="publish_form">
+  <form class="form-horizontal" role="form">
+  <div class="form-group" id="category_div">
+  <label class="col-sm-2 control-label">机种<span style="color:red;">*</span></label>
+  	<div class="col-sm-2">
+    <select class="form-control" id="category">
+   		 <option>请选择机种</option>
+          <option value="1">挖掘机</option>
+          <option value="2">装载机</option>
+          <option value="4">推土机</option>
+          <option value="5">起重机</option>
+          <option value="6">混凝土设备</option>
+          <option value="7">其他机械</option>
+     </select>   
+ 	</div>
+	
+  </div>
+  
+  	<div class="form-group">
+  	  <label class="col-sm-2 control-label">机型<span style="color:red;">*</span></label>
+  		<div class="col-sm-4">
+      <input type="text" class="form-control" id="brand_model" placeholder="如小松PC60-7">
+ 		</div>
+  	</div>
+    
+  <div class="form-group">
+  	  <label class="col-sm-2 control-label">上传图片</label>
+  		<div class="col-sm-10">
+	  	<div id="spanButtonPlaceHolder"></div><span style="color:#999;">只能上传单张图片</span>
+        <br />
+        <div style="margin-left:-13px; padding:0;" id="image_container"><div id="container_first"></div></div>
+          <div class="col-sm-12" style="padding:0;" id="fsUploadProgress"></div>
+        </div>
+      
+ 		<input type="hidden" class="form-control" id="image_url" placeholder="">
+  	</div>
+       
+   <div class="form-group">
+      <label class="col-sm-2 control-label">工作经验</label>
+      <div class="col-sm-2">
+      <select class="form-control" id="workyears">
+          <option selected value="0">学徒工</option>
+          <option value="1">一年以下</option>
+          <option value="3">两年到三年</option>
+          <option value="5">四年到五年</option>
+		  <option value="6">五年以上</option>
+     </select>  
+    </div>
+  </div>
+
+  <div class="form-group">
+      <label class="col-sm-2 control-label">月薪</label>
+      <div class="col-sm-4">
+      <input type="text" onkeyup="value=value.replace(/[^\d]/g,'')" class="form-control" id="salary" placeholder="单位（元）">
+    </div>
+  </div>
+
+  <div class="form-group">
+      <label class="col-sm-2 control-label">省市</label>
+      <div class="col-sm-2" style="padding-right:2px;">
+      <select class="form-control" id="province">
+      <option value="">请选择省</option>
+      </select>
+    </div>
+    <div class="col-sm-2" style="padding-left:2px;">
+      <select class="form-control" id="city">
+      </select>      
+    </div>  
+  </div>
+	
+	<div class="form-group">
+      <label class="col-sm-2 control-label">具体要求</label>
+      <div class="col-sm-4">
+      <textarea class="form-control" id="description" rows="3"></textarea>
+    </div>
+  </div>
+  
+  <div class="form-group" style="padding-top:15px;">
+      <label class="col-sm-2 control-label"></label>
+      <div class="col-sm-4">
+	 
+     <button type="button" class="btn btn-danger btn-lg" id="save">马上发布</button>
+    </div>
+  </div>
+
+  </form>
+  </div> <!--表单项结束-->
+  
+  
+  </div> <!--发布主页面content结束-->
+  
+<!-- Modal -->
+<div class="modal" id="myalert" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;margin:200px auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">提示</h4>
+      </div>
+      <div class="modal-body" id="myalert_content">
+        ...
+      </div>
+      <div class="modal-footer"> 
+        <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+       </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% endblock %}

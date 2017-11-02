@@ -1,0 +1,77 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+$(function(){              
+        
+});//function 主函数结束
+function post(){
+	if($("#phone").val().length!=11){
+	    alert("手机号码格式不正确");
+	    return false;
+	    }
+	if($("#phone").val()==''||$("#password").val()==''){
+	    alert("必填项请填写完整");
+	    return false;
+		}
+      var json = {
+    		  "username":$("#nickname").val(),
+    		  "phone":$("#phone").val(),
+    		  "password":$("#password").val(),
+    		  "mark":$("#mark").val(),
+    		  "validate":"9977"
+    	     };
+ 	
+     ajaxPost(
+              'app_dev.php/api/user/register',
+              json,
+              function(data, textStatus){
+             	 window.location.href="member";
+                  },
+              function(XMLHttpRequest, textStatus, errorThrown){
+                	  switch(XMLHttpRequest.status)
+      		  		{
+      		  			case 415:
+          		  			alert("手机号已经被使用");
+      		  				break;
+              		  			default:
+              		  				alert('加载数据出现错误，请重试');
+              		  		}
+               }
+          );
+     //str.split(",");
+     //alert(str[0]);  
+}
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+            
+                  <div class="form-group">
+                    <label>昵称</label>
+                    <input type="text" class="form-control" id="nickname" placeholder="输入昵称">
+                  </div>
+                  <div class="form-group">
+                    <label>手机号</label>
+                    <input type="text" class="form-control" onkeyup="value=value.replace(/[^\d]/g,'')" id="phone" placeholder="输入手机号码，可以登录使用（必填）">
+                  </div>
+                  
+                 <div class="form-group">
+                    <label>登录密码(默认六个1)</label>
+                    <input type="password" value="111111" class="form-control" id="password" placeholder="输入登录密码（必填）">
+                 </div>
+                 <div class="form-group">
+                    <label>用户身份</label>
+                    <select id="mark">
+                    <option value="0">普通用户</option>
+                    <option value="1" selected>商家用户</option>
+                    </select>
+                 </div>
+                  <button onclick="post()" class="btn btn-default">保存</button>
+           
+          
+  </div>
+  	
+  
+</div> <!--content结束-->
+
+
+{% endblock %}

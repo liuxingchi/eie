@@ -1,0 +1,608 @@
+{% extends 'YdzyJxBundle:Default:layout.html.twig' %}
+{% block body %}
+<style>
+a:hover{color:white;text-decoration:none;}
+a:visited{color:white;text-decoration:none;}
+tr { line-height:30px;}
+.myButton{
+    padding: 9px;
+    width: 64px;
+    float: left;
+    height: 64px;
+    border-radius: 8px;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+    margin: 4px;
+}
+.myButtonColor0{
+	background-color:  rgb(70, 52, 30);
+}
+.myButtonColor1{
+	background-color:  rgb(112, 65, 35);
+}
+.myButtonColor2{
+	background-color:  rgb(157, 110, 56);
+}
+.myButtonColor3{
+	background-color:  rgb(171, 151, 126);
+}
+.myButtonColor4{
+	background-color:  rgb(73, 102, 72);
+}
+.myButtonColor5{
+	background-color:  rgb(123, 137, 112);
+}
+#preshow_ul{
+padding-left:0px;
+}
+#preshow_ul li{
+list-style:none;
+}
+</style>
+<script>
+var browser = navigator.userAgent;
+var category = {{ category }};
+var prefix = "http://eie.ren";
+var uid = getQueryString("uid");
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]); return null;
+}
+function news(){
+	var json = 
+    {
+      "news_id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/news/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+          $("#title").html(data.title);
+          document.title="资讯详情";
+          $("#creation_date").html("发布时间："+data.creation_date);
+          if(data.image_url){
+        	  $("#pic").html("<img src='"+data.image_url+"' width='100%'/>");
+              }
+          $("#content").html(data.content);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	//alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function preshow(){
+	var json = 
+    {
+      "preshow_id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/preshow/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+          $("#preshow_title").html(data.title);
+          document.title="预展详情";
+          $("#showtime").html(data.showtime);
+          $("#endtime").html(data.endtime);
+          $("#showaddress").html(data.showaddress);
+          $("#auctiontime").html(data.auctiontime);
+          $("#auctionaddress").html(data.auctionaddress);
+          $("#creation_date").html("发布时间："+data.creation_date);         
+          $("#preshow_content").html(data.content);
+          
+          /* var stringurl = JSON.stringify(data.images);
+          //stringurl=stringurl.replace(/\//g, "\\/");  
+          stringurl=stringurl.replace(/"([^"]*)"/g, "'$1'");
+
+          console.log(stringurl); */
+          for(var i = 0;i<data.images.length;i++){
+              
+              $("#preshow_images").append("<a onclick=\"picshow("+i+")\"><img src='"+data.images[i].url+"' width='100%'/></a>");
+           }
+          
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	//alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function market(){
+	var json = 
+    {
+      "market_id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/market/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	$("#title").html(data.title);
+            document.title="拍卖行情";
+            $("#creation_date").html("发布时间："+data.creation_date);
+            /* if(data.image_url){
+          	  $("#pic").html("<img src='"+data.image_url+"' width='100%'/>");
+                } */
+            $("#content").html(data.content);
+            for(var i = 0;i<data.images.length;i++){
+                
+                $("#market_images").append("<a onclick=\"picshow("+i+")\"><img src='"+data.images[i].url+"' width='100%'/></a>");
+             }
+            
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	//alert("出现错误，稍后请重试");
+        }
+      });
+}
+function goods(){
+	var json = 
+    {
+      "id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	$(".goods_appeal").html(data.appeal);
+            document.title="发布的商品详情";
+            $("#goods_date").html(data.creation_date);
+            $("#goods_content").html(data.content);
+            //alert(data.image_urls[0].url);
+            /* if(data.appeal_id==2){
+              $("#buy_result").append("价格："+data.price);
+               appealSale(); 
+                }
+            if(data.appeal_id==1){
+     		   appealNum();
+     		   } */
+     		  appealNum();
+     		  getComment();
+            for(var i = 0;i<data.image_urls.length;i++){
+                $("#goods_images").append("<a onclick=\"picshow("+i+")\"><img src='"+data.image_urls[i].url+"' width='100%'/></a>");
+                }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	//alert("出现错误，稍后请重试");
+        }
+      });
+}
+function recommend(pic){
+	var json = 
+    {
+      "id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+            document.title="推荐给我的商品详情";
+            $("#recommend_id").html(data.id);
+            $("#recommend_date").html(data.creation_date);
+            $("#recommend_content").html(data.content);
+            $("#good_title").html(data.appeal);
+            for(var i = 0;i<data.image_urls.length;i++){
+                $("#recommend_images").append("<a onclick=\"picshow("+i+")\"><img width='75%' src='"+data.image_urls[i].url+"'/></a>");
+                }
+            if(pic==1){
+            secondAppeal(data.appeal_id);
+            }
+        }
+      });
+}
+
+function appealNum(){
+	var json = 
+    {
+      "id": {{ id }},
+      "mark":1
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/appealNum',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	//$("#goods_result").html(data);
+        	for(var i = 0;i<data.length;i++){
+        	    $("#buy_result").append("专家意见："+data[i].name);
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	//alert("出现错误，稍后请重试");
+        }
+      });
+}
+function getComment(){
+	var json =
+    {
+      "id": {{ id }},
+      "mark":1
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/retrieveComment',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	//$("#goods_result").html(data);
+        	for(var i = 0;i<1;i++){
+        	    $("#comment").append(data[i].comment);
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	//alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function appealSale(){
+	var json = 
+    {
+      "id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/appealSale',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	//$("#goods_result").html(data);
+        	for(var i = 0;i<data.length;i++){
+        	    $("#timelist").append("<li><b></b><span>"+data[i].creation_date+"</span><p>"+data[i].message+"</p></li>");
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	//alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function secondAppeal(category){
+	var json = 
+    {
+      "appeal_id": category
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/secondAppeal',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	for(var i = 0;i<data.length;i++){
+            	if(i<=5){
+					 var my = i;
+                	}else{
+						var my = i - 6;
+                    	}
+        	  $("#buttonArea").append("<a href='#' onclick='choose("+data[i].id+","/"+data[i].name+"/")' class='myButton myButtonColor"+my+"'>"+data[i].name+"</a>");
+        	}
+        }
+      });
+}
+function isChoose(){
+	if(!uid){
+			//alert("请先登录");
+			$("#modalHtml").html("请先登录");
+        	$("#modal").modal();
+			return false;
+		}
+	var json = 
+    {
+      "id":{{ id }},
+      "uid":uid
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/isChoose',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        console.log(data);
+            if(data==1){
+					recommend(1);
+                }else{
+                    $("#buttonArea").html("选择内容:"+data);
+					recommend(0);
+                    }
+        }
+      });
+}
+function isComment(){
+	if(!uid){
+			//alert("请先登录");
+			$("#modalHtml").html("请先登录");
+        	$("#modal").modal();
+			return false;
+		}
+	var json =
+    {
+      "id":{{ id }},
+      "uid":uid
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/isComment',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+            if(data){
+            	//评论过,返回的data就是评论内容
+				$("#comment_div").html("评论内容:"+data);
+				}
+        }
+      });
+}
+function choose(appeal_id,text){
+	var json = 
+    {
+      "appeal_id": appeal_id,
+      "id":{{ id }},
+      "uid":uid
+    };
+    $("#buttonArea").html("<a href='#' class='myButton myButtonColor0'>"+text+"</a>");
+    
+	
+
+     /* $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/chooseAppeal',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+            //alert("选择成功");
+            $("#modalHtml").html("选择成功");
+        	$("#modal").modal();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	//alert("你已经选择过！");
+        	$("#modalHtml").html("您已经选择过了");
+        	$("#modal").modal();
+        }
+      }); */
+
+    //这里需要去掉其他的按钮，然后。。。。。把值给他显示吧
+    
+}
+function comment(){
+	var json = 
+    {
+      "id":{{ id }},
+      "uid":uid,
+      "comment":$("#commentArea").val()
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/inputComment',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+            //alert("评论成功");
+            $("#modalHtml").html("评论成功");
+        	$("#modal").modal();
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	//alert("你已经评论过！");
+        	$("#modalHtml").html("您已经评论过了");
+        	$("#modal").modal();
+        }
+      });
+}
+function getAllPic(){
+	//获得所有的图片
+	var imgstr = "";
+	for(var i=0;i<document.getElementsByTagName("img").length;i++){
+	url = document.getElementsByTagName("img")[i].src;
+	var imgstr = imgstr +","+ url;
+	}
+	var array = imgstr.substr(1).split(",");
+	//print_array(array);
+	var json = $.toJSON(array);
+	return json;
+	
+}
+function picshow(index){
+    var json = getAllPic();
+	//console.log(json);
+	var browser = navigator.userAgent;
+	if(browser.indexOf('eie_android') > -1)
+	{
+		window.eieObj.showPic(json,index);
+		
+	}
+	else if(browser.indexOf('eie_ios') > -1)
+	{
+		$("#index").val(index);
+		window.location.href = "/iosPic";
+	}
+	
+	
+}
+
+function iosPic(){
+	var json = getAllPic();
+	var index = $("#index").val();
+	var content = {
+			"json":json,
+			"index":index
+			};
+	return JSON.stringify(content);
+}
+
+$(function(){
+	if(category==1){
+		 news();
+		 $("#news").show();
+		}
+	if(category==2){
+		 preshow();
+		 $("#preshow").show();
+		}
+	if(category==3){
+		  market();
+		  $("#news").show();
+		}
+	if(category==4){
+		   goods();
+		   $("#goods").show();
+		}
+	if(category==5){
+		   isChoose();
+		   isComment();
+		   $("#recommend").show();
+		}
+
+});
+function textfocus(o){
+    $("#textheight").height("250px");
+    document.getElementsByTagName('body')[0].scrollTop = document.getElementsByTagName('body')[0].scrollHeight;
+}
+</script>
+<input type="hidden" id="index"/>
+<div id="news" style="display:none;">
+<div id="title" class="col-sm-12 news_title"></div>
+<div id="creation_date" class="col-sm-12"></div>
+<div id="pic" class="col-sm-12" style="padding-top: 8px;"></div>
+<div id="content" class="col-sm-12" style="padding-top: 8px;"></div>
+<div id="market_images" class="col-sm-12" style="padding-top: 8px;"></div>
+</div>
+<div id="preshow" style='display:none;'>
+<div id="preshow_title" class="col-sm-12 news_title"></div>
+<ul id="preshow_ul">
+<li>预展信息</li>
+时间：<span id="showtime"></span>至<span id="endtime"></span></br>
+地点:<span id="showaddress"></span>
+<li>拍卖信息</li>
+时间：<span id="auctiontime"></span></br>
+地点:<span id="auctionaddress"></span>
+<li>拍卖展品</li>
+<span id="preshow_content"></span>
+<span id="preshow_images"></span>
+</ul>
+</div>
+<div id="goods" class="col-sm-12" style="display: none;"><!-- 商品详情 -->
+<div class="col-sm-12 news_title">当前状态:<span class="goods_appeal"></span></div>
+<div id="goods_date" class="col-sm-12" style="text-align: right;"></div>
+<div id="goods_content" class="col-sm-12"></div>
+<div id="goods_images" class="col-sm-12"></div>
+<div id="goods_result" class="col-sm-12" style="border:2px solid rgb(51,51,51);padding:0;margin:15px;">
+<div class="news_title" style="width:100%;height:50px;line-height:50px;background-color:rgb(51,51,51);color:white;">诉求：<span class="goods_appeal"></apan></div>
+<div style="padding:10px;">
+<span id="buy_result" style="font-size:23px;color:rgb(180,3,9);"></span>
+</div>
+</div>
+<div id="goods_result" class="col-sm-12" style="border:2px solid rgb(51,51,51);padding:0;margin:15px;">
+<div class="news_title" style="width:100%;height:50px;line-height:50px;background-color:rgb(51,51,51);color:white;">专家评论</div>
+<div style="padding:10px;">
+<span id="comment" style="font-size:23px;color:rgb(180,3,9);"></span>
+</div>
+</div>
+<div class="times">
+    <ul id="timelist">
+        
+    </ul>
+</div>
+</div>
+
+<div id="recommend" class="col-sm-12" style="display: none;"><!-- 推荐给我的商品详情，其实也就是商品详情，只是增加功能项 -->
+<!-- <div class="col-sm-12 news_title">商品编号：<span id="recommend_id"></span></div> -->
+<div class="col-sm-12 news_title" id="good_title"></div>
+<div id="recommend_date" class="col-sm-12" style="text-align: right;"></div>
+<div id="recommend_content" class="col-sm-12"></div>
+<div id="recommend_images" class="col-sm-12 " style="text-align: center;"></div>
+
+<div id="buttonArea" class="col-sm-12" style="margin-top:20px;margin-bottom:20px;display: inline-block;"></div>
+<div class="col-sm-12" id="comment_div" style="margin-bottom:20px;">
+<textarea class="form-control" placeholder="输入评价内容" id="commentArea" onfocus="textfocus(this)"></textarea>
+<button type="submit" class="btn btn-primary" id="btnComment" onclick="comment()">提交评论</button>
+</div>
+</div>
+
+
+<div id="textheight" class="col-sm-12"></div>
+
+</div>
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:250px;margin: 100px auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">提示</h4>
+      </div>
+      <div class="modal-body" id="modalHtml">
+
+	    </div>
+	    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">确认</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

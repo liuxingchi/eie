@@ -1,0 +1,290 @@
+{% extends 'YdzyJxBundle:Jx:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<script>
+var CATEGORY=1;
+var PROVINCE=-1;
+var CITY=-1;
+var WORKYEARS_MIN = -1;
+var WORKYEARS_MAX = -1;
+var SALARYSORT = "-1";
+var KEYWORD = "";
+var DATESORT = "0";
+</script>
+<script src="{{ asset('bundles/jxbundle/js/driverpage.js') }}"></script>
+<script>
+
+function reloadList(json_data,current){
+	$("#machine_list").html("");
+	var current = current;
+	page(current);
+	if(json_data==""){
+		var json={
+			"mark": "0",
+			"start": "0",
+			"num": "20",
+			"keyword":KEYWORD,
+			"category_id":CATEGORY,
+			"province_id":PROVINCE,
+			"workyears_min":WORKYEARS_MIN,
+			"workyears_max":WORKYEARS_MAX,
+			"updated_date_sort":DATESORT,
+			"salary_sort":SALARYSORT
+			};
+		}else{
+			var json = json_data;
+			}
+  	ajaxPost(
+		'app_dev.php/api/driver/retrieve',
+		json,
+		function(data, textStatus){
+		  //alert(data.length);
+		  for(var i=0;i<data.length;i++){
+			//alert(data[i].pic_all);
+			var updated_date = data[i].updated_date.substr(0,11);
+			if(data[i].salary==0){var salary = "面议";}else{var salary = data[i].salary+"元";}
+			if(data[i].province==null){var province = "";var city="";}else{var province = "工作地点："+data[i].province+" ";var city=data[i].city+"　";}
+     $("#machine_list").append("<div class=\"col-sm-3\" style=\"border:#cdcdcd 1px solid; height:110px; padding:0;\"> <a href='driver_content/"+data[i].driver_id+"' target='_blank'><div id='"+data[i].driver_id+"0'><img width='200px' height='108px' src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/></div></a></div> <div class=\"col-sm-7\" style=\"height:110px;\"> <a href='driver_content/"+data[i].driver_id+"' target='_blank'><p style=\"color:#b40202; text-decoration:underline;font-size:14px;font-weight:700;\">"+data[i].model+"</p></a> <p><span>工作经验："+data[i].workyears+"</span> | <span>"+province+"</span><span>"+city+"</span></p> <p><span>"+updated_date+"发布</span> </p></div> <div class=\"col-sm-2\" style=\"height:110px; font-size:20px; color:#b40202;line-height:90px;font-weight:500;\">"+salary+"</div> <img src=\"{{ asset('bundles/jxbundle/images/list_hr.png') }}\"/>");
+        //判断是否是false，如果不是false，将图片填充上
+        if (data[i].pic) {
+          var str = data[i].pic;
+		   $("#"+data[i].driver_id+"0").html("<img src='"+str+"' width='200px' height='108px'/>");
+            //alert(lihtml);
+          
+        }; 
+      }//结束循环
+	
+    },
+    function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+				alert('加载数据出现错误，请重试');
+		}
+    }
+  );
+}
+function loadProvince(){
+		//调取所有的省份
+		var province_json={};
+		ajaxPost(
+		'api/area/retrievePro',
+		province_json,
+		function(data, textStatus){
+		  //alert(data.length);
+		  for(var i=0;i<16;i++){
+			//alert(data[i].pic_all);
+			$("#province_first").append("　<a href='#' title='"+data[i].id+"' onclick='provinceFilter(this)'>"+data[i].area+"</a>");
+		   
+		  }//结束循环
+		  
+		  for(var i=17;i<data.length;i++){
+			//alert(data[i].pic_all);
+			$("#other_province").append("<li><a href='#' title='"+data[i].id+"' onclick='provinceFilter(this)'>"+data[i].area+"</a></li>");
+		   
+		  }
+		},
+		function(XMLHttpRequest, textStatus, errorThrown){
+		  alert("省市调取出现错误，请刷新重试");
+		}
+	  );
+	}
+
+//筛选province
+function provinceFilter(oClick){
+	PROVINCE = oClick.title;
+	$("#index_province_all").css("color","#000");
+	$("#other_province a").css("color","#000");
+	$("#province_first a").css("color","#000");
+	oClick.style.color='#b40202';
+	
+	reloadList("",0);
+	
+	}
+
+
+$(function(){
+loadnav();
+$("#search_close").attr("style","display:none");
+	$("#search_close").click(function(){
+		$("#search_box").val("");
+		$("#search_close").attr("style","display:none");
+		});
+
+loadProvince();
+var json = {"mark": "0",
+			"updated_date_sort":"0",
+			"start": "0",
+			"num": "20",
+			"category_id":"1"
+			};
+reloadList(json,0);		
+
+
+//筛选功能（category）
+$('#index_category > a').click(function(){
+	
+	var category_id = $(this).attr("value");
+	
+	$("#index_filter a").css("color","#000");
+	$(".index_filter_all").css("color","#b40202");
+	$('#index_category > a').css("color","#000");
+	$(this).css("color","#b40202");
+	$("#index_brand_all").css("color","#b40202");
+	CATEGORY = category_id;
+	var json = {
+		"mark": "0",
+		"start": "0",
+		"num": "20",
+		"category_id":CATEGORY,
+		"updated_date_sort":"0"
+		};
+	reloadList(json,0);
+	PROVINCE = -1;
+	WORKYEARS_MIN = -1;
+	WORKYEARS_MAX = -1;
+	SALARYSROT = "-1";
+	KEYWORD = "";
+	
+	
+	page(0);
+	});
+//province 全部
+$('#index_province_all').click(function(){	
+	$("#province_first a").css("color","#000");
+	$("#other_province a").css("color","#000");
+	$(this).css("color","#b40202");
+	PROVINCE = -1;
+	reloadList("",0);
+	});
+
+//筛选工作经验
+$("#driver_workyears a").click(function(){
+	WORKYEARS_MIN = $(this).attr("min");
+	WORKYEARS_MAX = $(this).attr("max");
+	
+	$('#driver_workyears a').css("color","#000");
+	$(this).css("color","#b40202");
+	
+	reloadList("",0);
+	});
+
+
+
+
+//薪酬排序
+$("#driver_salary_sort").toggle(function(){
+	$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+	$("#driver_salary_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_red.png') }}");
+	//从高到低
+	DATESORT = "-1";
+	SALARYSORT = "0";
+	
+	reloadList("",0);
+	},function(){
+		$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+		$("#driver_salary_sort img").attr("src","{{ asset('bundles/jxbundle/images/up_red.png') }}");
+		
+		//从低到高
+	DATESORT = "-1";
+	SALARYSORT = "1";
+	
+	reloadList("",0);
+		});
+
+//发布日期排序
+$("#driver_date_sort").toggle(function(){
+	$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+	$("#driver_date_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_red.png') }}");
+	//从高到低
+	DATESORT = "0";
+	SALARYSORT = "-1";
+	
+	reloadList("",0);
+	},function(){
+		$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+		$("#driver_date_sort img").attr("src","{{ asset('bundles/jxbundle/images/up_red.png') }}");
+		
+		//从低到高
+	DATESORT = "1";
+	SALARYSORT = "-1";
+	
+	reloadList("",0);
+		});
+
+
+//搜索
+$("#search_btn").click(function(){
+	var keyword = $("#search_box").val();
+	KEYWORD = keyword;
+	reloadList("",0);	
+	});
+	
+	document.getElementById("search_box").onkeyup = function(e){
+				var me = this;
+				e = e|| window.event;
+				var keycode = e.keyCode;
+				if(keycode === 13){
+				var keyword = $("#search_box").val();
+				KEYWORD = keyword;
+				reloadList("",0);
+				}
+			};
+
+
+});//function 主函数结束
+
+
+
+</script>
+ 
+  <div class="col-sm-12" id="search_line" style="margin-top:15px; padding:0;">
+  		<!--<div class="col-sm-4" id="search_box" style=" padding:0;height:34px;background-image:url({{ asset('bundles/jxbundle/images/search_box.png') }});background-repeat:no-repeat;"></div>-->
+        
+        <div class="col-sm-6" style="padding:0;">
+        <input type="text" id="search_box" class="form-control" onKeyUp="search_box();" maxlength="100" autocomplete="off" placeholder="支持对型号的搜索"><em id="search_close"></em>
+        </div>
+        <div class="col-sm-2" style="padding:0;"><a href="#"><img id="search_btn" src="{{ asset('bundles/jxbundle/images/search_btn.png') }}"/></a></div>
+        <div class="col-sm-4" id="create_btn" align="right" style="padding-right:5px;"><a href="{{url('jx_publish_driver')}}"><img src="{{ asset('bundles/jxbundle/images/create.png') }}" /></a></div>
+  </div> <!--搜索框结束-->
+  
+  <div id="content" style="position:relative; width:100%; margin-top:10px; padding:0;" class="col-sm-12">
+  <div class="driver_tabs"> <!--tab选择框-->
+    <ul>
+        <li class="first"><div style="float:left; padding-left:20px; padding-right:5px;"><img src="{{ asset('bundles/jxbundle/images/category_list.png') }}"/></div><div id="category_list_div2">招聘选择</div></li>
+        <li class="last"></li>
+    </ul>
+
+</div>  <!--tab选择框结束-->
+	<div id="index_filter" class="col-sm-12" style="padding:0;"> <!--类别选择框-->
+    
+    <div style="padding-top:15px;" id="index_category" class="col-sm-12"><span class="bold">机种</span>：<a href="#" value="1" style="color:#b40202;">挖掘机</a>　<a href="#" value="2">装载机</a>　<a href="#" value="4">推土机</a>　<a href="#" value="5">起重机</a>　<a href="#" value="6">混凝土设备</a>　<a href="#" value="7">其他机械</a> </div> 
+     
+    <div style="padding-top:10px;" class="col-sm-12"><div class="col-sm-11" style="padding:0;"><span class="bold">工作地点</span>：<a href="#" id="index_province_all" class="index_filter_all">全部</a> <span id="province_first"></span></div> <div class="btn-group col-sm-1" style="padding-left:5px;"><span data-toggle="dropdown">其他<span class="caret"></span></span><ul class="dropdown-menu" role="menu" id="other_province"></ul></div> </div>
+        
+	 <div style="padding-top:10px;" id="driver_workyears" class="col-sm-12"><span class="bold">工作经验:</span>：<a href="#" style="padding-right:12px;color:#b40202;" class="index_filter_all">全部</a> <a href="#" min="0" max="0">学徒工</a>　<a href="#" min="0" max="1">一年以下</a>　<a href="#" min="2" max="3">两年到三年</a>　<a href="#" min="4" max="5">四年到五年</a>　<a href="#" min="5" max="99999">五年以上</a></div> 
+
+    </div> <!--类别选择框结束-->
+  <div class="col-sm-12" style="padding-left:0; padding-right:0; margin-top:20px;">
+  	<div class="col-sm-9" style="overflow:hidden; padding-left:0;"><span style="font-size:16px; font-weight:bold; color:#b40202; padding-left:5px;">招聘列表</span><span style="float:left; position:absolute;left:80px; color:#999; font-size:10px; line-height:25px;" id="driver_list_num"></span>
+    <span style="float:right; padding-right:5px; line-height:20px;">排序：
+    <a href="#" style="color:#000;" class="index_sort" id="driver_salary_sort">薪酬<span><img src="{{ asset('bundles/jxbundle/images/down_grey.png') }}"/></span></a>　
+    <a href="#" style="color:#000;" class="index_sort" id="driver_date_sort">发布日期<span><img src="{{ asset('bundles/jxbundle/images/down_red.png') }}"/></span></a>　
+    </span>
+    <img src="{{ asset('bundles/jxbundle/images/hr.png') }}"/>
+   <div class="col-sm-12" id="machine_list"></div>
+    </div>
+    
+    
+  	<div class="col-sm-3" style="padding-right:0px; padding-left:20px;">
+		{{ include('YdzyJxBundle:Jx:right.html.twig')}}    
+    </div><!--右侧广告位展示-->
+  </div>
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>  
+    </div><!--分页结束-->
+</div> <!--content结束-->
+{% endblock %}

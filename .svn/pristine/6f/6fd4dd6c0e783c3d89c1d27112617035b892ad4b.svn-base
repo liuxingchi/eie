@@ -1,0 +1,594 @@
+{% extends 'YdzyJxBundle:Default:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<style>
+tr { line-height:30px;}
+/*public scroll*/
+.scroll{margin:0px auto;max-width:560px;}
+.scroll_box{overflow:hidden;visibility:hidden;position:relative;}
+.scroll_wrap{overflow:hidden; position:relative; height:160px; padding:0; margin-bottom:0;}
+.scroll_wrap li{position:relative;display:block;width:100%;float:left;}
+.scroll_wrap li a{display:block;margin:0 auto;position:relative;}
+.scroll_position{text-align:center;z-index:400px;bottom:0px;}
+.scroll_position li{margin-right:3px;display:inline-block;width:5px;height:5px;border-radius:2px;background:#fff;}
+.scroll_position li a{font-size:0;}
+.scroll_position li.on{background-color:#ffd800;}
+</style>
+<script>
+function after_share(){
+var url = window.location.href;
+var loc = url.substring(url.lastIndexOf('?flag=')+6, url.length);
+//alert(loc);
+//根据loc获得agent信息	
+  if(loc!=0){
+  var json = 
+            {
+              "uid": loc
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/userprofilebyid',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:false,
+		async:false,
+		success: function (data, textStatus) {
+			$("#username").html(data.nickname);
+			$("#mobile").html(data.phone);
+			$("#mobile_tel").attr("href","tel:"+data.phone);
+			if(data.icon!=""){
+		  $("#sicon").attr("src","http://image.landzestate.com/"+data.icon);
+		  }else{
+		     $("#sicon").attr("src","/bundles/jxbundle/images/03_03.png");
+			  }
+			},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {}
+  
+  
+  });
+  }
+}
+
+var browser = navigator.userAgent;
+function getShare(){
+	var shareContent={
+				  "title":"",
+				 "link":window.location.href,
+				 "content":"均价："+$("#unit_total_price").html()+"万元\n面积："+$("#GROUD_AREA").html()+"\n房型："+$("#jz").html()+" \n楼盘名称："+$("#COMMUNITY_NAME").html(),
+				 "img_url":"http://image.landzestate.com/"+data.FULL_VIEW_PATH,
+				 "phone":$("#mobile").html()
+			};
+		return JSON.stringify(shareContent); 
+	}
+function getSell(){
+	return ($("#community_id").val()); 
+}
+function getRent(){
+	return ($("#community_id").val()); 
+}
+function getPIC(){
+	return ("http://landz.yingdongzhuoyue.cn/app_dev.php/jx/communitypic/"+$("#id").val()); 
+}
+function getGPS(){
+	var gpsContent = {
+		"lat":$("#lat").val(),
+		"lng":$("#lng").val()
+		}
+	return JSON.stringify(gpsContent); 
+}
+
+function bannerMove(index){}
+
+function topic(id)
+{
+	
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			window.data.to_Pic("http://landz.yingdongzhuoyue.cn/app_dev.php/jx/communitypic/"+id);
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/getPIC";
+		}
+	else{
+				window.location.href="../communitypic/"+id;
+				}
+}
+function GPS()
+{
+	
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			//alert($("#lat").val());
+			window.data.startNavi($("#lat").val(),$("#lng").val());
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/getGPS";
+		}
+	else{
+			window.location.href ="../gps/"+$("#lng").val()+","+$("#lat").val();
+		}
+}
+function to_sell()
+{
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			
+			window.data.to_Sell($("#community_id").val());
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/getSell";
+		}
+		else{
+			window.location.href ="../infotolist?community="+$("#community_id").val()+"&mark=1";
+			}
+}
+function to_rent()
+{
+	
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			//alert($("#lat").val());
+			window.data.to_Rent($("#community_id").val());
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/getRent";
+		}
+	else{
+			window.location.href ="../infotolist?community="+$("#community_id").val()+"&mark=0";
+		}
+}
+function to_other(id)
+{
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			//alert($("#lat").val());
+			window.data.to_Other(id,1);
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/"+id+"/getOther";
+		}
+	else{
+			window.location.href ="../sellinfo/"+id;
+		}
+}
+function to_community(id)
+{
+	//alert(id);
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			//alert(id);//alert($("#lat").val());
+			window.data.to_Other(id+"",4);
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/"+id+"/toCommunity";
+		}
+	else{
+			window.location.href ="../communityinfo/"+id;
+		}
+}
+
+function getCommunity(bbd_id){
+	var bbd_id = bbd_id;		
+	var json = 
+            {
+              "bdd_id": bbd_id,
+			  "start":"5",
+			  "num":"5"
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/community/retrieveByFilter',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			for(var i=0;i<data.length;i++){
+				$("#community_a").append("<a onclick='to_community("+data[i].COMMUNITY_ID+")' class='list-group-item'>"+data[i].COMMUNITY_NAME+"<span style='float:right;'>"+data[i].ranking_unit_price+" 元/平米</span></a>");
+				}
+			},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {}
+  
+  
+  });
+
+	
+	}
+	
+function getSellNum(id){
+	var json = 
+            {
+              "community": id
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/sell/retrieveByFilterNum',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			//alert(data);
+			$("#sell_num").html(data);	
+			},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {}
+  
+  
+  });
+}
+function getRentNum(id){
+	var json = 
+            {
+              "community": id
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/rent/retrieveByFilterNum',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			//alert(data);
+			$("#rent_num").html(data);	
+			},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {}
+  
+  
+  });	
+}
+
+function getSell(community_id){
+	var community_id = community_id;		
+	var json = 
+            {
+              "community_id": community_id,
+			  "start":"5",
+			  "num":"5"
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/sell/retrieveByFilter',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			for(var i=0;i<data.length;i++){
+				$("#sell_a").append("<tr><td><a onclick='to_other("+data[i].landz_id+");' style='color:black;'>"+data[i].title+"</a></td><td style='width:20%;'>"+data[i].sell_price+"万</td></tr>");
+				}
+			},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {}
+  
+  
+  });
+}
+
+
+
+$(function(){
+$("#sell_num_btn").click(function(){
+	to_sell();
+	});		
+$("#rent_num_btn").click(function(){
+	to_rent();
+	});		
+$("#btn_map").click(function(){
+	GPS();
+	});		
+$("#allview").click(function(){
+	AllView($(this).attr("ref"));
+	});		
+$(".map_value").click(function(){
+	var value = $(this).children("span").html();
+	if (value == "商铺超市"){value="超市";}
+	aroundInfo(value,$("#lng").val(),$("#lat").val(),"");
+	});		
+$("#back-to-top").click(function(){
+                $('body,html').animate({scrollTop:0},1000);
+                return false;
+ });
+
+var id = $("#id").val();
+var json = 
+            {
+              "community_id": id,
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/community/info',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+		
+		var community_id = data.COMMUNITY_ID;
+		getSellNum(community_id);
+		getRentNum(community_id);
+		$("#community_id").val(community_id);
+	      $("#COMMUNITY_NAME").html(data.COMMUNITY_NAME);
+		  $("#GROUD_AREA").html(data.GROUD_AREA);
+		  $("#BUSINESS_DISTRICT_NAME").html(data.BUSINESS_DISTRICT_NAME);
+		  $("#unit_total_price").html(data.ranking_unit_price);
+		  $("#per_price").html(data.per_price);
+		  $("#jz").html(data.jz);
+		  $("#FLOOR_AREA_RATIO").html(data.FLOOR_AREA_RATIO);
+		  $("#TOTALL_NUM").html(data.TOTALL_NUM);
+		  $("#BUILD_FINISHED_YEAR").html(data.BUILD_FINISHED_YEAR);
+		  $("#PLOT_NUMS").html(data.PLOT_NUMS);
+		  $("#FINISHED_YEAR").html(data.FINISHED_YEAR);
+		  $("#address").html(data.ADDR);
+		  $("#lat").val(data.BAIDU_LATITUDE);
+		  $("#lng").val(data.BAIDU_LONGITUDE);
+		  $("#img_one").html("<a onclick='topic("+data.COMMUNITY_ID+")'><img src='http://image.landzestate.com/"+data.FULL_VIEW_PATH+"' class='img-rounded img-responsive'/></a>");
+		  
+		  //默认显示周边的交通设施
+		  aroundInfo("交通设施",data.BAIDU_LONGITUDE,data.BAIDU_LATITUDE,"one");
+		  var info = data.COMMUNITY_DESC;
+		  if(info.length>=100){
+			  var info_up = info.substr(0,100)+"...";
+			  $("#info_foot").html("<img src='/bundles/jxbundle/images/01_03.png' width='20px'/>");
+			  }else{
+				  var info_up = info;
+				  }
+		  $("#info_foot").click(function(){
+			$("#COMMUNITY_DESC").html(info);
+			$("#info_foot").html("");
+				  });
+		  $("#COMMUNITY_DESC").html(info_up);
+		  
+		  $("#BUILDING_AREA").html(data.BUILDING_AREA);
+		  $("#AFFORESTATION_RATIO").html(data.AFFORESTATION_RATIO);
+		  $("#PROPERTY_COMPANY_NAME").html(data.PROPERTY_COMPANY_NAME);
+		  $("#BUILDING_AREA").html(data.BUILDING_AREA);
+		  var lng = data.BAIDU_LONGITUDE;
+		  var lat = data.BAIDU_LATITUDE;
+
+		  getCommunity(data.bbd_id);
+		  getSell(data.COMMUNITY_ID);
+		  
+		  $("#map").html("<img class='img-responsive' src='http://api.map.baidu.com/staticimage?markers="+data.BAIDU_LONGITUDE+","+data.BAIDU_LATITUDE+"&width=300&height=300&markerStyles=l&zoom=14'/>");
+
+			//alert(data.FULL_VIEW_PATH);
+  			var shareContent={
+				 "title":"",
+				 "link":window.location.href,
+				 "content":"均价："+$("#unit_total_price").html()+"万元\n面积："+$("#GROUD_AREA").html()+"\n房型："+$("#jz").html()+" \n楼盘名称："+$("#COMMUNITY_NAME").html(),
+				 "img_url":"http://image.landzestate.com/"+data.FULL_VIEW_PATH
+			};
+			if(browser.indexOf('ydzyBrowser_android') > -1)
+			{
+				window.data.getInfo(JSON.stringify(shareContent));
+			}
+ 
+ 			after_share();
+ 
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("出现错误，稍后请重试");
+		}
+	});
+
+
+/*  $.ajax({
+	  
+		type:"POST",
+		url:'/app_dev.php/api/community/img',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+		for(var i=0;i<data.length;i++){	
+	    $("#scroll_wrap").append("<li onclick='topic("+id+");'><a href='#'><img class='img' id='img_"+i+"' src='http://image.landzestate.com/"+data[i].PIC_PATH+"' width='100%'/></a></li>");
+		$("#scroll_position").append("<li><a href='javascript:void(0);'>"+i+"</a></li>");
+		}
+							var slider = Swipe(document.getElementById('scroll_img'), {
+								auto: 3000,
+								continuous: true,
+								callback: function(pos) {
+									var i = bullets.length;
+									while (i--) {
+										bullets[i].className = ' ';
+									}
+									bullets[pos].className = 'on';
+						}
+					});
+					var bullets = document.getElementById('scroll_position').getElementsByTagName('li');
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("出现错误，稍后请重试");
+		}
+	});
+*/
+
+});
+</script>
+<input type="hidden" value="{{id}}" id="id"/>
+<input type="hidden" value="" id="community_id"/>
+<input type="hidden" value="" id="lat"/>
+<input type="hidden" value="" id="lng"/>
+
+<div style="padding-left:20px; padding-top:20px;" class="col-sm-12"><span id="COMMUNITY_NAME"></span>
+<span style='float:right;'>
+<button type="button" class="btn btn-default col-sm-4" id="sell_num_btn">出售<span id="sell_num"></span>套</button>
+<button type="button" class="btn btn-default col-sm-4" id="rent_num_btn">出租<span id="rent_num"></span>套</button>
+</span>
+
+</div>
+<br />
+
+<div style="padding:15px;" class='col-sm-12' id="img_one"></div>
+
+<div style="margin:10px;padding:20px; padding-left:15px; padding-right:15px; background-color:#FFF;border-radius:0.5em">
+基本信息<br /><br />
+均价：<span id="unit_total_price"></span>元/平米<br />
+<table width="100%" style="margin-top:10px;">
+<tr><td>商圈：<span id="BUSINESS_DISTRICT_NAME"></span></td><td>容积率:<span id="FLOOR_AREA_RATIO"></span></td></tr>
+<tr><td>建筑类型：<span id="jz"></span></td><td>总户数:<span id="TOTALL_NUM"></span></td></tr>
+<tr><td>车位：<span id="PLOT_NUMS"></span></td><td>年代:<span id="BUILD_FINISHED_YEAR"></span></td></tr>
+</table>
+</div>
+
+<div style="margin:10px;padding:20px; padding-left:15px; padding-right:15px; background-color:#FFF;border-radius:0.5em">
+楼盘描述：<br />
+<div id="COMMUNITY_DESC"></div>
+<div id="info_foot" style="text-align:center;"></div>
+</div>
+
+<div style="margin:10px;padding:20px; padding-left:15px; padding-right:15px; background-color:#FFF;border-radius:0.5em">
+楼盘概览：<br />
+<table width="100%" style="margin-top:10px;">
+<tr>物业公司：<span id="PROPERTY_COMPANY_NAME"></span></tr><tr>占地面积:<span id="GROUD_AREA"></span></tr>
+<tr>绿化率：<span id="AFFORESTATION_RATIO"></span></tr><tr>建筑面积:<span id="BUILDING_AREA"></span></tr>
+</table>
+</div>
+
+<div style="margin:10px;padding:20px; padding-left:15px; padding-right:15px; background-color:#FFF;border-radius:0.5em">
+地址：<span id="address"></span><span style="float:right; padding:10px;"><button type="button" class="btn btn-default colg-2" id="btn_map">导航</button></span><br />
+<!--<div id="map" class="col-lg-12" style="margin-top:40px;height:300px; margin-bottom:20px;"></div>
+--><div id="allmap" class="col-lg-12" style="margin-top:40px;height:300px; margin-bottom:20px;"></div>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+<script type="text/javascript">
+function aroundInfo(value,lng,lat,time)
+{	
+	
+	$("#map_result").html("");
+	var map2 = new BMap.Map("allmap");
+	var point2 = new BMap.Point(lng,lat);
+	map2.centerAndZoom(point2, 15);
+	var marker1 = new BMap.Marker(point2);  // 创建标注
+    map2.addOverlay(marker1);              // 将标注添加到地图中
+	if(time=="one"){var mapshow = "";}
+	else{var mapshow=map2;}
+	var options = {
+			renderOptions:{
+				map:mapshow,
+				autoViewport:true,
+				selectFirstResult: false
+			},
+			onSearchComplete: function (results){
+				//test results
+				//alert(results);
+				//判断状态是否正确
+				if(local.getStatus() == BMAP_STATUS_SUCCESS){
+					var s = [];
+					//for(var i = 0;i<results.getCurrentNumPois(); i ++){
+					for(var i = 0;i<5; i ++){
+						//alert(results.getPoi(i).point.lng);
+						var jindu = results.getPoi(i).point.lng;
+						var weidu = results.getPoi(i).point.lat;
+						//var jindu = lng;
+						//var weidu = lat;
+						//alert("经度："+jindu+"纬度:"+weidu);
+						var pointStart = new BMap.Point(jindu,weidu);
+						//两点之间的距离
+						var distance = Math.round(map2.getDistance(pointStart,point2));
+						//计算步行时间
+						//定义每分钟步行米数
+						var perMinuteWalk = 80;
+						var minutes = Math.round(distance/perMinuteWalk);
+						//alert(results.getPoi(i).title);
+						//s.push("<ul><li class='fli'>【"+results.getPoi(i).title+"】</li><li class='tli'>步行"+distance+"米，约"+minutes+"分钟</li></ul>");
+						
+						$("#map_result").append("<a class='list-group-item'>【"+results.getPoi(i).title+"】 步行"+distance+"米，约"+minutes+"分钟</a>");
+						
+					}
+				}else{
+
+				}
+			}
+		};
+		var local = new BMap.LocalSearch(map2, options);
+	
+	//var local = new BMap.LocalSearch(map2, {renderOptions:{map: map2, autoViewport:true,selectFirstResult: false}});
+	//调用这个范围之内的数据
+	local.searchInBounds(value, map2.getBounds()); 
+	//目前地理位置的附近的数据
+	//local.searchNearby(v, point2);
+}
+</script>
+
+</div>
+
+<div style="padding:10px;">
+<button type="button" style="padding:10px;" class="btn btn-default col-xs-4 map_value"><img src="{{ asset('bundles/jxbundle/images/03_07.png') }}" width="20px;"/><span>交通设施</span></button>
+<button type="button" style="padding:10px;" class="btn btn-default col-xs-4 map_value"><img src="{{ asset('bundles/jxbundle/images/02_09.png') }}" width="20px;"/><span>教育机构</span></button>
+<button type="button" style="padding:10px;" class="btn btn-default col-xs-4 map_value"><img src="{{ asset('bundles/jxbundle/images/02_12.png') }}" width="20px;"/><span>商铺超市</span></button>
+</div>
+
+
+<div style="padding:10px; margin-top:30px; padding-bottom:0px;">
+<div class="list-group" id='map_result'>
+  <a class="list-group-item active" style="background-color: #dfdfdf;border-color: #dfdfdf; color:#000; height:40px;">
+    <div style=" float:left;width:50%; text-align:center">设备名称</div> <div style=" float:left;width:50%; text-align:center;">距离</div>
+  </a>
+</div>
+</div>
+
+<div style="padding:15px;">本楼盘最新二手房</div>
+<div style="padding:10px; margin-top:5px; padding-bottom:0px;">
+<div class="list-group">
+  <a class="list-group-item active" style="background-color: #dfdfdf;border-color: #dfdfdf; color:#000; height:40px;">
+    <div style=" float:left;width:50%; text-align:center"><img src="{{ asset('bundles/jxbundle/images/04_18.png') }}" width="20px;" style=" padding-bottom:5px;"/>房源</div> <div style=" float:left;width:50%; text-align:center;"><img src="{{ asset('bundles/jxbundle/images/04_21.png') }}"  style=" padding-bottom:5px;" width="20px;"/>售价</div>
+  </a>
+      <table id="sell_a" class="table table-hover" style="background-color:#FFF; border-radius:0.5em; border:#CCC solid 1px;">
+ 
+  </table>
+
+
+</div>
+</div>
+
+
+<div style="padding:15px;">周边楼盘推荐</div>
+<div style="padding:10px; margin-top:5px; padding-bottom:0px;">
+<div class="list-group" id="community_a">
+  <a class="list-group-item active" style="background-color: #dfdfdf;border-color: #dfdfdf; color:#000; height:40px;">
+    <div style=" float:left;width:50%; text-align:center"><img src="{{ asset('bundles/jxbundle/images/04_18.png') }}" width="20px;" style=" padding-bottom:5px;"/>楼盘</div> <div style=" float:left;width:50%; text-align:center;"><img src="{{ asset('bundles/jxbundle/images/04_21.png') }}"  style=" padding-bottom:5px;" width="20px;"/>均价</div>
+  </a>
+</div>
+</div>
+
+<div style="padding:0;margin-top:70px;" class="col-xs-12"></div>
+<div style="padding:0; margin-top:20px; position:fixed; bottom:0; z-index:999;" class="col-xs-12">
+
+<div class="col-xs-8" style="padding:0;background-color:#adacac; color:#FFF; height:60px;">
+ <div class="col-xs-4" style="line-height:60px;padding-left:5px;">
+ <img id="sicon" class="img-rounded" src="{{ asset('bundles/jxbundle/images/sicon.png') }}" height="45px"/>
+ </div>
+ <div class="col-xs-8" style=" padding-left:10px;padding-top:10px;">
+  <span id='username'>咨询电话</span>：<br /><span id="mobile">400-888-9950</span>
+ </div>
+</div>
+
+<a href="tel:400-888-9950" id="mobile_tel"><div class="col-xs-4" style=" padding:0;text-align:center;background-color:#088711;color:#FFF; height:60px; line-height:60px;"><img src="{{ asset('bundles/jxbundle/images/05_26.png') }}" width="25px" style="padding-bottom:10px;padding-right:1px;"/><span style="font-size:18px;">致电</span></div></a>
+
+</div>
+{% endblock %}

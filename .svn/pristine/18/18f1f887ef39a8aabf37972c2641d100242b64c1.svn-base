@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="format-detection" content="telephone=no"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,minimum-scale=1.0,user-scalable=no"/>
+        <link rel="apple-touch-icon" href=""/>
+		<script type="text/javascript" src="{{ asset('bundles/jxxq/02.js')}}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/jxxq/jquery-1.8.3.min.js')}}"></script>
+		<script type="text/javascript" src="{{ asset('bundles/jxxq/jquery.json-2.3.min.js')}}"></script>
+		<script language="JavaScript" src="http://mat1.gtimg.com/www/js/newsapp/wechat/wechat20130709_min.js" type="text/javascript" charset="utf-8"></script> 
+        <link rel="stylesheet" href="{{ asset('bundles/jxxq/css1.css')}}" type="text/css" />
+        <link rel="stylesheet" href="{{ asset('bundles/jxxq/css2.css')}}" type="text/css" />
+	<title>万吉工程机械</title>
+    </head><?php ?>
+	<style type="text/css">
+   			.c12{
+				font-family:'SimHei';
+				font-size:15px;
+			}
+			.i5{
+				font-weight:600 !important;
+				font-size:12px !important;
+				font-weight:bold  !important;
+				margin-right:5px;
+			}
+			#model_0{ font-size:14px !important;font-family:'SimHei' !important; font-weight:normal !important;}
+			#model_1{ font-size:14px !important;font-family:'SimHei' !important; font-weight:normal !important;}
+			#model_2{ font-size:14px !important;font-family:'SimHei' !important; font-weight:normal !important;}
+			#rent_by_num_0{ font-size:14px !important;font-family:'SimHei' !important; font-weight:normal !important;}
+			#rent_by_num_1{ font-size:14px !important;font-family:'SimHei' !important; font-weight:normal !important;}
+			#rent_by_num_2{ font-size:14px !important;font-family:'SimHei' !important; font-weight:normal !important;}
+    </style>
+
+    <body style="background:#fcfcfc;">
+		<input id="pageInit"  type="hidden" />
+		<div class="container" id='prop_view'>
+			<div class="V">
+				<div>
+					<div id="prop_view_boxContent">
+						<div id="Prop_View_C" class="d" fyid="196589883" ctid='14' fyisauction="201">
+							<div class="d1">
+								<span fyid="196589883" ctid='14'  id="ppcfyid" style="display: none;"></span>
+								<div id='swipe' class='a1' style="display:none;"onclick="clickMenuImg('AllImg')">
+									<div class="a4" id="a4">
+										
+									</div>
+								</div>
+							</div>
+							<div class="dp">
+								<div class="c12" style="padding-top:10px;letter-spacing: 1px;">
+									<label><i class="i5">月薪：</i><i class="i1" id="salary"style="font-size:22px;"></i><i class="i1" style="font-size:12px;" id="wan">元</i></label>
+                                    <label><i class="i5"></i><i></i></label>
+									<label><i class="i5">机种：</i><i id="category" style="font-size:12px !important;"></i></label>
+                                    <label><i class="i5">机型：</i><i id="model" style="font-size:12px !important;"></i></label>
+									<label><i class="i5">工作地点：</i><i id="addr" style="font-size:12px !important;"></i></label>
+                                    <i style="display:none" id="workyears"></i>
+								</div>
+							</div>
+							<div class="do nt_padd" style="margin-bottom:3px;">
+								<span class="dt" style="font-family:'SimHei';font-size:16px;line-height:25px;margin-left:10px;font-weight:bold">具体要求：</span>
+									<div id="view_introduction" class="c2a" style="min-height:100px;overflow:hidden;font-size:12px;text-indent:2em;font-family:'SimHei';border-bottom: 1px solid #dcdcdc;color:#686868"">
+									</div>
+								<div style="min-height:100px;overflow:hidden;width:100%;">
+									<div style="min-height:50px;width:100%;overflow:hidden;font-family:'SimHei';font-size:16px;line-height:50px; margin-left:10px;font-weight:bold;letter-spacing: 0px !important;"id="Recommend">看过该职位的人还感兴趣:</div>
+									
+                                    
+								</div>
+								<span class="c11" style="font-family:'SimHei';font-size:16px;font-weight:bold; padding:5px 0px; margin-left:10px;" onclick="send_more()">更多推荐
+									<div style="float:right; margin-right:12px; margin-top:5px;"><img src="{{ asset('bundles/jxxq/2.png')}}" height="20"/></div>
+								</span>
+									<div onclick="clickMenuJz('Linker')" style="padding-left:5px">
+								    <a class="periphery c53" style="height:20px;" onclick="clickMenu(123456654321);">
+										<span class="ca" style="font-weight: normal; margin-left:-10px" ><i style="font-size:16px !important; color:#000;font-weight:bold;">关于发布人：
+                                        </i>
+											<i style=" display:none;" id="uid"></i>
+											<i style=" display:none;" id="mark"></i>
+										</span>
+									</a>
+
+									<a class="periphery c54" style="border-top: none;height:10px;">
+										<span class="ca" style="margin-left:-10px;"><i  style="font-size:12px;color:#000;font-weight:bold;">姓名：</i><i id="shuju9" style="font-size:15px;"></i>
+                                        <div style="float:right; margin-right:-20px;"><img src="{{ asset('bundles/jxxq/2.png')}}" height="20"/>
+                                        </div>
+                                        </span>
+									</a>
+
+									<a class="periphery c55" style="border-top: none;border-bottom: 1px solid #dcdcdc;height:5;">
+										<span class="ca" style="margin-left:-10px;"><i style="font-size:12px;color:#000;font-weight:bold;">电话：</i><i id="shuju10" style="font-size:15px;"></i>
+										</span>
+									</a>
+									</div>
+								</div>
+							</div>
+							<br /><br />
+							<div id="download"><!--下载-->
+                            	
+                            </div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+<script type="text/javascript" src="{{ asset('bundles/jxxq/03.js')}}"></script>
+<script type="text/javascript" src="{{ asset('bundles/jxxq/04.js')}}"></script>
+<script type="text/javascript" src="{{ asset('bundles/jxxq/05.js')}}"></script>
+<script type="text/javascript">
+
+					var upurl = window.location.href;
+					var pairs = upurl.split("/");
+					var mid = pairs.slice(pairs.length-1);
+					var shuju = {
+						driver_id:mid[0]
+					};
+			       $.ajax({
+					  type: "POST",
+					  url: "/app_dev.php/api/driver/info",
+					  data: $.toJSON(shuju),
+					  dataType: 'json',
+					  async:false,
+					  success: function(data){
+						$("#workyears").text(data.workyears);
+						if(data.salary=="0"){
+							$("#salary").text("面议");
+							$("#wan").text("");
+						}else{
+                       		$("#salary").text(data.salary);
+						}
+                      	$("#category").text(data.category);
+                		$("#model").text(data.model); 
+						if(data.city_id=="0"){
+							$("#addr").text("");
+						}else{
+                       		$("#addr").text(data.province+data.city);
+						}
+						$("#view_introduction").text(data.description);;
+                       	if(data.roles=="{}"){ 
+							$("#shuju10").text(data.phone);
+							$("#shuju9").text(data.nickname);
+						}else{}
+						$("#uid").text(data.uid);
+						$("#mark").text(data.mark);
+						$("#a4").html("<img class='a3' id='a3' src='"+data.image.pic+"'>");
+                      },
+						error: function(XMLHttpRequest) {
+								alert("服务器错误，请重试");
+						 }
+
+				});
+				//更多推荐
+var shuju1={
+		recommend:"1",
+		start:"0",
+		num:"3"
+};
+$.ajax({
+		type:"POST",
+		url:"/api/driver/retrieve",
+		data:$.toJSON(shuju1),
+		dataType:'json',
+		success:function(data){
+			for(var i=0;i<data.length;i++){
+				var Sale_price = "";
+				var DW = "";
+				if(data[i].salary==0)
+				{
+					Sale_price = "面议";
+				}else{      
+					Sale_price = data[i].salary; 
+					DW = "元";
+				}
+				var Rent_by_num = "工作地点："+data[i].province;   
+				var jingyan = "工作经验："+data[i].workyears;
+				$("#Recommend").append('<div style=\"min-height:80px;width:100%;overflow:hidden;margin-top:6px; padding:0px 10px;\" onclick="recommend_info('+[i]+')"><div style=\"display:none\" id="recommend_'+[i]+'">'+data[i].driver_id+'</div><div style=\"display:none\" id="recommend_province'+[i]+'">'+data[i].province+'</div><div style=\"display:none\" id="recommend_workhours'+[i]+'">'+data[i].workyears+'</div><div style=\"display:none\" id="recommend_mark'+[i]+'">'+data[i].mark+'</div><div style="height:100px;width:35%;float:left; "><img src="'+data[i].pic+'" height="100" width="100%" id="jxxq_img_'+[i]+'"/></div><div style=\"height:100px;width:65%;float:left;font-family:\"SimHei\";font-size:14px;\"><div id="xq_machine_name_'+[i]+'"style=\"height:33px;width:100%;line-height:33px;margin-left:10px;margin-top:0px;font-weight:bold;font-size:16px; color:#000\">'+data[i].category+'</div><div  id="model_'+[i]+'"style=\"height:33px;width:100%;line-height:33px;margin-left:6px;color:#989898; \">'+jingyan+'</div><div style=\"height:33px;width:100%;margin-left:6px;\"><div id="rent_by_num_'+[i]+'" style=\"height:33px;width:51%;float:left;line-height:33px;color:#989898; \">'+Rent_by_num+'</div><span id="sale_price_'+[i]+'" style=\"height:33px;width:30%;float:left;line-height:33px;color:#b40202;font-size:18px;font-weight:bold;  text-align:right;\">'+Sale_price+'</span><span id="wan_'+[i]+'"  style=\"float:left;margin-left:0px;color:#b40202;font-size:12px;font-weight:bold;\">'+DW+'</span></div>	</div></div><div style=\"height:6px;width:100%;border-bottom:1px solid #dcdcdc; \"></div>');
+			}
+
+		},   
+		error:function(XMLHttpRequest){ 
+			alert("服务器错误请重试");	
+		}	
+});
+//下载------------------------------------------
+					//判断是安卓还是IOS还是浏览器
+					var browser = navigator.userAgent;
+					function download()
+					{
+						if(typeof(data) != 'undefined' || !!browser.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/))
+							{
+								
+							}
+						else{
+								$("#download").append("<div style='margin-top:-20px;'><a href='#'><img src='{{ asset('bundles/jxxq/android.png')}}' width='100%'/></a></div><div style='margin-top:-5px;'><a href='#'><img src='{{ asset('bundles/jxxq/ios.png')}}' width='100%'/></a></div>")
+						}
+					}
+				window.onload = download;
+//更多推荐-----------------------------------------
+					//判断是安卓还是IOS还是浏览器
+					var browser = navigator.userAgent;
+					//安卓
+					function pushMore(){
+					 	window.data.pushMore();	
+					}
+					function send_more()
+					{
+					   if(typeof(data) != 'undefined')
+							{
+									pushMore();
+							}
+					   else if(!!browser.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/))
+							{
+									window.location.href = "http://jx.card-books.com.cn/app_dev.php/jx/csxq/sendMore";
+							}
+						else {
+							//window.location.href = "http://jx.card-books.com.cn/app_dev.php/jx/ditu/"+mapstr;
+						}
+					}
+//推荐三个点击-----------------------------------------
+					//判断是安卓还是IOS还是浏览器
+					var browser = navigator.userAgent;
+					
+					function recommend_info(i){
+						var info = {
+							"driver_id":$("#recommend_"+[i]+"").html(),
+							"category":$("#xq_machine_name_"+[i]+"").html(),
+							"pic":$("#jxxq_img_"+[i]+"").attr("src"),
+							"sale_price":$("#sale_price_"+[i]+"").html(),
+							"mark":$("#recommend_mark"+[i]+"").html(),
+							"workhorse":$("#recommend_workhours"+[i]+"").html(),
+							"addr":$("#recommend_province"+[i]+"").html()
+						};	
+								
+					   if(typeof(data) != 'undefined')
+							{
+								var newinfo = JSON.stringify(info);
+								window.data.toNew(newinfo);
+							}
+					   else if(!!browser.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/))
+							{
+								window.location.href = "http://wanjiwang.cn/jx/zwzp/"+info.driver_id;
+							}
+						else {
+								window.location.href = "http://wanjiwang.cn/jx/zwzp/"+info.driver_id;
+						}
+					}
+					
+
+//关于机主--------------------------------
+					//安卓关于机主	
+					function senduid(){
+						uid = $("#uid").html();
+						window.data.getUid(uid);
+					}
+					//IOS 关于机主
+					var content={
+						"uid":$("#uid").html(),
+						"name":$("#shuju9").html(),
+						"phone":$("#shuju10").html(),
+						"mark":$("#mark").html()
+					};
+					function getUId(){
+						return JSON.stringify(content);
+					}
+					function clickMenuJz(menuId)
+					{
+						if(typeof(data) != 'undefined')
+							{
+								if(content.name=="" || content.phone==""){
+									return false;	
+								}else{
+									senduid();
+								}
+							}
+						 else if(!!browser.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/))
+							{
+								if(content.name=="" || content.phone==""){
+									return false;	
+								}else{
+									window.location.href = menuId;
+								}
+							}else{}
+					}
+//所有图片------------------------------------------
+					var allimg={};
+					var imgstr = "";
+					for(var i=0;i<document.getElementById("a4").getElementsByTagName("img").length;i++){
+						url = document.getElementById("a4").getElementsByTagName("img")[i].src;
+						var imgstr = imgstr +","+ url;
+					}
+					var array = imgstr.substr(1).split(",");
+					var json = $.toJSON(array);
+					//安卓
+					function allImg(){ 
+						window.data.picShow2(json);
+					}
+					//IOS
+					function getAllImg(){
+						return json;
+					}
+					//所有图片
+					function clickMenuImg(Img)
+					{
+						if(typeof(data) != 'undefined')
+							{
+								allImg();
+							}
+						else 
+							{
+								window.location.href = Img;
+							}
+					}
+//分享-----------------------------------------------
+					var contentModel={
+						 "name":$("#shuju9").html(),
+						 "phone":$("#shuju10").html(),
+						 "title":$("#model").html(),
+						 "link":window.location.href,
+						 "content":"职位名称："+$("#model").html()+","+"机种："+$("#category").html()+","+"工作地点："+$("#addr").html()+","+"月薪："+$("#salary").html(),
+						 "img_url":$("#a3").attr("src"),
+						 "httpUrl":"http://wanjiwang.cn"
+					};
+					function getString(){
+						return JSON.stringify(contentModel);
+					}
+					if(window.data != null)
+					{
+						window.data.getInfo(getString());
+					}
+//收藏-----------------------------------------------	
+					var collectInfo = {
+						"machine_id":shuju.driver_id,
+						"model":$("#model").html(),
+						"pic":$("#a3").attr("src"),
+						"workhours":$("#model_"+[i]+"").html(),
+						"sale_price":$("#salary").html(),
+						"city":$("#addr").html(),						
+					};				 
+					//ios
+					function ios_toNew(){
+						return JSON.stringify(collectInfo);	
+					}
+//拨打电话-------------------------------------------------------- 
+					var linker={
+						"phone":$("#shuju10").html()
+					};
+					function getLinker(){
+						return JSON.stringify(linker);
+					}					
+
+	
+</script>	      
+    </body>
+</html>

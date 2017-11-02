@@ -1,0 +1,189 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+var KEYWORD = "";
+var START = 0;
+</script>
+<script src="{{ asset('js/page.js') }}"></script>
+<script>
+function enable(uid,enable){
+	var json = {
+			"user_id":uid,
+			"enable":enable
+			};
+	ajaxPost(
+            'app_dev.php/api/user/enable',
+            json,
+            function(data, textStatus){
+                if(enable==0){$("#status"+uid).html("<a href='#' onclick='enable("+uid+",1)'>启用</a>");}
+                else{$("#status"+uid).html("<a href='#' onclick='enable("+uid+",0)'>禁用</a>");}
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+function reloadList(current){
+	$("#order_list").html("");
+	var current = current;
+	userpage(current);
+  	
+  	var json = {
+  		  	'keyword':KEYWORD,
+  		  	'start':START,
+  		  	'num':20
+			};
+	ajaxPost(
+            'app_dev.php/api/user/retrieveByFilter',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+            	    if(data[i].enable==1){
+            	    	   var status = "<a href='#' onclick='enable("+data[i].id+",0)'>禁用</a>";
+                	    }else{
+                	        var status = "<a href='#' onclick='enable("+data[i].id+",1)'>启用</a>";
+                    	    }
+            	    var grade = "普通会员";
+            	    data[i].grade==1?grade = "三星会员":(data[i].grade==2?grade="五星会员":grade = "普通会员");
+            	    var mark = "普通用户";
+             	    data[i].mark==1?mark = "商家用户":"";
+//<td><a href='memberinfo/"+data[i].id+"'>查看并修改</a></td>
+ 				   $("#order_list").append("<tr id='tr"+data[i].id+"'><td>"+data[i].id+"</td><td>"+data[i].username+"</td><td>"+data[i].phone+"</td><td>"+grade+"</td><td>"+mark+"</td><td>"+data[i].last_login+"</td><td>"+data[i].create_date+"</td><td id='status"+data[i].id+"'>"+status+"</a>/<a href='#' onclick='showModal("+data[i].id+")'>发送消息</a>/<a href='#' onclick='changeMark("+data[i].id+","+data[i].mark+")'>转变身份</a></td></tr>"); 
+ 				   }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+
+$(function(){
+reloadList(0);
+//搜索
+$("#search_btn").click(function(){
+	var keyword = $("#search_box").val();
+	KEYWORD = keyword;
+	reloadList(0);
+	});
+
+document.getElementById("search_box").onkeyup = function(e){
+				var me = this;
+				e = e|| window.event;
+				var keycode = e.keyCode;
+				if(keycode === 13){
+				var keyword = $("#search_box").val();
+				KEYWORD = keyword;
+				reloadList("",0);
+				}
+			};
+
+});//function 主函数结束
+function changeMark(uid,mark){
+	var mark = abs(mark - 1);
+	var json = {
+			"user_id":uid,
+			"mark":mark
+			};
+	ajaxPost(
+            'app_dev.php/api/user/changeProfile',
+            json,
+            function(data, textStatus){
+            	reloadList(0);
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+			}
+        );
+}
+function showModal(uid){
+
+	$("#modal").modal("show");
+	$("#user_id").val(uid);
+}
+function addMessage(){
+	var message = $("#message").val();
+	var user_id = $("#user_id").val();
+	//alert(word+"________"+id);
+	
+	var json = {
+			"uid":user_id,
+			"content":message
+			};
+	ajaxPost(
+            'app_dev.php/api/user/pushone',
+            json,
+            function(data, textStatus){
+                $("#message").val();
+                $("#modal").modal("hide");
+                $("#alert").show();
+                setTimeout("$('#alert').hide()", 5000);
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+			}
+        );
+}
+</script>
+  <div id="alert" class="bs-example bs-example-standalone" data-example-id="dismissible-alert-js" style="display: none;">
+    <div class="alert alert-warning alert-dismissible fade in" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>消息发送成功</strong>
+    </div>
+  </div> 
+   
+   
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+  <div class="col-sm-12"><div class="col-sm-1"><a href="adduser" role="button" class="btn btn-default">新增</a></div><div class="col-sm-5"><input type="text" id="search_box" class="form-control" onKeyUp="search_box();" maxlength="100" autocomplete="off" placeholder="支持手机号模糊搜索"></div><div><button type="button" class="btn col-sm-1 btn-default" id="search_btn" >搜索</button></div></div>
+    <div style="padding-top:20px;" class="col-sm-12" id="count"></div>
+    <div style="padding-top:20px;" class="col-sm-12">
+    <table class="table table-hover">
+  	<thead>
+  	<tr>
+  	<th>编号</th>
+    <th width="15%">昵称</th>
+    <th>手机号</th>
+    <th>会员等级</th>
+    <th>会员身份</th>
+    <th>最后在线时间</th>
+    <th>注册时间</th>
+	<th colspan=8>操作</th>
+    </tr>
+  	</thead>
+  	<tbody id="order_list"></tbody>	
+    </table>
+    
+    </div>
+  	
+  </div>
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>  
+    </div><!--分页结束-->
+</div> <!--content结束-->
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">消息内容</h4>
+      </div>
+      <div class="modal-body" id="myModalContent">
+       
+        
+	   
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="输入消息内容" id="message">
+      <input type="hidden" class="form-control" id="user_id">
+      <span class="input-group-btn">
+        <button id="btnAdd" class="btn btn-default" onclick="addMessage()" type="button">发送</button>
+      </span>
+        </div><!-- /input-group -->
+    
+	    
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

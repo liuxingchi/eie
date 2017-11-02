@@ -1,0 +1,21 @@
+ydzy_admin:
+    resource: "@YdzyAdminBundle/Resources/config/routing.yml"
+    prefix:   /admin
+ydzy_jx:
+    resource: "@YdzyJxBundle/Resources/config/routing.yml"
+    prefix:   /
+ydzy_test:
+    resource: "@YdzyTestBundle/Resources/config/routing.yml"
+    prefix:   /test
+ydzy_api:
+    resource: "@YdzyApiBundle/Resources/config/routing.yml"
+    prefix:   /api
+ydzy_file:
+    resource: "@YdzyFileBundle/Resources/config/routing.yml"
+    prefix:   /file
+ydzy_login:
+    pattern:  /login
+    defaults: { _controller: YdzyUserBundle:Default:LoginRedirect }
+ydzy_user:
+    resource: "@YdzyUserBundle/Resources/config/routing.yml"
+    prefix:   /manage

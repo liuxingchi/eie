@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html class="">
+		<head>
+				<title>豪宅研究</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-ui.js')}}"></script>
+				<style>
+						.R_1{
+								height:55px;
+								width:100%;	
+						}
+								.R_2{
+										height:55px;
+										width:50%;
+										margin-left:20%;
+										white-space:nowrap;  
+										overflow:hidden;	  
+										text-overflow:ellipsis;
+										line-height:55px;	
+										float:left;
+								}
+								.R_3{
+										width:18px;	
+										float:left;
+										margin-top:15px;
+								}
+						.research1{
+								height:300px;
+								width:100%;	
+						}
+								.R_4,.R_5,.R_6,.R_7,.R_8{
+										height:55px;
+										width:100%;		
+								}
+										.R_9{
+												height:55px;
+												width:70%;
+												margin-left:3%;
+												white-space:nowrap;  
+												overflow:hidden;	  
+												text-overflow:ellipsis;
+												line-height:55px;	
+												float:left;	
+										}
+										.R_10{
+												width:18px;	
+												float:left;
+												margin-top:15px;	
+										}
+							.Rlist{
+									min-height:75px;
+									width:100%;	
+							}
+									.Rlist_a{
+											height:75px;
+											width:100%;	
+											border-top:1px solid #ccc;
+									}
+											.Rlist_b{
+													height:45px;
+													width:100%;	
+													font-size:17px;
+													line-height:50px;
+													white-space:nowrap;  
+													overflow:hidden;	  
+													text-overflow:ellipsis;
+											}
+											.Rlist_c{
+													height:30px;
+													width:100%;	
+													font-size:14px;
+													line-height:20px;
+													white-space:nowrap;  
+													overflow:hidden;	  
+													text-overflow:ellipsis;
+											}
+				</style>
+		</head>
+		<body style="background:#f0f0f0;position:relative;">
+				<div class="research uba" style="" onclick="changeR();">    
+						<div class="R_1">
+								<div class="R_2">个楼盘市场研究</div>	
+								<div class="R_3"><img src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" width="100%"></div>	
+						</div>
+				</div>
+				<div class="research1" style="display:none;position:absolute;top:56px;left:0px;z-index:8500;background:#f0f0f0;">    
+						<div class="R_4" onclick="getR('R_4')">
+								<div class="R_9">个楼盘市场研究</div>	
+								<div class="R_10"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%"></div>	
+						</div>
+						<div class="R_5" onclick="getR('R_5')">
+								<div class="R_9">公寓TOP101盘市场研究</div>	
+								<div class="R_10"></div>	
+						</div>
+						<div class="R_6" onclick="getR('R_6')">
+								<div class="R_9">别墅TOP58盘市场研究</div>	
+								<div class="R_10"></div>	
+						</div>
+						<div class="R_7" onclick="getR('R_7')">
+								<div class="R_9">新盘市场研究</div>	
+								<div class="R_10"></div>	
+						</div>
+						<div class="R_8" onclick="getR('R_8')">
+								<div class="R_9">其他专题研究</div>	
+								<div class="R_10"></div>	
+						</div>
+				</div>
+				<div class="Rlist">
+	<!--			<div class="Rlist_a">
+								<div class="Rlist_b uba">阿斯达是的发生</div>	
+								<div class="Rlist_c uba">撒打算发声</div>	
+						</div>
+	-->
+				</div>
+				<script>
+						var category_id = "43";
+						function changeR(){
+								$(".research1").css("display","block");	
+						}	
+						function getR(obj){
+								if(obj == "R_4"){category_id = "43";}	
+								if(obj == "R_5"){category_id = "39";}	
+								if(obj == "R_6"){category_id = "40";}	
+								if(obj == "R_7"){category_id = "41";}	
+								if(obj == "R_8"){category_id = "42";}	
+								$(".research1").css("display","none");	
+								$(".R_10").html("");
+								$("."+obj+" .R_10").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+								$(".R_2").html($("."+obj+" .R_9").html());
+								gettypeR();
+						}
+						
+						
+						function gettypeR(){
+								var HL2json = {
+										"category_id":category_id,
+										"keyword":"",
+										"start":"0",
+										"num":"10"
+							  };
+							  $.ajax({
+							      type: "POST",
+							      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/news/retrieveByFilter",
+							      data: $.toJSON(HL2json),
+							      dataType: 'json',
+							      success: function(data){
+					      				var ln_j3c = "";			
+						        		for(var i=0;i<data.length;i++){
+						        			ln_j3c += "<div class='Rlist_a' onclick=\"Rtail('"+data[i].id+"')\"><div class='Rlist_b'>&nbsp;&nbsp;&nbsp;"+data[i].title+"</div><div class='Rlist_c'>&nbsp;&nbsp;&nbsp;"+data[i].description+"</div></div>";
+						        		}
+						        		$(".Rlist").html("");	
+						           	$(".Rlist").html(ln_j3c);	
+								    },
+								    error: function(){}
+								});		
+						}
+						gettypeR();
+						function Rtail(obj){
+									window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/api/news/info?id="+obj;
+						}
+						
+				</script>
+		</body>	
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html class="">
+		<head>
+				<title>待租豪宅</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+		</head>
+		<body style="background:#f0f0f0;">
+				<div class="" style="">    <!-- 搜索经纪人 ln_ -->
+						<div class="lb_a uba">				<!-- 原筛选 -->
+								<div class="lb_b">
+										<div class="lb_d">
+												<div class="lb_e">面积</div>
+												<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_21.png')}}" width="100%"></div>
+										</div>	
+								</div>
+								<div class="lb_c">
+										<div class="lb_d">
+												<div class="lb_e">价格</div>
+												<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_22.png')}}" width="100%"></div>
+										</div>	
+								</div>
+						</div>
+						<div class="HL11" style="height:30px;width:96%;margin-left:2%;line-height:30px;font-size:15px;"></div>   <!-- 显示查询条数 -->	
+						<div class="brogetin" style="margin-top:10px;">
+							
+		<!--				<div class="li_b ubb">
+										<div class="li_c">
+												<div class="li_e"><img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width='100%' />	</div>
+												<div class="li_f">
+														<div class="li_h">毛大壮</div>
+														<div class="li_i">
+																<div class="li_i1">学历：</div>	
+																<div class="li_i2">阿斯阿斯达是的阿斯达是的达是的</div>	
+														</div>	
+														<div class="li_j">
+																<div class="li_i1">语言：</div>	
+																<div class="li_i2">阿斯达是的阿斯达是的阿斯达是的</div>	
+														</div>	
+												</div>		
+												<div class="li_g uc-a">拨打电话</div>	
+										</div>
+										<div class="li_d">
+												<div class="li_d1 uba uc-a">在售房源4套</div>
+												<div class="li_d2 uba uc-a">在租房源4套</div>		
+										</div>
+								</div>
+		-->	
+						</div>				
+				</div>
+				<script>
+						var REC_a = window.location.href;
+						var REC_b = REC_a.split("?");
+						var REC_c = REC_b[1].split("&");
+						var REC_c1 = REC_c[0].split("=");			
+						var REC_c2 = REC_c[1].split("=");			
+						var REC_c3 = REC_c[2].split("=");			
+						//alert(REC_c1[1]+REC_c2[1]+REC_c3[1]);
+						var ln_keyword = REC_c3[1];				//关键字
+						var ln_whobroker = REC_c2[1];			//级别
+						var ln_language = REC_c1[1];			//语言
+						var ln_B12json = {
+						 	  "keyword":ln_keyword,
+						 	  "lang":ln_language,
+						 	  "al_id":ln_whobroker
+					  };
+				    $.ajax({
+				        type: "POST",
+				        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/agent/retrieveByFilterNum",
+				        data: $.toJSON(ln_B12json),
+				        dataType: 'json',
+				        success: function(data){
+				        		$(".HL11").html("为您搜索到"+data+"位豪宅顾问");
+				        		var ln_B13json = {
+										 	  "keyword":ln_keyword,
+										 	  "lang":ln_language,
+										 	  "al_id":ln_whobroker,
+										 	  "start":"0",
+										 	  "num":"10"
+									  };
+									  $.ajax({
+								        type: "POST",
+								        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/agent/retrieveByFilter",
+								        data: $.toJSON(ln_B13json),
+								        dataType: 'json',
+								        success: function(data){
+								        		var la_list2 = "";
+					 		        			for(var i=0;i<data.length;i++){
+									        			la_list2 += "<div class='li_b ubb' onclick='gotogentinfo("+data[i].AGENT_ID+");'><div class='li_c'><div class='li_e'><img class='uc-a' src='http://image.landzestate.com/"
+							        					+data[i].SMALL_PHOTO_PATH+
+							        			 		"' width='100%' height='100%' /></div><div class='li_f'><div class='li_h'>"
+							        			 		+data[i].USERNAME+
+							        			 		"</div><div class='li_i'><div class='li_i1'>学历：</div><div class='li_i2'>"
+							        			 		+data[i].DEGREE+
+							        			 		"</div></div>	<div class='li_j'><div class='li_i1'>语言：</div><div class='li_i2'>"
+							        			 		+data[i].LANGVAGE+
+							        			 		"</div></div></div><a style='text-decoration: none;' href='tel:"
+							        			 		+data[i].MOBILE+
+							        			 		"'><div class='li_g uc-a'>拨打电话</div></a></div><div class='li_d'><div class='li_d1 uba uc-a'>在售房源:"
+							        			 		+data[i].sell_count+
+							        			 		"套</div><div class='li_d2 uba uc-a'>在租房源:"
+							        			 		+data[i].rent_count+
+							        			 		"套</div></div></div>";
+								        		}
+								        		$(".brogetin").html("");
+								           	$(".brogetin").append(la_list2);
+								        },
+								        error: function(){}
+								    });	
+				        },
+				        error: function(){}
+				    });	
+				    function gotogentinfo(obj){
+				    		window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/lzhbrotail?agentid="+obj;
+				    }
+				</script>
+		</body>	
+</html>

@@ -1,0 +1,44 @@
+﻿@charset "utf-8";
+
+a, a:visited {
+	text-decoration: none;
+	color: #000000;
+}
+
+a:hover{
+	text-decoration: none;
+	color: #FF0000;
+}
+
+li a:hover{
+	text-decoration: none;
+	color: #FF0000;
+}
+
+li{
+	font-size: 10pt;
+	margin-bottom: 5px;
+}
+
+.title{
+	margin:10px 0px; 
+	border: 1px solid #000000; 
+	/*background-color: #FFFFAA;*/
+	background-color: #CCCCFF;
+}
+
+.memu1{
+	font-size:14pt;
+}
+
+#Foot .copyright {
+	text-align: center;
+	line-height: 20px;
+	padding-bottom: 34px;
+	color: #666666;
+	font-size:10pt;
+	position: relative;
+    bottom: 0px;
+	padding: 0px;
+	margin: 5px;
+}

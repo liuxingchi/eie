@@ -1,0 +1,115 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script type="text/javascript" src="{{ asset('js/swfupload.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/swfupload.queue.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/fileprogress.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/handlers.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/ckeditor/ckeditor.js') }}"></script>
+<script>
+var swfu;
+
+window.onload = function() {
+      var settings = {
+        flash_url : "{{ asset('js/swfupload.swf') }}",//swfupload.swf文件的绝对或相对地址
+        upload_url: "{{url('Ydzyfile_image_upload')}}",  //处理上传文件的服务器端页面的url地址
+        file_post_name : "imageFile",//用普通的文件域上传文件时的name属性
+        file_size_limit : "100 MB",
+        file_types : "*.jpg;*.jpeg;*.gif;*.png;*.bmp;",
+        file_types_description : "All Files",//指定在文件选取窗口中显示的文件类型描述，起一个提示和说明的作用吧
+        file_upload_limit : 1,  //指定最多能上传多少个文件
+        file_queue_limit : 0,//指定文件上传队列里最多能同时存放多少个文件
+        custom_settings : {
+          progressTarget : "fsUploadProgress"
+        },
+        debug: false,
+
+        // Button settings
+        button_image_url: "{{ asset('images/upload_btn.png') }}",
+        button_width: "137",
+        button_height: "34",
+        button_placeholder_id: "spanButtonPlaceHolder",//指定一个dom元素的id,该dom元素在swfupload实例化后会被Flash按钮代替
+        button_text: '',//指定Flash按钮上的文字，也可以是html代码
+        button_text_style: "",
+        button_text_left_padding: 0,
+        button_text_top_padding: 0,
+        
+        file_queued_handler : fileQueued,//fileQueued事件侦听函数
+		file_queue_error_handler : fileQueueError,
+		file_dialog_complete_handler : fileDialogComplete,
+		upload_start_handler : uploadStart,
+		upload_progress_handler : uploadProgress,
+		upload_error_handler : uploadError,
+		upload_success_handler : uploadSuccess,//文件上传成功后触发的事件处理函数
+		upload_complete_handler : uploadComplete,
+		queue_complete_handler : queueComplete
+      };
+      swfu = new SWFUpload(settings);
+      
+      CKEDITOR.replace( 'content' );
+      
+};
+
+		
+function fileDialogComplete(selectedNum, queuedNum) {
+	if (queuedNum > 0) {//选择并添加到上传队列的文件数大于0
+		this.startUpload();//开始上传
+	}
+}
+
+function dopost(){
+	var content=CKEDITOR.instances.content.getData();
+	if($("#title").val()=="" || content || $("#firstImageUrl").val()==""){
+		alert("封面图、标题、内容均不能为空");
+		return;
+	}
+    var json = {
+		  "content":content,
+		  "title":$("#title").val(),
+		  "image_url":$("#firstImageUrl").val()
+	     };
+ 	
+     ajaxPost(
+              'app_dev.php/api/market/add',
+              json,
+              function(data, textStatus){
+             	 window.location.href="market";
+                  },
+              function(XMLHttpRequest, textStatus, errorThrown){
+                	  
+               }
+          );
+}
+
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+            
+              <div class="form-group">
+                    <label>封面图</label>
+                    <div id="spanButtonPlaceHolder"></div>
+                    <div class="col-sm-12" style="padding:0;" id="fsUploadProgress"></div>
+                    <input type="hidden" class="form-control" id="firstImageUrl" placeholder="firstImageUrl"/>
+                    <input type="hidden" class="form-control" id="image_url" placeholder="image_url"/>
+                    <input type="hidden" class="form-control" id="image_url1" placeholder="image_url1"/>
+                    <input type="hidden" class="form-control" id="image_url2" placeholder="image_url2"/>
+              </div>
+              <div class="form-group">
+                <label>标题</label>
+                <input type="text" class="form-control" id="title" placeholder="标题(必填)" />
+              </div>
+              <div class="form-group">
+                <label>详情</label>
+                <textarea class="form-control" name="content" id="content" placeholder="详情（必填）"></textarea>
+              </div>
+              
+              <div id="radio"></div><br>
+              <button onclick="dopost()" class="btn btn-default">保存</button>
+       
+          
+  </div>
+  	
+  
+</div> <!--content结束-->
+
+
+{% endblock %}

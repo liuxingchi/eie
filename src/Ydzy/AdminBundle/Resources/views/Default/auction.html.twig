@@ -1,0 +1,184 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script src="{{ asset('js/ajaxfileupload.js') }}"></script> 
+<script>
+var domain = "http://trendsfit.yingdongzhuoyue.com";
+function reloadList(){
+	
+  	ajaxPost(
+            '/app_dev.php/api/user/chatGroup',
+            {},
+            function(data, textStatus){
+                //alert(data);
+                if(data){
+                    $("#list_area").show();
+                    //alert(data.groupid);
+                    $("#auction").append("<span style='display:none;' id='groupid'>"+data.id+"</span>拍卖名称:"+data.name+"<br>主持人:"+data.affiliations[0].owner+"<br>拍卖描述:"+data.description);
+                }else{
+                	$("#add_area").show();
+                }
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+
+}
+
+$(function(){
+
+reloadList();
+
+
+});//function 主函数结束
+
+
+function add(){
+	var groupname = $("#groupname").val();
+	var phone = $("#phone").val();
+	var desc = $("#desc").val();
+	var grade = $("#select").val();
+	
+	var json = {'groupname':groupname,
+			'owner':phone,
+			'desc':desc,
+			'grade':grade};
+	ajaxPost(
+	          '/app_dev.php/api/user/createGroups',
+	          json,
+	          function(data, textStatus){
+	        	  window.location.href="auction";          
+					},
+	          function(XMLHttpRequest, textStatus, errorThrown){
+						switch(XMLHttpRequest.status)
+				  		{
+				  			case 400: //没数据
+					  			alert("手机号必须要到前端注册用户才能成为主持人");
+				  				break;
+				  			default:
+				  				alert('加载数据出现错误，请重试');
+				  		}
+				          }
+	      );
+}
+function del(){
+	var json = {
+			  'groupid':$("#groupid").html()
+			};
+   ajaxPost(
+          '/app_dev.php/api/user/delGroup',
+          json,
+          function(data, textStatus){
+        	    window.location.href="auction";	            
+				},
+          function(XMLHttpRequest, textStatus, errorThrown){}
+      );
+}
+function showresult(){
+	var json = {
+			  'groupid':$("#groupid").html()
+			};
+  	ajaxPost(
+            '/app_dev.php/api/user/showResult',
+            json,
+            function(data, textStatus){
+                $("#result").val(data);
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function history(){
+	//获得聊天记录
+	$("#history").html("");
+	var json = {
+			  'groupid':$("#groupid").html()
+			};
+  	ajaxPost(
+            '/app_dev.php/api/user/history',
+            json,
+            function(data, textStatus){
+                //alert(data);
+                for(var i = 0;i<data.length;i++){
+                    $("#history").append("<li>"+data[i].from+"  "+data[i].timestamp+"</li><li style='list-style-type:none;'>"+data[i].msg+"</li>");
+                    }
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+
+function result(){
+	//提交结果到群组信息里
+	var json = {
+			  'groupid':$("#groupid").html(),
+			  'result':$("#result").val()
+			};
+	ajaxPost(
+          '/app_dev.php/api/user/updateResult',
+          json,
+          function(data, textStatus){
+              alert("提交成功");
+				},
+          function(XMLHttpRequest, textStatus, errorThrown){}
+      );
+}
+
+</script>
+ <div class="col-sm-12" id="add_area" style="display:none;margin-top:15px; padding:0;">
+            
+                  <div class="form-group">
+                    <label>拍卖名称</label>
+                    <input type="text" class="form-control" id="groupname" placeholder="输入要创建的群组名称(必填)">
+                  </div>
+                  <div class="form-group">
+                    <label>主持人</label>
+                    <input type="text" class="form-control" id="phone" placeholder="填写主持人手机号(必填)">
+                  </div>
+                   <div class="form-group">
+                    <label>描述</label>
+                    <textarea rows="" cols="" class="form-control" id="desc" placeholder="具体信息(必填)"></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>最低权限</label>
+                    <select id="select" name="select">
+                    <option value='0'>普通用户</option>
+                    <option value='1'>三星用户</option>
+                    <option value='2' selected>五星用户</option>
+                    </select>
+                  </div>
+                  <button onclick="add()" class="btn btn-default">保存</button>      
+  </div>
+  
+  <div class="col-sm-12" id="list_area" style="display:none;margin-top:15px; padding:0;">
+    
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 style="line-height: 2.1;" class="panel-title">现在已有的拍卖
+           <button onclick="del()" style="float: right;margin-left:10px;" class="btn btn-danger">结束</button>
+           <button onclick="showresult()" style="float:right;margin-left:10px;" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse1" aria-expanded="false" aria-controls="collapse1">拍卖结果</button>
+           <button onclick="history()" style="float:right;" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapse2" aria-expanded="false" aria-controls="collapse2">拍卖记录</button>
+        </h3>
+      </div>
+      <div class="panel-body" id="auction"></div>
+    </div>
+    <div class="collapse" id="collapse1">
+      <div class="well">
+        <div style="height: 90px;">
+        <textarea rows="" cols="" class="form-control" id="result" placeholder="拍卖结果记录"></textarea>
+        <button onclick="result()" style="float: right;margin-top:10px;" class="btn btn-default">提交</button>
+        </div>
+      </div>
+      
+    </div>
+    
+    <div class="collapse" id="collapse2">
+      <div class="well">
+        <ul id="history"></ul>
+      </div>
+    </div>
+
+  	
+  </div>
+  
+  
+  
+</div> <!--content结束-->
+{% endblock %}

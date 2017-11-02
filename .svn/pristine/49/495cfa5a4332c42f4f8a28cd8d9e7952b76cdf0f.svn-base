@@ -1,0 +1,214 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %} 
+<script src="{{ asset('js/page.js') }}"></script>  
+<script>
+
+$(function(){
+    /* var json = {
+			"recommended_id":$("#id").val()
+			};
+	ajaxPost(
+            'api/recommended/info',
+            json,
+            function(data, textStatus){
+            	$("#goodsId").html(data.id);
+            	$("#goodsContent").html(data.content);
+            	$("#goodsPrice").html(data.price);
+            	$("#creationDate").html(getLocalTime(data.creation_date));
+            	var urlHtmls="";
+            	$.each(data.image_urls,function(i,v){
+            		urlHtmls+="<div style='width:200px;float:left;'><img class='img-responsive' src='"+v.url+"'></div>";
+            	});
+            	$("#goodsImageUrls").html(urlHtmls);
+            	},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        ); 
+    loadWannaBuyerList(0);*/
+});//function 主函数结束
+
+function loadWannaBuyerList(){
+	$("#order_list").html("");
+  	var json = {
+  			'recommended_id':$("#id").val()
+			};
+  	ajaxPost(
+            'app_dev.php/api/recommended/retrieveWantBuyList',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+                	 $("#order_list").append("<tr id='"+data[i].id+"'><td><img src='"+data[i].icon+"' width='75'/></td>"+
+                	 "<td>"+data[i].username+"</td><td>"+data[i].phone+"</td><td><a href='#' onclick='showModal("+data[i].id+",{{ id }})'>生成订单</a></td></tr>"); 
+		      }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function showModal(uid,id){
+	$("#btnCreate").attr("onClick","createOrder("+uid+","+id+")");
+	$("#createOrderModal").modal("show");
+}
+function createOrder(user_id,publish_id){
+	var json = {
+  			'user_id':user_id,
+  			'publish_id':publish_id,
+  			'money':$("#money").val()
+			};
+  	ajaxPost(
+            'app_dev.php/api/user/createOrder',
+            json,
+            function(data, textStatus){
+                alert("订单生成成功");
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+</script>
+ 
+<div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+<input id="id" value="{{id}}" type="hidden"/>
+    <div class="panel panel-default">
+      <div class="panel-heading">订单编号</div>
+      <div class="panel-body">
+          <span id="goodsId">{{ array.order_num }}</span>            
+      </div>
+    </div>
+    
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">商品详情</h3>
+      </div>
+      <div class="panel-body">
+        <span id="goodsContent">{{ array.content }}</span>
+      </div>
+    </div>
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">价格</h3>
+      </div>
+      <div class="panel-body">
+        <span id="goodsPrice">{{ array.money }}</span>
+      </div>
+    </div>
+    
+    <div class="panel panel-default">
+		<div class="panel-heading">
+       		<h3 class="panel-title">购买者</h3>
+      	</div>
+      	<div class="panel-body">
+		    {{ array.username }}
+		    
+		</div>
+    </div>
+    
+    <div class="panel panel-default">
+		<div class="panel-heading">
+       		<h3 class="panel-title">购买者电话</h3>
+      	</div>
+      	<div class="panel-body">
+		    {{ array.buy_phone }}
+		    
+		</div>
+    </div>
+    
+     <div class="panel panel-default">
+		<div class="panel-heading">
+       		<h3 class="panel-title">收货人</h3>
+      	</div>
+      	<div class="panel-body">
+		    {{ array.name }}
+		    
+		</div>
+    </div>
+    
+    <div class="panel panel-default">
+		<div class="panel-heading">
+       		<h3 class="panel-title">收货人电话</h3>
+      	</div>
+      	<div class="panel-body">
+		    {{ array.phone }}
+		    
+		</div>
+    </div>
+    
+     <div class="panel panel-default">
+		<div class="panel-heading">
+       		<h3 class="panel-title">收货地址</h3>
+      	</div>
+      	<div class="panel-body">
+		    {{ array.address }}
+		    
+		</div>
+    </div>
+    
+    <div class="panel panel-default">
+		<div class="panel-heading">
+       		<h3 class="panel-title">订单状态</h3>
+      	</div>
+      	<div class="panel-body">
+		    {{ array.status_message }}
+		    
+		</div>
+    </div>
+    
+ 
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">创建日期</h3>
+      </div>
+      <div class="panel-body">
+        <span id="creationDate">{{ array.creation_date }}</span>
+      </div>
+    </div>
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">商品图片</h3>
+      </div>
+      <div class="panel-body" id="goodsImageUrls">
+      <img src="http://eie.ren{{ array.image_url }}"/>
+      </div>
+    </div>
+
+	
+
+
+</div> <!--content结束-->
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="createOrderModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">生成订单</h4>
+      </div>
+      <div class="modal-body" id="myModalContent">
+      
+      <form class="form-horizontal">
+          <div class="form-group">
+            <div class="col-sm-12">
+              
+              <input type="text" class="form-control" id="money" placeholder="输入确认金额">
+            </div>
+          </div>
+          
+         
+          <div class="form-group">
+            <div class="col-sm-12">
+              <button type="submit" class="btn btn-default" id="btnCreate">确认</button>
+            </div>
+          </div>
+      </form>
+    
+	    
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

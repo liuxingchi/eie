@@ -1,0 +1,53 @@
+<!DOCTYPE html> 
+<html>
+<head> 
+<title>丽兹行</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('bundles/push/bootstrap.css')}}">
+    <link rel="stylesheet" href="{{ asset('bundles/push/m.css')}}">
+    
+    <script src="{{ asset('bundles/push/jquery-1.10.2.js')}}"></script>
+    <script src="{{ asset('bundles/push/bootstrap.js')}}"></script>
+    
+    <script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/jquery-1.8.3.min.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/jquery.json-2.3.min.js') }}"></script>
+
+ </head> 
+ <body>
+    <div class="container" id="container" style="width:100%;">
+				<div class="row">
+					  <div class="col-xs-12" id="ptitle" style="text-align:center;"></div>
+				</div>
+				<div class="row" id="pcontent" style="margin-top:-1px;"></div>
+		</div>
+		<script>
+				var shuju = {
+	  				'pid':{{ pid }}
+			  };
+			  $.ajax({
+					  type: "POST",
+					  url: "/app_dev.php/api/onepushtml",
+					  data: $.toJSON(shuju),
+					  dataType: 'json',
+					  async:false,
+					  success: function(data){
+					  	if(data.ptitle == "title"){
+					  			$("#ptitle").html("");	
+					  	}else{
+					  			$("#ptitle").html(data.ptitle);	
+					  	}
+					  	$("#pcontent").html(data.content);
+//					  	$("img").attr({class:"img-responsive"});
+//					  	$("img").attr({alt:"Responsive image"});
+//					  	$("img").attr({sizingMethod:"image"});
+								$("img").css("width","100%");
+								$("img").css("height","");
+						},
+						error: function(XMLHttpRequest) {
+								//alert('连接失败，请重试');
+						}	
+				});		
+		</script>
+</body>
+ </html>

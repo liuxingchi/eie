@@ -1,0 +1,119 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script src="{{ asset('js/ajaxfileupload.js') }}"></script> 
+<script>
+
+var domain = "http://trendsfit.yingdongzhuoyue.com";
+function ajaxFileUpload()
+{
+	$.ajaxFileUpload
+	(
+		{
+			url:'/app_dev.php/file/uploadimage',
+			secureuri:false,
+			fileElementId:'imageFile',
+			dataType:'json',
+			success: function (data, status)
+			{	
+					
+					alert("上传成功");
+					$("#icon").val(data.Url);
+					$("#img").attr("src",domain+data.Url);
+					
+			},
+			error: function (data, status,e)
+			{
+					alert("上传失败");
+			}
+		}
+	)
+	return false;
+}
+$(function(){
+    var json = {
+			"user_id":{{ id }}
+			};
+	ajaxPost(
+            'app_dev.php/api/user/profile',
+            json,
+            function(data, textStatus){
+            	
+            	$("#phone").val(data.phone);
+            	$("#username").val(data.username);
+            	$("#create_date").val(data.create_date);
+            	$("#img").attr("src",domain+data.icon);
+            	$("#icon").val(data.icon);
+            	
+                },
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+
+});//function 主函数结束
+function save(){
+	var phone = $("#phone").val();
+	var username = $("#username").val();
+	var icon = $("#icon").val();
+	if(phone==''){
+	    alert("手机号必填");
+	    return false;
+		}
+	var json = {
+			"username":username,
+			"icon":icon,
+			"user_id":{{ id }}
+			};
+	ajaxPost(
+            'app_dev.php/api/user/changeProfile',
+            json,
+            function(data, textStatus){
+            	alert("更改成功");
+            	window.location.href="../member";
+            	
+                },
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+</script>
+ 
+<div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+
+ <div class="form-group">
+    <label>头像</label>
+    <img width='50' id="img"/><br>
+    <input type="file" name="imageFile" id="imageFile" class='col-sm-4' style='display: inherit'/>
+    <button class="submit" id="buttonUpload" onclick="return ajaxFileUpload();" value="提交">提交</button>
+    <input type="hidden" class="form-control" id="icon">
+  </div>
+  
+  
+  
+  <div class="form-group">
+    <label>用户名</label>
+    <input type="text" class="form-control" id="username">
+  </div>
+  
+  <div class="form-group">
+    <label>手机号</label>
+    <input type="text" onkeyup="value=value.replace(/[^\d]/g,'')" class="form-control" id="phone" disabled>
+  </div>
+  
+  
+  <div class="form-group">
+    <label>注册时间</label>
+    <input type="text" class="form-control" id="create_date" disabled>
+  </div>
+
+</div>
+  
+  
+  <a role="button" onclick="save();" class="btn  btn-primary active">保存</a>
+  <a href="../member" class="btn btn-default" role="button">返回用户列表</a>
+
+
+
+</div> <!--content结束-->
+{% endblock %}

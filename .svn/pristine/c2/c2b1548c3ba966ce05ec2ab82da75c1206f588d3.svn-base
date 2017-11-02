@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="">
+<head>
+    <title>丽兹行</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+	<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+	<script>
+		function clickMenu(obj){
+				
+				if(obj == 8){		//一首豪宅
+						window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/firsthouse";
+				}
+				if(obj == 4){		//楼盘鉴赏
+						window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/houseapp";
+				}
+				if(obj == 2){		//顶级豪宅
+						window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/tophouse";
+				}
+				if(obj == 3){		//搜索
+						window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/housesearch";
+				}
+				if(obj == 1){		//在售豪宅的列表 (主页)
+						window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/isellinglist";
+				}  
+				if(obj == 5){		//待租豪宅的列表 (主页)
+						window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/isrentlist";
+				}
+				if(obj == 6){		//豪宅顾问的列表 (主页)
+						//window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/lzhbrokerlist";
+						window.location.href = encodeURI("http://landz.yingdongzhuoyue.cn/app_dev.php/jx/lzhbrokerlist?lan=&whobro=&key=");
+				}
+				if(obj == 7){		//豪宅研究的列表 (主页)
+						window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/Researchlist";
+				}
+		}
+	</script>
+
+	<style>
+		.lzh_1{  /*  one  */
+			padding:10px;
+			display:block;
+		}
+		.lzh_2{   /*  轮播  */
+			padding:10px;
+			padding-top:0px;
+			display:block;
+		}
+		.lzh_3{   /*  3  */
+			display:block;
+			overflow:hidden;
+			padding-left:15px;
+			padding-right:15px;
+		}
+			.lzh_4{  /*  在售豪宅  */
+				display:block;
+				width:50%;
+				float:left;
+				margin-left:-5px;
+				margin-right:5px;
+			}
+			.lzh_5{   /*  32   顶级豪宅  搜索  楼盘鉴赏  */
+				display:block;
+				width:50%;
+				height:100%;
+				float:left;
+				margin-right:-5px;
+				padding-left:5px;
+			}
+				/* 32下的 */
+				.lzh_6{   /* 顶级豪宅  搜索   */
+					overflow:hidden;
+					padding-left:5px;
+					padding-right:5px;				
+				}
+					.lzh_8{   /*     顶级豪宅  */
+						width:50%;		
+						float:left;
+						margin-left:-5px;
+						margin-right:5px;		
+					}
+					.lzh_9{   /*     搜索  */
+						width:50%;	
+						float:left;	
+						margin-right:-5px;
+						padding-left:5px;			
+					}
+				.lzh_7{   /*  32   楼盘鉴赏  */
+					
+					margin-top:10px;				
+				}
+				
+		/*  4  待租豪宅  豪宅顾问  豪宅研究  一手豪宅的整个DIV大块  */
+		.lzh_10{   
+			margin-top:10px;
+			display:block;
+			overflow:hidden;
+			padding-left:15px;
+			padding-right:15px;
+		}
+			.lzh_11{  /* 41  待租豪宅  豪宅顾问  豪宅研究  */
+				display:block;
+				width:50%;
+				float:left;
+				margin-left:-5px;
+				margin-right:5px;
+			}
+				.lzh_13{   /*  32   楼盘鉴赏  */
+					margin-top:0px;				
+				}
+				.lzh_14{   /* 顶级豪宅  搜索   */
+					margin-top:10px;
+					overflow:hidden;
+					padding-left:5px;
+					padding-right:5px;				
+				}
+			.lzh_12{   /*  42  一手豪宅  */
+				display:block;
+				width:50%;
+				height:100%;
+				float:left;
+				margin-right:-5px;
+				padding-left:5px;
+			}
+			
+			
+		/* 我的   和  更多  */
+		.lzh_15{   
+			margin-top:10px;
+			display:block;
+			overflow:hidden;
+			padding-left:15px;
+			padding-right:15px;
+		}
+			.lzh_16{  /* 41  待租豪宅  豪宅顾问  豪宅研究  */
+				display:block;
+				width:50%;
+				float:left;
+				margin-left:-5px;
+				margin-right:5px;
+			}
+			.lzh_17{   /*  42  一手豪宅  */
+				display:block;
+				width:50%;
+				height:100%;
+				float:left;
+				margin-right:-5px;
+				padding-left:5px;
+			}
+	</style>
+</head>
+<body class="" style='background:#000;font-size:0px;!important;'>
+	
+    <div id="page_0" class="up ub ub-ver" tabindex="0">
+       	<!--content开始-->
+        <div id="content" class="ub-f1 tx-l t-bla ub-img6 res10" style=''>
+		   	<div class='lzh_1' style=""><img src="{{ asset('bundles/lzh/css/images/lzh_11.png')}}" style="width:100%;"/></div>
+			<a href="./Selling.html"><div class='lzh_2' style=""><img src="{{ asset('bundles/lzh/css/images/lzh_12.png')}}" style="width:100%;"/></div></a>
+			<div class='lzh_3' style="">
+				<div class='lzh_4' style="" onclick="clickMenu(1);">  <!-- 在售豪宅 -->
+					<img src="{{ asset('bundles/lzh/css/images/lzh_10.gif')}}" style="width:100%;"/>   
+				</div>
+				<div class='lzh_5' style="">
+					<div class='lzh_6' style="">
+						<div class='lzh_8' style="" onclick="clickMenu(2);">
+							<img src="{{ asset('bundles/lzh/css/images/lzh_2.gif')}}" style="width:100%;"/>  <!-- 最小图片 顶级豪宅 -->
+						</div>
+						<div class='lzh_9' style="" onclick="clickMenu(3);">
+							<img src="{{ asset('bundles/lzh/css/images/lzh_7.gif')}}" style="width:100%;"/>  <!-- 最小图片 搜索 -->
+						</div>
+					</div>
+					<div class='lzh_7' style="" onclick="clickMenu(4);">
+						<img src="{{ asset('bundles/lzh/css/images/lzh_6.gif')}}" style="width:100%;"/>   <!-- 楼盘鉴赏 -->
+					</div>
+				</div>
+			</div>
+			
+			
+			<!-- 4  待租豪宅  豪宅顾问  豪宅研究 一手豪宅 -->
+			<div class='lzh_10' style="">
+				<div class='lzh_11' style="">
+					<div class='lzh_13' style="" onclick="clickMenu(5);">
+						<img src="{{ asset('bundles/lzh/css/images/lzh_13.gif')}}" style="width:100%;"/>   <!-- 待租豪宅 -->
+					</div>
+					<div class='lzh_14' style="">
+						<div class='lzh_8' style="" onclick="clickMenu(7);">
+							<img src="{{ asset('bundles/lzh/css/images/lzh_5.gif')}}" style="width:100%;"/>  <!-- 豪宅顾问 -->
+						</div>
+						<div class='lzh_9' style="" onclick="clickMenu(6);">
+							<img src="{{ asset('bundles/lzh/css/images/lzh_4.gif')}}" style="width:100%;"/>  <!-- 豪宅研究 -->
+						</div>
+					</div>
+				</div>
+				<div class='lzh_12' style="" onclick="clickMenu(8);">    <!-- 一手豪宅 -->
+					<img src="{{ asset('bundles/lzh/css/images/lzh_9.gif')}}" style="width:100%;"/>   
+				</div>
+			</div>
+			
+			<!-- 我的  和  更多、、 -->
+			<div class="lzh_15" style="display:none;">
+				<div class='lzh_16' style="" ontouchstart="clickMenu(9);" onclick="clickMenu(9);">
+					<img src="{{ asset('bundles/lzh/css/images/lzh_8.gif')}}" style="width:100%;"/>   <!-- 我的 -->
+				</div>
+				<div class='lzh_17' style="" ontouchstart="clickMenu(10);" onclick="clickMenu(10);">
+					<img src="{{ asset('bundles/lzh/css/images/lzh_3.gif')}}" style="width:100%;"/>   <!-- 更多 -->
+				</div>
+			</div>
+			<script>
+				var lzh_4_div_height = $(".lzh_4").height();
+				$(".lzh_5").height(lzh_4_div_height);
+				var lzh_10_div_height = $(".lzh_10").height();
+				$(".lzh_12").height(lzh_4_div_height);
+			</script>
+        </div>
+		<!--content结束-->
+    </div>
+</body>
+<script>
+</script>
+</html>

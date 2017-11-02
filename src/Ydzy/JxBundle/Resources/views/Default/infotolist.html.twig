@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+		<head>
+			<title>搜索结果</title>
+		    	<meta charset="utf-8">
+		    	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+					<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+					<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+					<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+		</head>
+		<body style="background:#fff;">
+				<div class="lb_a uba">				<!-- 原筛选 -->
+						<div class="lb_b" onclick="AreaAsc('lb_b');">
+								<div class="lb_d">
+										<div class="lb_e">面积</div>
+										<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_21.png')}}" width="80%" style="margin-top:3px;"></div>
+								</div>	
+						</div>
+						<div class="lb_c" onclick="priceAsc('lb_c');">
+								<div class="lb_d">
+										<div class="lb_e">价格</div>
+										<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_22.png')}}" width="80%" style="margin-top:3px;"></div>
+								</div>	
+						</div>
+				</div>
+				<div class="lzapp_m"></div>
+				<script>
+						var REC_a = window.location.href;
+						var REC_b = REC_a.split("?");
+						var REC_c = REC_b[1].split("&");
+						var REC_c1 = REC_c[0].split("=");	
+						var REC_c2 = REC_c[1].split("=");
+						toparea_sort = "";
+						sell_price_sort = "";
+						if(REC_c2[1] == 1){  //出售
+								infotolist_selling();
+						}	
+						function infotolist_selling(){
+								var HL2json = {
+										"sell_price_min":"",
+										"sell_price_max":"",		
+										"community":REC_c1[1],
+										"bedroom_num":"",
+									 	"bbd_id":"",
+									 	"area_min":"",
+									 	"area_max":"",
+									 	"special":"",
+									 	"category":"",
+									 	"area_sort":toparea_sort,
+									 	"rent_price_sort":sell_price_sort,
+								 	  "start":"",		//开始
+								 	  "num":""			//条数
+							  };
+							  $.ajax({
+							      type: "POST",
+							      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/sell/retrieveByFilter",
+							      data: $.toJSON(HL2json),
+							      dataType: 'json',
+							      success: function(data){
+							      		var la_list2 = "";
+	     		        			for(var i=0;i<data.length;i++){
+					        					la_list2 += "<div class='la_f ubb' onclick=\"gotosell('"+data[i].landz_id+"')\"><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+							           		+data[i].pic+
+							           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1'>"
+							           		+data[i].title+
+							           		"</div><div class='la_k'><div class='la_j' style='height:20px;margin-top:-7px;'>"+data[i].BUSINESS_DISTRICT_NAME+"&nbsp;&nbsp;&nbsp;&nbsp;"+data[i].COMMUNITY_NAME+"</div><div class='la_m1'>"
+							           		+data[i].bedroom_num+
+							           		"室"
+								           	+data[i].hall_num+
+								           	"厅</div><div class='la_m2'>"
+								           	+data[i].area+
+								           	"㎡</div><div class='la_m3' style='color:red;'>"
+								           	+data[i].sell_price+
+								           	"万</div></div><div class='la_l'>";
+								           	if(data[i].fytd){					//处理 南北通透  地暖 公园景观 湖景
+								           			
+								           			var la_strs1= new Array(); 
+																la_str1=data[i].fytd.split(";");
+																var la_temp4 = "";
+																var la_temp3 = "";
+																for (var j=0;j<la_str1.length - 1 ;j++ )   //la_str1.length - 1
+																{ 	
+																		if(j>3){
+																				break;
+																		}else{
+																				la_temp3 += "<div class='la_n uba uc-a' style='color:#321344;'>"+la_str1[j]+"</div>";
+																		}
+																} 		
+								           	}
+							           		la_list2 += la_temp3+"</div></div></div></div>";
+						        		}
+						        		$(".lzapp_m").html("");
+						           	$(".lzapp_m").append(la_list2);
+								    },
+								    error: function(){}
+								});	
+						}
+						if(REC_c2[1] == 0){
+								infotolist_renting();
+						}	
+						function infotolist_renting(){
+								var HL2json = {
+										"rent_price_min":"",
+										"rent_price_max":"",		
+										"community":REC_c1[1],
+										"bedroom_num":"",
+									 	"bbd_id":"",
+									 	"area_min":"",
+									 	"area_max":"",
+									 	"special":"",
+									 	"category":"",
+									 	"agent_id":"",
+									 	"area_sort":toparea_sort,
+									 	"rent_price_sort":sell_price_sort,
+								 	  "start":"",		//开始
+								 	  "num":"10"			//条数
+							  };
+							  $.ajax({
+							      type: "POST",
+							      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/rent/retrieveByFilter",
+							      data: $.toJSON(HL2json),
+							      dataType: 'json',
+							      success: function(data){
+							      		var la_list2 = "";
+	     		        			for(var i=0;i<data.length;i++){
+					        			la_list2 += "<div class='la_f ubb' onclick='gotorent("+data[i].landz_id+")'><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+							           		+data[i].pic+
+							           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1'>"
+							           		+data[i].title+
+							           		"</div><div class='la_j'>"+data[i].BUSINESS_DISTRICT_NAME+"&nbsp;&nbsp;&nbsp;&nbsp;"+data[i].COMMUNITY_NAME+"</div><div class='la_k'><div class='la_m1'>"
+							           		+data[i].bedroom_num+
+							           		"室"
+								           	+data[i].hall_num+
+								           	"厅</div><div class='la_m2'>"
+								           	+data[i].area+
+								           	"㎡</div><div class='la_m3' style='color:red;'>"
+								           	+data[i].rent_price+
+								           	"元</div></div>";
+							           		la_list2 += "</div></div></div></div>";
+						        		}
+						        		$(".lzapp_m").html("");
+						           	$(".lzapp_m").append(la_list2);
+								    },
+								    error: function(){}
+								});			
+						}
+						function gotosell(obj){		//出售情页  
+								window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/sellinfo/"+obj;
+						}
+						function gotorent(obj){		//出租情页  
+								window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/rentinfo/"+obj;
+						}
+						
+						
+						
+						
+						
+						
+						
+						
+						function AreaAsc(obj){
+								if(REC_c2[1] == 1){  //出售
+										$(".lb_c .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+										if(toparea_sort == ""){
+												toparea_sort = "0";
+												sell_price_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+												infotolist_selling();
+										}else if(toparea_sort == "0"){
+												toparea_sort = "1";
+												sell_price_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+												infotolist_selling();
+										}else if(toparea_sort == "1"){
+												toparea_sort = "0";
+												sell_price_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+												infotolist_selling();
+										}		
+								}else{
+										$(".lb_c .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+										if(toparea_sort == ""){
+												toparea_sort = "0";
+												sell_price_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+												infotolist_renting();
+										}else if(toparea_sort == "0"){
+												toparea_sort = "1";
+												sell_price_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+												infotolist_renting();
+										}else if(toparea_sort == "1"){
+												toparea_sort = "0";
+												sell_price_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+												infotolist_renting();
+										}			
+								}
+						}
+						function priceAsc(obj){
+								if(REC_c2[1] == 0){  //出租
+										$(".lb_b .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+										if(sell_price_sort == ""){
+												sell_price_sort = "0";
+												toparea_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+												infotolist_selling();
+										}else if(sell_price_sort == "0"){
+												sell_price_sort = "1";
+												toparea_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+												infotolist_selling();
+										}else if(sell_price_sort == "1"){
+												sell_price_sort = "0";
+												toparea_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+												infotolist_selling();	
+										}
+								}else{
+										$(".lb_b .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+										if(sell_price_sort == ""){
+												sell_price_sort = "0";
+												toparea_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+												infotolist_renting();
+										}else if(sell_price_sort == "0"){
+												sell_price_sort = "1";
+												toparea_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_21.png' width='80%' style='margin-top:3px;' />");
+												infotolist_renting();
+										}else if(sell_price_sort == "1"){
+												sell_price_sort = "0";
+												toparea_sort = "";
+												$(".lzapp_m").html("");
+												$("."+obj+" .lb_d .lb_f").html("<img src='../../../../../../bundles/lzh/css/img/lzh_22.png' width='80%' style='margin-top:3px;' />");
+												infotolist_renting();
+										}
+								}			
+						}
+				</script>
+		</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+		<head>
+			<title>顾问详情</title>
+		    	<meta charset="utf-8">
+		    	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+					<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+					<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+					<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+		</head>
+		<body style="background:#fff;">
+				<div class="lzd_a uba">
+						<div class="ld_a">
+								<div class="ld_b">
+										<div class="ld_c">
+												<div class="ld_c_1" style="width:90px;height:120px;">
+														
+												</div>
+												<div class="ld_d"></div>
+										</div>
+										<div class="ld_e">
+												<div class="ld_f">学历：</div><div class="ld_f1"></div>
+												<div class="ld_f">语言：</div><div class="ld_f2"></div>
+												<div class="ld_f">工作地点：</div><div class="ld_f3"></div>
+												<div class="ld_f">职位级别：</div><div class="ld_f4"></div>
+												<div class="ld_f">熟悉商圈：</div><div class="ld_f5"></div>
+												<div class="ld_f">熟悉小区：</div><div class="ld_f6"></div>
+										</div>
+								</div>	
+						</div>
+						<div class="lb_a" style="border-bottom:1px solid #cac8c8;">			<!-- 取自顶级豪宅部分 -->
+								<div class="lb_b" style="background:#f0f0f0;">
+										<div class="lb_d" style="">
+												<div class="lb_e" style="">在售房源 </div>
+												<div class="lb_f">2套</div>
+										</div>	
+								</div>
+								<div class="lb_c">
+										<div class="lb_d" style="">
+												<div class="lb_e" style="">待租房源 </div>
+												<div class="lb_f">2套</div>
+										</div>		
+								</div>
+						</div>
+						<div id="lb_g" style="">  	<!-- 遍历数据  通用-->	 
+								
+						</div>
+						<div id="lb_g1" style="display:none;">  	<!-- 遍历数据  通用-->	 
+								
+						</div>
+						<div class="temp_id" style="display:none;"></div>
+				</div>
+				<script>
+						var REC_a = window.location.href;
+						var REC_b = REC_a.split("?");
+						var REC_c = REC_b[1].split("&");
+						var REC_c1 = REC_c[0].split("=");	
+						var agents = {
+						 	  "agent_id":REC_c1[1]
+					  };
+				    $.ajax({
+				        type:	"POST",
+				        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/agent/info",
+				        data: $.toJSON(agents),
+				        dataType: 'json',
+				        success: function(data){
+				        		$(".ld_c_1").html("<img class='uc-a' src='http://image.landzestate.com/"+data.SMALL_PHOTO_PATH+"' width='100%' height='100%' />");
+				        		$(".ld_d").html(data.USERNAME);
+				        		$(".ld_f1").html(data.DEGREE);
+				        		$(".ld_f2").html(data.LANGVAGE);
+				        		$(".ld_f3").html(data.store_name);
+				        		if(data.AL_ID == 1){
+				        				$(".ld_f4").html("豪宅顾问");	
+				        		}else if(data.AL_ID == 2){
+				        				$(".ld_f4").html("高级豪宅顾问");	
+				        		}else if(data.AL_ID == 3){
+				        				$(".ld_f4").html("资深豪宅顾问");	
+				        		}else{
+				        				$(".ld_f4").html("豪宅顾问");			
+				        		}
+				        		$(".ld_f5").html(data.SXSQ);
+				        		$(".ld_f6").html(data.SXXQ);
+				        		$(".lb_b .lb_d .lb_f").html(data.sell_count+"套");
+				        		$(".lb_c .lb_d .lb_f").html(data.rent_count+"套");
+				        		var HL2json = {
+												"agent_id":data.AGENT_ID,
+												"sell_price_min":"",
+												"sell_price_max":"",		
+												"community":"",
+												"bedroom_num":"",
+											 	"bbd_id":"",
+											 	"area_min":"",
+											 	"area_max":"",
+											 	"special":"",
+											 	"category":"",
+										 	  "start":"",		//开始
+										 	  "num":""			//条数
+									  };
+									  //alert(HL2json.sell_price_max);
+									  $.ajax({
+									      type: "POST",
+									      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/sell/retrieveByFilter",
+									      data: $.toJSON(HL2json),
+									      dataType: 'json',
+									      success: function(data){
+									      		var la_list2 = "";
+			     		        			for(var i=0;i<data.length;i++){
+							        					la_list2 += "<div class='la_f ubb' onclick=\"gotosell('"+data[i].landz_id+"')\"><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+									           		+data[i].pic+
+									           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1'>"
+									           		+data[i].title+
+									           		"</div><div class='la_k'><div class='la_j' style='height:20px;margin-top:-7px;'>"+data[i].BUSINESS_DISTRICT_NAME+"&nbsp;&nbsp;&nbsp;&nbsp;"+data[i].COMMUNITY_NAME+"</div><div class='la_m1'>"
+									           		+data[i].bedroom_num+
+									           		"室"
+										           	+data[i].hall_num+
+										           	"厅</div><div class='la_m2'>"
+										           	+data[i].area+
+										           	"㎡</div><div class='la_m3' style='color:red;'>"
+										           	+data[i].sell_price+
+										           	"万</div></div><div class='la_l'>";
+										           	if(data[i].fytd){					//处理 南北通透  地暖 公园景观 湖景
+										           			
+										           			var la_strs1= new Array(); 
+																		la_str1=data[i].fytd.split(";");
+																		var la_temp4 = "";
+																		var la_temp3 = "";
+																		for (var j=0;j<la_str1.length - 1 ;j++ )   //la_str1.length - 1
+																		{ 	
+																				if(j>3){
+																						break;
+																				}else{
+																						la_temp3 += "<div class='la_n uba uc-a' style='color:#321344;'>"+la_str1[j]+"</div>";
+																				}
+																		} 		
+										           	}
+									           		la_list2 += la_temp3+"</div></div></div></div>";
+								        		}
+								        		//$(".lzapp_m").html("");
+								           	$("#lb_g").append(la_list2);
+										    },
+										    error: function(){}
+										});	
+										$(".temp_id").html(data.AGENT_ID);
+				        },
+				        error: function(){}
+				    });	
+				  $(".lb_b").click(function(){
+				  		$(".lb_c").css("background","#fff");
+				  		$(".lb_b").css("background","#f0f0f0");
+				  		$("#lb_g1").css("display","none");
+				  		$("#lb_g").css("display","block");
+				  })
+				  $(".lb_c").click(function(){
+				  		$("#lb_g1").html("");
+				  		$(".lb_c").css("background","#f0f0f0");
+				  		$(".lb_b").css("background","#fff");
+				  		$("#lb_g").css("display","none");
+				  		$("#lb_g1").css("display","block");
+				  		var HL3json = {
+				  				"agent_id":$(".temp_id").html(),
+									"rent_price_min":"",
+									"rent_price_max":"",		
+									"community":"",
+									"bedroom_num":"",
+								 	"bbd_id":"",
+								 	"area_min":"",
+								 	"area_max":"",
+								 	"special":"",
+								 	"category":"",
+								 	"area_sort":0,
+								 	"rent_price_sort":0,
+							 	  "start":"",		//开始
+							 	  "num":""			//条数
+						  };
+						  $.ajax({
+						      type: "POST",
+						      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/rent/retrieveByFilter",
+						      data: $.toJSON(HL3json),
+						      dataType: 'json',
+						      success: function(data){
+						      		var la_list2 = "";
+	   		        			for(var i=0;i<data.length;i++){
+				        			la_list2 += "<div class='la_f ubb' onclick='gotorent("+data[i].landz_id+")'><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+						           		+data[i].pic+
+						           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1'>"
+						           		+data[i].title+
+						           		"</div><div class='la_j'>"+data[i].BUSINESS_DISTRICT_NAME+"&nbsp;&nbsp;&nbsp;&nbsp;"+data[i].COMMUNITY_NAME+"</div><div class='la_k'><div class='la_m1'>"
+						           		+data[i].bedroom_num+
+						           		"室"
+							           	+data[i].hall_num+
+							           	"厅</div><div class='la_m2'>"
+							           	+data[i].area+
+							           	"㎡</div><div class='la_m3' style='color:red;'>"
+							           	+data[i].rent_price+
+							           	"元</div></div>";
+						           		la_list2 += "</div></div></div></div>";
+					        		}
+					        		//$(".lzapp_m").html("");
+					           	$("#lb_g1").append(la_list2);
+							    },
+							    error: function(){}
+							});	
+				  })
+				  function gotosell(obj){		//出售情页  
+							window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/sellinfo/"+obj;
+					}
+					function gotorent(obj){		//出租情页  
+							window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/rentinfo/"+obj;
+					}
+				</script>
+		</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,122 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+var KEYWORD = "";
+var START = 0;
+var ISREST = "0";
+</script>
+<script src="{{ asset('js/page.js') }}"></script> 
+<script>
+var domain = "http//eie.club/";
+
+function reloadList(current){
+	$("#order_list").html("");
+	var current = current;
+	pageTemp(currentPage,"{}","market");
+  	var json = {
+  		  	'start':START,
+  		  	'num':20
+			};
+  	ajaxPost(
+            'app_dev.php/api/market/retrieveByFilter',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+					$("#order_list").append("<tr id='"+data[i].id+"'><td><img width='75' src='"+data[i].image_url+"' /></td><td>"+data[i].title+"</td><td>"+data[i].content+"</td><td>"+(data[i].creation_date)+"</td><td><a href='#' onclick='info("+data[i].id+")'>详情</a>/<a href='#' onclick='del("+data[i].id+")'>删除</a></td></tr>"); 
+		      }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function info(id){
+	var json = {
+			"market_id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/market/info',
+            json,
+            function(data, textStatus){
+            	$("#myModalLabel").text(data.title);
+            	for(var i = 0;i<data.images.length;i++){
+                    
+                    $("#preshow_images").append("<a onclick=\"picshow("+i+")\"><img src='"+data.images[i].url+"' width='100%'/></a>");
+                 }
+            	$("#myModalContent").html(data.content);
+
+            	$("#diaModal").modal('show');
+			},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+$(function(){
+    reloadList(0);
+    $("#add_btn").click(function(){
+	location.href="addmarket";
+	});
+  
+});//function 主函数结束
+
+function del(id){
+	
+	var json = {
+			"market_id":id
+			};
+	ajaxPost(
+            'api/market/del',
+            json,
+            function(data, textStatus){
+            	$("#"+id).remove();
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+    <div class="col-sm-12"><a type="button" class="btn col-sm-1 btn-default" href="#" id="add_btn" >新增</a></div>
+    <div style="padding-top:20px;" class="col-sm-12">
+    
+    <table class="table table-hover">
+  	<thead>
+  	<tr>
+    <th>封面图</th>
+    <th>标题</th>
+    <th width="50%">内容</th>
+    <th>创建时间</th>
+	<th colspan=8>操作</th>
+    </tr>
+  	</thead>
+  	<tbody id="order_list"></tbody>	
+    </table>
+    
+    </div>
+  	
+  </div>
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>  
+    </div><!--分页结束-->
+</div> <!--content结束-->
+
+
+<!-- Modal -->
+<div id="diaModal" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"></h4>
+      </div>
+      <div class="modal-body" id="myModalContent">
+      </div>
+      <div class="modal-body" id="images"></div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

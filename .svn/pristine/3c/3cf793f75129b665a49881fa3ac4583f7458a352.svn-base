@@ -1,0 +1,21 @@
+parameters:
+#    acme_coupon_admin.example.class: Acme\CouponAdminBundle\Example
+services:
+#    acme_coupon_admin.example:
+#        class: %acme_coupon_admin.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
+#  acme_coupon_admin.privilege_listener:
+#    class: Acme\CouponAdminBundle\EventListener\MyPrivilegeListener
+#    arguments: ["@database_connection"]    
+#    tags: 
+#       - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+       
+       
+  security.access.Access_voter:
+    class: Ydzy\AdminBundle\Security\Authorization\Voter\AccessVoter
+    arguments: ["@my_datebase"]
+    public: false
+    tags: 
+       - { name: security.voter }
+  
+#   arguments: [@service_id, "plain_value", %parameter%]

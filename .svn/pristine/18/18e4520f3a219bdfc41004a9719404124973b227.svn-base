@@ -1,0 +1,53 @@
+<?php
+
+namespace ydzy\apiBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use  Ydzy\AdminBundle\Entity\Version;
+
+class VersionController extends Controller
+{
+		public function getversionAction(Request $request)    //admin 获得版本
+    {
+			
+		    $em = $this->getDoctrine()->getEntityManager();
+		    $upload = $em->getRepository('YdzyAdminBundle:Version');
+		    $query = $upload->createQueryBuilder('v')
+		                  ->where('v.version != :version')
+		                  ->setParameter("version", "")
+    		              ->orderBy('v.create_date','DESC')
+    		              ->getQuery();
+				$versions = $query->getResult();	
+    		if(!$versions){
+    				return new JsonResponse("", 400);  
+    		}
+    		
+				$code = $versions[0]->getVersion();
+				$name = $versions[0]->getName();
+				$description = $versions[0]->getDescription();
+				$filepath = $versions[0]->getFilepath();
+				$filesize = $versions[0]->getFilesize();
+				$md5sum = $versions[0]->getMd5();
+				$createDate = $versions[0]->getCreateDate();	  
+				$json_r = array(
+						'vid' => $versions[0]->getId(),
+						'versionCode' => $code,
+						'versionName' => $name,
+						'releaseNotes' => $description,
+					 	'url' => $filepath,
+					 	'filesize' => $filesize,
+					 	'md5sum' => $md5sum,
+					 	'createDate' =>date_format($createDate, 'Y-m-d H:i:s')
+				);
+    		return new JsonResponse($json_r);
+		}
+		
+		
+		public function downloadAction()
+    {
+        return $this->render('YdzyApiBundle:Default:download.html.twig');
+    } 
+}

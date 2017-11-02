@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html class="">
+		<head>
+				<title>豪宅顾问</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				<style>
+						.lzh_Grade,.lzh_Lan{
+								width:100%;
+								position:absolute;
+								top:51px;
+								left:0px;
+								background:#f0f0f0;
+								z-index:8500;	
+						}
+								.lzh_Grade_1,.lzh_Grade_2,.lzh_Grade_3,.lzh_Grade_4,.lzh_Grade_5,.lzh_Grade_7,.lzh_Grade_8,.lzh_Grade_9,.lzh_Grade_10,.lzh_Grade_11{
+										height:50px;
+										width:100%;
+										line-height:50px;
+								}
+										.lzh_Grade_22{
+												height:50px;
+												width:70%;
+												margin-left:2%;	
+												float:left;
+										}
+										.lzh_Grade_21,.lzh_Grade_23{
+												float:left;
+												width:30px;
+										}
+				</style>
+		</head>
+		<body style="background:#f0f0f0;">
+				<div class="" style="position:relative;">    <!-- 搜索经纪人 ln_ -->
+						<div class="lb_a uba">				<!-- 原筛选 -->
+								<div class="lb_b" onclick="changbor(1);">
+										<div class="lb_d">
+												<div class="lb_e">级职</div>
+												<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" width="100%"></div>
+										</div>	
+								</div>
+								<div class="lb_c" onclick="changbor(0);">
+										<div class="lb_d">
+												<div class="lb_e">语言</div>
+												<div class="lb_f" style="width:15px;margin-left:6px;"><img src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" width="100%"></div>
+										</div>	
+								</div>
+						</div>	
+						<div class="lzh_Grade" style="display:none;">
+								<div class="lzh_Grade_1" onclick="getGrade('lzh_Grade_1')">
+										<div class="lzh_Grade_22">不限</div>
+										<div class="lzh_Grade_21"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%"></div>
+								</div>
+								<div class="lzh_Grade_2" onclick="getGrade('lzh_Grade_2')">
+										<div class="lzh_Grade_22">豪宅顾问</div>
+										<div class="lzh_Grade_21"></div>
+								</div>
+								<div class="lzh_Grade_3" onclick="getGrade('lzh_Grade_3')">
+										<div class="lzh_Grade_22">高级豪宅顾问</div>
+										<div class="lzh_Grade_21"></div>
+								</div>
+								<div class="lzh_Grade_4" onclick="getGrade('lzh_Grade_4')">
+										<div class="lzh_Grade_22">资深豪宅顾问</div>
+										<div class="lzh_Grade_21"></div>
+								</div>
+								<div class="lzh_Grade_5" onclick="getGrade('lzh_Grade_5')">
+										<div class="lzh_Grade_22">资深店经理</div>
+										<div class="lzh_Grade_21"></div>
+								</div>
+						</div>	
+						<div class="lzh_Lan" style="display:none;">
+								<div class="lzh_Grade_7" onclick="getGrade1('lzh_Grade_7')">
+										<div class="lzh_Grade_22">不限</div>
+										<div class="lzh_Grade_23"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%"></div>
+								</div>
+								<div class="lzh_Grade_8" onclick="getGrade1('lzh_Grade_8')">
+										<div class="lzh_Grade_22">英语</div>
+										<div class="lzh_Grade_23"></div>
+								</div>
+								<div class="lzh_Grade_9" onclick="getGrade1('lzh_Grade_9')">
+										<div class="lzh_Grade_22">日语</div>
+										<div class="lzh_Grade_23"></div>
+								</div>
+								<div class="lzh_Grade_10" onclick="getGrade1('lzh_Grade_10')">
+										<div class="lzh_Grade_22">韩语</div>
+										<div class="lzh_Grade_23"></div>
+								</div>
+								<div class="lzh_Grade_11" onclick="getGrade1('lzh_Grade_11')">
+										<div class="lzh_Grade_22">汉语</div>
+										<div class="lzh_Grade_23"></div>
+								</div>	
+						</div>	
+						<div class="brogetin" style="margin-top:10px;"></div>				
+				</div>
+				<script>
+						var REC_a = decodeURI(window.location.href);
+						var REC_b = REC_a.split("?");
+						var REC_c = REC_b[1].split("&");
+						var REC_c1 = REC_c[0].split("=");			
+						var REC_c2 = REC_c[1].split("=");			
+						var REC_c3 = REC_c[2].split("=");	
+						var brokerlang = REC_c1[1];
+						var al_id = REC_c2[1];
+						var StartNum = "0";
+						var keyword = REC_c3[1];
+						function getGrade1(obj){
+								$(".lzh_Grade_23").html("");
+								$("."+obj+" .lzh_Grade_23").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");		
+								if(obj == "lzh_Grade_7"){brokerlang = "";}
+								if(obj == "lzh_Grade_8"){brokerlang = "英语";}
+								if(obj == "lzh_Grade_9"){brokerlang = "日语";}
+								if(obj == "lzh_Grade_10"){brokerlang = "韩语";}
+								if(obj == "lzh_Grade_11"){brokerlang = "汉语";}
+								$(".lzh_Lan").css("display","none");
+								StartNum = "0"
+								$(".brogetin").html("");
+								getBroker();
+						}
+						function getGrade(obj){
+								$(".lzh_Grade_21").html("");
+								$("."+obj+" .lzh_Grade_21").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+								if(obj == "lzh_Grade_1"){al_id = "";}
+								if(obj == "lzh_Grade_2"){al_id = "1";}
+								if(obj == "lzh_Grade_3"){al_id = "2";}
+								if(obj == "lzh_Grade_4"){al_id = "3";}
+								if(obj == "lzh_Grade_5"){al_id = "4";}
+								$(".lzh_Grade").css("display","none");
+								StartNum = "0"
+								$(".brogetin").html("");
+								getBroker();
+						}
+						function changbor(obj){
+								if(obj == 1){
+										$(".lzh_Grade").css("display","block");
+										$(".lzh_Lan").css("display","none");
+										
+								}
+								if(obj == 0){
+										$(".lzh_Lan").css("display","block");
+										$(".lzh_Grade").css("display","none");
+								}
+						}
+						function getBroker(){
+								var ln_B13json = {
+								 	  "keyword":keyword,
+								 	  "lang":brokerlang,
+								 	  "al_id":al_id,
+								 	  "start":StartNum,
+								 	  "num":"10"
+							  };
+							  $.ajax({
+						        type: "POST",
+						        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/agent/retrieveByFilter",
+						        data: $.toJSON(ln_B13json),
+						        dataType: 'json',
+						        success: function(data){
+						        		var la_list2 = "";
+			 		        			for(var i=0;i<data.length;i++){
+							        			la_list2 += "<div class='li_b ubb' onclick='gotogentinfo("+data[i].AGENT_ID+");'><div class='li_c'><div class='li_e'><img class='uc-a' src='http://image.landzestate.com/"
+					        					+data[i].SMALL_PHOTO_PATH+
+					        			 		"' width='100%' height='100%' /></div><div class='li_f'><div class='li_h'>"
+					        			 		+data[i].USERNAME+
+					        			 		"</div><div class='li_i'><div class='li_i1'>学历：</div><div class='li_i2'>"
+					        			 		+data[i].DEGREE+
+					        			 		"</div></div>	<div class='li_j'><div class='li_i1'>语言：</div><div class='li_i2'>"
+					        			 		+data[i].LANGVAGE+
+					        			 		"</div></div></div><a style='text-decoration: none;' href='tel:"
+					        			 		+data[i].MOBILE+
+					        			 		"'><div class='li_g uc-a'>拨打电话</div></a></div><div class='li_d'><div class='li_d1 uba uc-a'>在售房源:"
+					        			 		+data[i].sell_count+
+					        			 		"套</div><div class='li_d2 uba uc-a'>在租房源:"
+					        			 		+data[i].rent_count+
+					        			 		"套</div></div></div>";
+						        		}
+						        		//$(".brogetin").html("");
+						           	$(".brogetin").append(la_list2);
+						        },
+						        error: function(){}
+						    })	
+						}
+	      		getBroker();
+	      		var tempnum = 0;
+	      		$(window).scroll(function(){
+								var scrollTop = $(this).scrollTop();
+								var scrollHeight = $(document).height();
+								var windowHeight = $(this).height();
+								if(scrollTop + windowHeight == scrollHeight){
+										var tempnum = parseInt(StartNum);
+										if(tempnum > 0){
+												StartNum = tempnum+10;
+												tempnum = tempnum + 1;
+										}else{
+												StartNum = tempnum+11;	
+												tempnum = tempnum + 1;	
+										}
+										getBroker();
+								}	
+						});
+						function gotogentinfo(obj){
+				    		window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/lzhbrotail?agentid="+obj;
+				    }
+				</script>
+		</body>	
+</html>

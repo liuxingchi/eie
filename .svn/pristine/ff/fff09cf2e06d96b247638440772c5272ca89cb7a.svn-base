@@ -1,0 +1,341 @@
+ydzy_api_homepage:
+    pattern:  /
+    defaults: { _controller: YdzyApiBundle:Default:index }
+ydzy_api_updateSystem:
+    pattern:  /updateSystem
+    defaults: { _controller: YdzyApiBundle:Default:updateSystem }
+ydzy_api_system:
+    pattern:  /system
+    defaults: { _controller: YdzyApiBundle:Default:system }
+##############################################################
+# recommended
+##############################################################
+recommended_add:
+    pattern:  /recommended/add
+    defaults: { _controller: YdzyApiBundle:Recommended:add }
+recommended_update:
+    pattern:  /recommended/update
+    defaults: { _controller: YdzyApiBundle:Recommended:update }
+recommended_info:
+    pattern:  /recommended/info
+    defaults: { _controller: YdzyApiBundle:Recommended:info }
+recommended_del:
+    pattern:  /recommended/del
+    defaults: { _controller: YdzyApiBundle:Recommended:del }
+recommended_buy:
+    pattern:  /recommended/buy
+    defaults: { _controller: YdzyApiBundle:Recommended:buy }
+recommended_unlike:
+    pattern:  /recommended/unlike
+    defaults: { _controller: YdzyApiBundle:Recommended:unlike }
+recommended_retrieveByFilter:
+    pattern:  /recommended/retrieveByFilter
+    defaults: { _controller: YdzyApiBundle:Recommended:retrieveByFilter }
+recommended_retrieveByFilterNum:
+    pattern:  /recommended/retrieveByFilterNum
+    defaults: { _controller: YdzyApiBundle:Recommended:retrieveByFilterNum }
+recommended_buyOrNot:
+    pattern:  /recommended/buyOrNot
+    defaults: { _controller: YdzyApiBundle:Recommended:buyOrNot }
+recommended_retrieveWantBuyList:
+    pattern:  /recommended/retrieveWantBuyList
+    defaults: { _controller: YdzyApiBundle:Recommended:retrieveWantBuyList }
+recommended_categoryList:
+    pattern:  /recommended/categoryList
+    defaults: { _controller: YdzyApiBundle:Recommended:categoryList }
+##############################################################
+# bbs
+##############################################################
+bbs_add:
+    pattern:  /bbs/add
+    defaults: { _controller: YdzyApiBundle:Bbs:add }
+bbs_retrieveByFilter:
+    pattern:  /bbs/retrieveByFilter
+    defaults: { _controller: YdzyApiBundle:Bbs:retrieveByFilter }
+bbs_info:
+    pattern:  /bbs/info
+    defaults: { _controller: YdzyApiBundle:Bbs:info }
+bbs_comment:
+    pattern:  /bbs/comment
+    defaults: { _controller: YdzyApiBundle:Bbs:comment }
+bbs_commentList:
+    pattern:  /bbs/commentList
+    defaults: { _controller: YdzyApiBundle:Bbs:commentList }
+bbs_collection:
+    pattern:  /bbs/collection
+    defaults: { _controller: YdzyApiBundle:Bbs:collection }
+bbs_collectionList:
+    pattern:  /bbs/collectionList
+    defaults: { _controller: YdzyApiBundle:Bbs:collectionList }
+bbs_money_nodify:
+    pattern:  /bbs/moneyNodify
+    defaults: { _controller: YdzyApiBundle:Bbs:nodify }
+bbs_createPay:
+    pattern:  /bbs/createPay
+    defaults: { _controller: YdzyApiBundle:Bbs:createPay }
+bbs_createWeixinPay:
+    pattern:  /bbs/createWeixinPay
+    defaults: { _controller: YdzyApiBundle:Bbs:createWeixinPay }
+##############################################################
+# news
+##############################################################
+news_retrieveByFilter:
+    pattern:  /news/retrieveByFilter
+    defaults: { _controller: YdzyApiBundle:News:retrieveByFilter }
+news_add:
+    pattern:  /news/add
+    defaults: { _controller: YdzyApiBundle:News:add }
+news_update:
+    pattern:  /news/update
+    defaults: { _controller: YdzyApiBundle:News:update }
+news_info:
+    pattern:  /news/info
+    defaults: { _controller: YdzyApiBundle:News:info }
+news_del:
+    pattern:  /news/del
+    defaults: { _controller: YdzyApiBundle:News:del }
+news_retrieveByFilterNum:
+    pattern:  /news/retrieveByFilterNum
+    defaults: { _controller: YdzyApiBundle:News:retrieveByFilterNum }
+##############################################################
+# market
+##############################################################
+market_retrieveByFilter:
+    pattern:  /market/retrieveByFilter
+    defaults: { _controller: YdzyApiBundle:Market:retrieveByFilter }
+market_add:
+    pattern:  /market/add
+    defaults: { _controller: YdzyApiBundle:Market:add }
+market_info:
+    pattern:  /market/info
+    defaults: { _controller: YdzyApiBundle:Market:info }
+market_del:
+    pattern:  /market/del
+    defaults: { _controller: YdzyApiBundle:Market:del }
+market_retrieveByFilterNum:
+    pattern:  /market/retrieveByFilterNum
+    defaults: { _controller: YdzyApiBundle:Market:retrieveByFilterNum }
+##############################################################
+# preshow
+##############################################################
+preshow_retrieveByFilter:
+    pattern:  /preshow/retrieveByFilter
+    defaults: { _controller: YdzyApiBundle:Preshow:retrieveByFilter }
+preshow_add:
+    pattern:  /preshow/add
+    defaults: { _controller: YdzyApiBundle:Preshow:add }
+preshow_info:
+    pattern:  /preshow/info
+    defaults: { _controller: YdzyApiBundle:Preshow:info }
+preshow_del:
+    pattern:  /preshow/del
+    defaults: { _controller: YdzyApiBundle:Preshow:del }
+preshow_retrieveByFilterNum:
+    pattern:  /preshow/retrieveByFilterNum
+    defaults: { _controller: YdzyApiBundle:Preshow:retrieveByFilterNum }
+##############################################################
+# publish发布
+##############################################################
+publish_retrieveByFilter:
+    pattern:  /Publish/retrieveByFilter
+    defaults: { _controller: YdzyApiBundle:Publish:retrieveByFilter }
+publish_retrieveByFilterNum:
+    pattern:  /publish/retrieveByFilterNum
+    defaults: { _controller: YdzyApiBundle:Publish:retrieveByFilterNum }
+publish_appeal:
+    pattern:  /publish/appeal
+    defaults: { _controller: YdzyApiBundle:Publish:appeal }
+publish_categoryAllList:
+    pattern:  /publish/categoryAllList
+    defaults: { _controller: YdzyApiBundle:Publish:categoryAllList }
+publish_secondAppeal:
+    pattern:  /publish/secondAppeal
+    defaults: { _controller: YdzyApiBundle:Publish:secondAppeal }
+publish_secondAppealAdd:
+    pattern:  /publish/secondAppealAdd
+    defaults: { _controller: YdzyApiBundle:Publish:secondAppealAdd }
+publish_add:
+    pattern:  /publish/add
+    defaults: { _controller: YdzyApiBundle:Publish:add }
+publish_info:
+    pattern:  /publish/info
+    defaults: { _controller: YdzyApiBundle:Publish:info }
+publish_del:
+    pattern:  /publish/del
+    defaults: { _controller: YdzyApiBundle:Publish:del }
+publish_comment:
+    pattern:  /publish/comment
+    defaults: { _controller: YdzyApiBundle:Publish:comment }
+publish_commentOrNot:
+    pattern:  /publish/commentOrNot
+    defaults: { _controller: YdzyApiBundle:Publish:commentOrNot }
+publish_my:
+    pattern:  /publish/my
+    defaults: { _controller: YdzyApiBundle:Publish:my }
+publish_appealNum:
+    pattern:  /publish/appealNum
+    defaults: { _controller: YdzyApiBundle:Publish:appealNum }
+publish_appealSale:
+    pattern:  /publish/appealSale
+    defaults: { _controller: YdzyApiBundle:Publish:appealSale }
+publish_addMessage:
+    pattern:  /publish/addMessage
+    defaults: { _controller: YdzyApiBundle:Publish:addMessage }
+publish_publishallAdmin:
+    pattern:  /publish/publishAllAdmin
+    defaults: { _controller: YdzyApiBundle:Publish:publishAllAdmin }
+publish_publishall:
+    pattern:  /publish/publishAll
+    defaults: { _controller: YdzyApiBundle:Publish:publishAll }
+publish_info:
+    pattern:  /publish/info
+    defaults: { _controller: YdzyApiBundle:Publish:info }
+publish_chooseAppeal:
+    pattern:  /publish/chooseAppeal
+    defaults: { _controller: YdzyApiBundle:Publish:chooseAppeal }
+publish_isChoose:
+    pattern:  /publish/isChoose
+    defaults: { _controller: YdzyApiBundle:Publish:isChoose }
+publish_count:
+    pattern:  /publish/count
+    defaults: { _controller: YdzyApiBundle:Publish:count }
+publish_addSecondAppeal:
+    pattern:  /publish/addSecondAppeal
+    defaults: { _controller: YdzyApiBundle:Publish:addSecondAppeal }
+publish_addAppeal:
+    pattern:  /publish/addAppeal
+    defaults: { _controller: YdzyApiBundle:Publish:addAppeal }
+publish_delAppeal:
+    pattern:  /publish/delAppeal
+    defaults: { _controller: YdzyApiBundle:Publish:delAppeal }
+##############################################################
+# user
+##############################################################
+user_retrieveWantBuyList:
+    pattern:  /user/retrieveWantBuyList
+    defaults: { _controller: YdzyApiBundle:User:retrieveWantBuyList }
+user_delGroup:
+    pattern:  /user/delGroup
+    defaults: { _controller: YdzyApiBundle:User:delGroup }
+user_getGroup:
+    pattern:  /user/chatGroup
+    defaults: { _controller: YdzyApiBundle:User:getGroup }
+user_getTelValidate:
+    pattern:  /user/getTelValidate
+    defaults: { _controller: YdzyApiBundle:User:getTelValidate }
+user_register:
+    pattern:  /user/register
+    defaults: { _controller: YdzyApiBundle:User:register }
+user_login:
+    pattern:  /user/login
+    defaults: { _controller: YdzyApiBundle:User:login }
+user_logout:
+    pattern:  /user/logout
+    defaults: { _controller: YdzyApiBundle:User:logout }
+user_profile:
+    pattern:  /user/profile
+    defaults: { _controller: YdzyApiBundle:User:profile }
+user_changeProfile:
+    pattern:  /user/changeProfile
+    defaults: { _controller: YdzyApiBundle:User:changeProfile }
+user_repwd:
+    pattern:  /user/repwd
+    defaults: { _controller: YdzyApiBundle:User:repwd }
+user_forgetPwd:
+    pattern:  /user/forgetPwd
+    defaults: { _controller: YdzyApiBundle:User:forgetPwd }
+user_repwd:
+    pattern:  /user/repwd
+    defaults: { _controller: YdzyApiBundle:User:repwd }
+user_updateResult:
+    pattern:  /user/updateResult
+    defaults: { _controller: YdzyApiBundle:User:updateResult }
+user_history:
+    pattern:  /user/history
+    defaults: { _controller: YdzyApiBundle:User:history }
+user_showResult:
+    pattern:  /user/showResult
+    defaults: { _controller: YdzyApiBundle:User:showResult }
+user_retrieveGroupsList:
+    pattern:  /user/retrieveGroupsList
+    defaults: { _controller: YdzyApiBundle:User:retrieveGroupsList }
+user_createGroups:
+    pattern:  /user/createGroups
+    defaults: { _controller: YdzyApiBundle:User:createGroups }
+user_retrieveByFilterNum:
+    pattern:  /user/retrieveByFilterNum
+    defaults: { _controller: YdzyApiBundle:User:retrieveByFilterNum }
+user_retrieveByFilter:
+    pattern:  /user/retrieveByFilter
+    defaults: { _controller: YdzyApiBundle:User:retrieveByFilter }
+user_enable:
+    pattern:  /user/enable
+    defaults: { _controller: YdzyApiBundle:User:enable }
+user_pushone:
+    pattern:  /user/pushone
+    defaults: { _controller: YdzyApiBundle:User:pushone }
+user_pushall:
+    pattern:  /user/pushall
+    defaults: { _controller: YdzyApiBundle:User:pushall }
+user_allSystemMessage:
+    pattern:  /user/allSystemMessage
+    defaults: { _controller: YdzyApiBundle:User:allSystemMessage }
+user_allMessagesToMe:
+    pattern:  /user/allMessagesToMe
+    defaults: { _controller: YdzyApiBundle:User:allMessagesToMe }
+user_updateReadTime:
+    pattern:  /user/updateReadTime
+    defaults: { _controller: YdzyApiBundle:User:updateReadTime }
+user_unreadNum:
+    pattern:  /user/unreadNum
+    defaults: { _controller: YdzyApiBundle:User:unreadNum }
+user_notify:
+    pattern:  /user/notify
+    defaults: { _controller: YdzyApiBundle:User:notify }
+user_createWeixinPay:
+    pattern:  /user/createWeixinPay
+    defaults: { _controller: YdzyApiBundle:User:createWeixinPay }
+user_createAlipay:
+    pattern:  /user/createAlipay
+    defaults: { _controller: YdzyApiBundle:User:createAlipay }
+##############################################################
+# order
+##############################################################
+user_createOrder:
+    pattern:  /user/createOrder
+    defaults: { _controller: YdzyApiBundle:User:createOrder }
+order_retrieve:
+    pattern:  /order/retrieve
+    defaults: { _controller: YdzyApiBundle:Order:retrieve }
+order_myOrder:
+    pattern:  /user/myOrder
+    defaults: { _controller: YdzyApiBundle:User:myOrder }
+order_info:
+    pattern:  /order/info
+    defaults: { _controller: YdzyApiBundle:Order:info }
+order_postBack:
+    pattern:  /order/postBack
+    defaults: { _controller: YdzyApiBundle:Order:postBack }
+order_followMessages:
+    pattern:  /order/followMessages
+    defaults: { _controller: YdzyApiBundle:Order:followMessages }
+order_addMessage:
+    pattern:  /order/addMessage
+    defaults: { _controller: YdzyApiBundle:Order:addMessage }
+##############################################################
+# others 
+##############################################################
+leaveword_add:
+    pattern:  /leaveword/insert
+    defaults: { _controller: YdzyApiBundle:Leaveword:insert }
+leaveword_list:
+    pattern:  /leaveword/retrieve
+    defaults: { _controller: YdzyApiBundle:Leaveword:retrieve }
+getVersion:
+    pattern:  /version
+    defaults: { _controller: YdzyApiBundle:Version:getversion }
+download:
+    pattern:  /download
+    defaults: { _controller: YdzyApiBundle:Version:download }
+
+

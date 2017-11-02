@@ -1,0 +1,75 @@
+{% extends 'YdzyJxBundle:Jx:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<script src="{{ asset('bundles/jxbundle/js/followpage.js') }}"></script>
+<script>
+
+function reloadList(json_data,current){
+	$("#machine_list").html("");
+	var current = current;
+	page(current);
+	
+	if(json_data==""){
+		var json={
+			"start": "0",
+			"num": "30"
+			};
+		}else{
+			var json = json_data;
+			}
+  	ajaxPost(
+		'app_dev.php/api/follownews',
+		json,
+		function(data, textStatus){
+		  //alert(data.length);
+		  for(var i=0;i<data.length;i++){
+			
+     $("#machine_list").append("<div class='col-sm-12'><div class=\"col-sm-2\" style=\"padding:0;\">"+data[i].title+"</div><div class='col-sm-7'>"+data[i].content+"</div><div class='col-sm-3'>"+data[i].creation_date+"</div></div><img src=\"{{ asset('bundles/jxbundle/images/hr.png') }}\"/>");
+       
+      }//结束循环
+	
+    },
+    function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+				alert('加载数据出现错误，请重试');
+		}
+    }
+  );
+}
+
+$(function(){
+loadnav();			
+reloadList("",0);		
+
+
+
+});//function 主函数结束
+
+
+
+</script>
+   
+  <div id="content" style="position:relative; width:100%; margin-top:10px; padding:0;" class="col-sm-12">
+
+  <div class="col-sm-12" style="padding-left:0; padding-right:0; margin-top:20px;">
+  	<div class="col-sm-9" style="overflow:hidden; padding-left:0;"><span style="font-size:16px; font-weight:bold; color:#b40202; padding-left:5px;">我的关注动态</span><span style="float:left; position:absolute;left:120px; color:#999; font-size:10px; line-height:25px;" id="index_list_num"></span>
+    
+    <img src="{{ asset('bundles/jxbundle/images/hr.png') }}"/>
+   <div class="col-sm-12" id="machine_list"></div>
+    </div>
+    
+    
+  	<div class="col-sm-3" style="padding-right:0px; padding-left:20px;">
+    	{{ include('YdzyJxBundle:Jx:right.html.twig')}}    
+    </div><!--右侧广告位展示-->
+  </div>
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>  
+    </div><!--分页结束-->
+</div> <!--content结束-->
+{% endblock %}

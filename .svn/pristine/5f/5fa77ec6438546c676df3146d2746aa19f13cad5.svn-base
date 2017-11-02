@@ -1,0 +1,480 @@
+{% extends 'YdzyJxBundle:Default:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<div  id="machine_list"><!--机械列表-->
+</div><!--机械列表-->
+<div onclick="dianj()" style="height:40px; line-height:40px; background:#dcdcdc;width:100%; text-align:center; font-size:14px; font-family:'SimHei'">点击加载更多</div>
+ <!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">请选择</h4>
+      </div>
+      <div class="modal-body" id="more_list">
+      <ul id="more_list_ul"></ul>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog --> 
+</div><!-- /.modal -->   
+<!------------------------------------------------省份------------------------------------------------------------------------>
+<div class="modal fade" id="Province" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">请选择</h4>
+      </div>
+      <div class="modal-body">
+      	<ul id="Province_ul"></ul>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script type="text/javascript">
+var Dstart=11;
+var upurl = window.location.href; 
+var index1=0;
+var index2=upurl.indexOf("?");
+if(index2=="-1"){
+	var pairs = upurl.split("/");	
+}else{
+	var aa = upurl.substring(index1,index2);
+	var pairs = aa.split("/");
+}
+var mid = pairs.slice(pairs.length-1);
+var CATEGORY=mid[0];
+var KEYWORD = "";
+var BRAND= "";
+var PRICE_MIN = "";
+var	PRICE_MAX = "";
+var TONN_MIN = "";
+var TONN_MAX = "";
+var PROVINCE= "";
+var CITY= "";
+var WORKHOURS_MIN = "";
+var WORKHOURS_MAX = "";
+var FACTORY_MIN = "";
+var FACTORY_MAX = "";
+var TONN_MIN = "";
+var TONN_MAX = "";
+var PRICE_MIN = "";
+var PRICE_MAX = "";
+var DATESORT = "";
+var FACTORYSORT = "";
+var WORKHOURSSORT = "";
+var PRICESORT = "";
+var UPDATED_DATE_SORT = "0";
+var DISTANCE_SORT = "";
+var DISTANCE = "";
+var PROVINCE = -1;
+var CITY = "";
+//----------显示数据--------------------------------------------
+window.onload=function(){	
+	var upurl = window.location.href; 
+	var index1=0;
+	var index2=upurl.indexOf("?");
+	if(index2=="-1"){
+		var pairs = upurl.split("/");	
+	}else{
+		var aa = upurl.substring(index1,index2);
+		var pairs = aa.split("/");
+	}
+	var mid = pairs.slice(pairs.length-1);
+	var shuju = {
+	    "category_id":mid[0],
+		"mark": "1",
+		"start": "0",
+		"num": "10",
+		"updated_date_sort":"0",
+	};
+	reloadList(shuju);
+}
+//----------显示数据方法-------------------------------------------------------
+function reloadList(json_data){
+   if(json_data==""){
+	 var json={
+		"category_id":CATEGORY[0],
+		"mark": "1",
+		"start": "0",
+		"num": "10",
+		"updated_date_sort":UPDATED_DATE_SORT,
+		"keyword" : KEYWORD,
+		"brand_id":BRAND,
+		"province":PROVINCE,
+		"workhours_min":WORKHOURS_MIN,
+		"workhours_max":WORKHOURS_MAX,
+		"tonn_min":TONN_MIN,
+		"tonn_max":TONN_MAX,
+		"sale_price_min":PRICE_MIN,
+		"sale_price_max":PRICE_MAX,
+		'factory_year_min':FACTORY_MIN,
+		'factory_year_max':FACTORY_MAX,
+		"workhours_sort":WORKHOURSSORT,
+		"sale_price_sort":PRICESORT,
+		"factory_year_sort":FACTORYSORT,
+		"distance_sort":DISTANCE_SORT,
+		"distance":DISTANCE,
+		"province":PROVINCE,
+		"city":CITY,
+	 };
+	}else{
+		var json = json_data;
+	}
+$.ajax({
+   type: "POST",
+   url: "/api/machine/retrieveByFilter",
+   data: $.toJSON(json),
+   dataType: 'json',
+   async:false,
+   success: function(data){
+	  var upurl = window.location.href;
+	  var url = upurl.substring(0,23);
+	  for(var i=0;i<data.length;i++){
+		   //价格为0
+		   var price = "";
+		   var dw = "";
+		    if(data[i].sale_price==0)
+		    { 
+			  price = "面议";
+			  dw = "";
+		    }else{
+			  price = data[i].sale_price;
+			  dw="万"; 
+		    }
+			//小时数0   年份0
+			var workhours = "";
+			var factory_year = "";
+		    if(data[i].workhours==0)
+			{
+				factory_year = data[i].factory_year+"年";
+			} if(data[i].factory_year==0){
+				workhours = data[i].workhours+"小时";
+			} if(data[i].workhours==0 && data[i].factory_year==0){
+				workhours = "";
+				factory_year = "";
+			}if(data[i].workhours!=0 && data[i].factory_year!=0){
+				factory_year = data[i].factory_year+"年";
+				workhours = data[i].workhours+"小时";
+			}
+			//名字截取
+			var NAME = "";
+			if(data[i].machine_name.length>11){ 
+				var name = data[i].machine_name.substr(0,11);
+				NAME = name+"...";
+			}else{
+				NAME = data[i].machine_name;
+			} 
+		$("#machine_list").append("<a href='"+url+"csxq/"+data[i].machine_id+"' id='link"+[i]+"' style=\"text-decoration:none;\"><div style=\"min-height:80px;width:100%;overflow:hidden;margin-top:6px; padding:0px 10px;\"><div id=\"jxxq_img_"+[i]+"\" style=\"height:100px;width:35%;float:left;\"><img src='"+data[i].pic+"' height='100' width='100%' /></div><div style=\"height:100px;width:60%;float:left;font-family:'SimHei';font-size:14px;\"><div id=\"xq_machine_name_"+[i]+"\"style=\"height:33px;width:100%;line-height:33px;margin-left:10px;margin-top:0px;font-weight:bold;font-size:16px;color:#000\">"+NAME+"</div><div  id=\"model_"+[i]+"\"style=\"height:33px;width:100%;line-height:33px;margin-left:6px;color:#989898;\">"+data[i].brand+data[i].model+"</div><div style=\"height:33px;width:100%;margin-left:6px;\"><div id=\"rent_by_num_"+[i]+"\" style=\"height:33px;width:70%;float:left;line-height:33px;color:#989898;\">"+workhours+""+factory_year+"</div> <span id=\"sale_price_"+[i]+"\"  style=\"height:33px; text-align:right !important; width:26%;float:left;line-height:33px;color:#b40202;font-size:18px;font-weight:bold;\">"+price+"</span><span id=\"dw_"+[i]+"\" style=\"float:right; margin-right:-8px;color:#b40202;font-size:12px;font-weight:bold;margin-top:9px;\">"+dw+"</span></div></div></div></a><div style=\"height:6px;width:100%;border-bottom:1px solid #dcdcdc;\"></div>");
+	  }//结束循环
+	  
+  
+	},error: function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				alert("没有更多数据");
+				break;
+			default:
+				alert('服务器错误请重试');
+		}
+    }
+  });
+}
+
+
+//---------------顶部刷新，底部加载-------------------------------------------------
+//$(window).scroll(function() {
+	//if ($(document).scrollTop() <= 0) {
+//		location.reload();
+//	}
+	
+	//if ($(document).scrollTop() >= $(document).height() - $(window).height()) {
+		function dianj(){
+	  var shuju = {
+	    "category_id":CATEGORY[0],
+		"mark": "1",
+		"start": Dstart,
+		"num": "10",
+		"updated_date_sort":UPDATED_DATE_SORT,
+		"keyword" : KEYWORD,
+		"brand_id":BRAND,
+		"province":PROVINCE,
+		"workhours_min":WORKHOURS_MIN,
+		"workhours_max":WORKHOURS_MAX,
+		"tonn_min":TONN_MIN,
+		"tonn_max":TONN_MAX,
+		"sale_price_min":PRICE_MIN,
+		"sale_price_max":PRICE_MAX,
+		'factory_year_min':FACTORY_MIN,
+		'factory_year_max':FACTORY_MAX,
+		"workhours_sort":WORKHOURSSORT,
+		"sale_price_sort":PRICESORT,
+		"factory_year_sort":FACTORYSORT,
+		"distance_sort":DISTANCE_SORT,
+		"distance":DISTANCE,
+		"province":PROVINCE,
+		"city":CITY,
+	  };
+		reloadList(shuju);
+		Dstart = Dstart + 11; 
+ 
+	}
+//});
+
+//---------------搜索----------------------------------------------------------
+function search_machine(){
+	var keywords = $("#search_machine").val();
+	KEYWORD = keywords;
+	var shuju = {
+	   "mark": "1",
+	   "start": "0",
+	   "num": "10",
+	   "keyword": keywords,
+	   "updated_date_sort":"0",
+	   "category_id":CATEGORY[0],
+		"brand_id":BRAND,
+		"province":PROVINCE,
+		"workhours_min":WORKHOURS_MIN,
+		"workhours_max":WORKHOURS_MAX,
+		"tonn_min":TONN_MIN,
+		"tonn_max":TONN_MAX,
+		"sale_price_min":PRICE_MIN,
+		"sale_price_max":PRICE_MAX,
+		'factory_year_min':FACTORY_MIN,
+		'factory_year_max':FACTORY_MAX,
+		"workhours_sort":WORKHOURSSORT,
+		"sale_price_sort":PRICESORT,
+		"factory_year_sort":FACTORYSORT,
+		"distance_sort":DISTANCE_SORT,
+		"distance":DISTANCE,
+		"province":PROVINCE,
+		"city":CITY,
+	};
+	$("#machine_list").html(" ");
+	reloadList(shuju);
+}
+//---------------点击加载品牌---------------------------------------------------
+function loadBrand(){
+   var json = {"category_id":CATEGORY[0]};
+   $.ajax({
+   type: "POST",
+   url: "/api/brand/retrieve",
+   data: $.toJSON(json),
+   dataType: 'json',
+   async:false,
+   success: function(data){
+	  $("#more_list_ul").html("");  
+	  for(var i=0;i<data.length;i++){
+		$("#more_list_ul").append("<li data-dismiss='modal'><a title='"+data[i].id+"'  onclick='filter_machine(this)'>"+data[i].brand_name+"</a></li>");
+	  }//结束循环
+	},error: function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+				alert('服务器错误请重试');
+		}
+    }
+  });
+}	
+
+//---------------品牌筛选------------------------------------------------
+function filter_machine(brand_id){
+	BRAND = brand_id.title;
+	$("#machine_list").html(" ");
+	reloadList("");
+}
+//---------------判断价格------------------------------------------------
+$("#price").click(function(){
+	$("#more_list_ul").html("");  
+	if(CATEGORY[0]==2){
+		$("#more_list_ul").append(' <li data-dismiss="modal"><a onclick="filter_price(0,10)">10万以下</a></li><li data-dismiss="modal"><a onclick="filter_price(10,15)">10-15万</a></li><li data-dismiss="modal"><a onclick="filter_price(15,35)">15-35万</a></li><li data-dismiss="modal"><a onclick="filter_price(35,99999)">35万以上</a></li>');
+	} else{
+		$("#more_list_ul").append('<li data-dismiss="modal"><a onclick="filter_price(0,10)">10万以下</a></li><li data-dismiss="modal"><a onclick="filter_price(10,20)">10-20万</a></li><li data-dismiss="modal"><a onclick="filter_price(20,50)">20-50万</a></li><li data-dismiss="modal"><a onclick="filter_price(50,110)">50-110万</a></li><li data-dismiss="modal"><a onclick="filter_price(110,99999)">110万以上</a></li>');   
+	}	  
+}); 
+//---------------价格筛选------------------------------------------------
+function filter_price(MIN,MAX){
+	PRICE_MIN = MIN;
+	PRICE_MAX = MAX;
+	$("#machine_list").html(" ");
+	reloadList("");
+};
+
+//---------------判断吨位------------------------------------------------
+$("#tonn").click(function(){
+	$("#more_list_ul").html("");  
+	if(CATEGORY[0]==2){
+		$("#more_list_ul").append(' <li data-dismiss="modal"><a onclick="filter_tonn(0,3)">3吨以下</a></li><li data-dismiss="modal"><a onclick="filter_tonn(3,4)">3-4吨</a></li><li data-dismiss="modal"><a onclick="filter_tonn(5,99999)">5吨以上</a></li>');
+	} else{
+		$("#more_list_ul").append('<li data-dismiss="modal"><a onclick="filter_tonn(0,6)">6吨以下</a></li><li data-dismiss="modal"><a onclick="filter_tonn(6,15)">6-15吨</a></li><li data-dismiss="modal"><a onclick="filtfilter_tonner_price(15,20)">15-20吨</a></li><li data-dismiss="modal"><a onclick="filter_tonn(25,30)">25-30吨</a></li><li data-dismiss="modal"><a onclick="filter_tonn(30,35)">30-35吨</a></li><li data-dismiss="modal"><a onclick="filter_tonn(35,999999)">35吨以上</a></li>');   
+	}	  
+}); 
+//---------------吨位筛选-----------------------------------------------
+function filter_tonn(MIN,MAX){
+	TONN_MIN = MIN;
+	TONN_MAX = MAX;
+	$("#machine_list").html(" ");
+	reloadList("");
+};
+
+//-----------------排序--------------------------------------------------------
+$("#sort").click(function(){
+	$("#more_list_ul").html("");
+	$("#more_list_ul").append('<ul><li data-dismiss="modal" onclick="factory_date_0()">出厂日期由近到远</li><li data-dismiss="modal" onclick="factory_date_1()">出厂日期由远到近</li><li data-dismiss="modal" onclick="update_date_0()">更新日期由近到远</li><li data-dismiss="modal" onclick="update_date_1()">更新日期由远到近</li><li data-dismiss="modal" onclick="sale_0()">售价由低到高</li><li data-dismiss="modal" onclick="sale_1()">售价由高到低</li><li data-dismiss="modal" onclick="workhours_0()">小时数由低到高</li><li data-dismiss="modal" onclick="workhours_1()">小时数由高到低</li></ul>');	
+});
+//出厂日期由近到远
+function factory_date_0(){
+	FACTORYSORT = "0";
+	UPDATED_DATE_SORT = "";
+	$("#machine_list").html("");
+	reloadList("");	
+};
+//出厂日期由远到近
+function factory_date_1(){
+	FACTORYSORT = "1";
+	UPDATED_DATE_SORT = "";
+	$("#machine_list").html("");
+	reloadList("");	
+};
+//更新日期由近到远
+function update_date_0(){
+	UPDATED_DATE_SORT = "0";
+	$("#machine_list").html("");
+	reloadList("");	
+};
+//更新日期由远到近
+function update_date_1(){
+	UPDATED_DATE_SORT = "1";
+	$("#machine_list").html("");
+	reloadList("");	
+};
+//售价由低到高
+function sale_0(){
+	PRICESORT = "1";
+	UPDATED_DATE_SORT = "";
+	$("#machine_list").html("");
+	reloadList("");	
+};
+//售价由高到低
+function sale_1(){
+	PRICESORT = "0";
+	UPDATED_DATE_SORT = "";
+	$("#machine_list").html("");
+	reloadList("");	
+};
+//小时数由低到高
+function workhours_0(){
+	WORKHOURSSORT = "1";
+	UPDATED_DATE_SORT = "";
+	$("#machine_list").html("");
+	reloadList("");	
+};
+//小时数由高到低
+function workhours_1(){
+	WORKHOURSSORT = "0";
+	UPDATED_DATE_SORT = "";
+	$("#machine_list").html("");
+	reloadList("");	
+};
+
+
+//-----------------省份筛选-----------------------------------------------
+$("#province").add("#search_all").click(function(){
+	$("#Province_ul").html("");
+	
+	$.ajax({
+	type:"POST",
+	url:"/api/area/retrievePro",
+	data:"",
+	dataType:'json',
+	async:false,
+	success:function(data){
+		for(i=0;i<data.length;i++){
+			$("#Province_ul").append("<li id="+data[i].id+" data-dismiss=\"modal\" onclick=\"Province("+data[i].id+",'"+data[i].area+"')\" >"+data[i].area+"</li>");
+		};
+	},error:function(XMLHttpRequest, textStatus, errorThrown){
+	  switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				alert("没有更多数据");
+				break;
+			default:
+				alert('服务器错误请重试');
+		}
+	}
+});
+});
+//筛选省份
+function Province(id,area){
+	PROVINCE = id;
+	$("#search_all").text(area);
+	$("#machine_list").html("");
+	reloadList("");	
+}
+//-----------------城市筛选-----------------------------------------------
+$("#Ctiy").click(function(){
+	$("#Province_ul").html("");
+	var json ={"pro_id" : PROVINCE};
+	$.ajax({
+	type:"POST",
+	url:"/api/area/retrieveCityJson",
+	data:$.toJSON(json),
+	dataType:'json',
+	async:false,
+	success:function(data){
+		for(i=0;i<data.length;i++){
+			$("#Province_ul").append("<li id="+data[i].id+" data-dismiss=\"modal\" onclick=\"City("+data[i].id+")\" >"+data[i].area+"</li>");
+		};
+		
+	},error:function(XMLHttpRequest, textStatus, errorThrown){
+	  switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				alert("没有更多数据");
+				break;
+			default:
+				alert('服务器错误请重试');
+		}
+	}
+});
+});
+//筛选城市
+function City(id){
+	CITY = id;
+	$("#machine_list").html("");
+	reloadList("");	
+}
+//-----------------距离筛选-------------------------------------------------------------------------
+//$("#distance").click(function(){
+//	$("#more_list").html("");
+//	$("#more_list").append('<ul><li data-dismiss="modal">不限</li><li data-dismiss="modal" onclick="dis_10()">10千米以内</li><li data-dismiss="modal">20千米以内</li><li data-dismiss="modal">50千米以内</li></ul>');	
+//});
+//
+//function dis_10(){
+//	DISTANCE = "10";
+//	UPDATED_DATE_SORT = "0";
+//	$("#machine_list").html("");
+//	reloadList("");	
+//};
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

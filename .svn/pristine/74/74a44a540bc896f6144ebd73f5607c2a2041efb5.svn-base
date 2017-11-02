@@ -1,0 +1,72 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+
+
+<script>
+
+$(function(){
+
+
+});//function 主函数结束
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+    
+    
+  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          苗条
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+       <a href="recharge/1/7">短期七天</a><br>
+       <a href="recharge/4/15">中期十五天</a><br>
+       <a href="recharge/7/30">长期三十天</a>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          塑型
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+        <a href="recharge/2/7">短期七天</a><br>
+       <a href="recharge/5/15">中期十五天</a><br>
+       <a href="recharge/8/30">长期三十天</a>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingThree">
+      <h4 class="panel-title">
+        <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          强健
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">
+        <a href="recharge/3/7">短期七天</a><br>
+       <a href="recharge/6/15">中期十五天</a><br>
+       <a href="recharge/9/30">长期三十天</a>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  	
+  </div>
+  
+</div> <!--content结束-->
+
+{% endblock %}

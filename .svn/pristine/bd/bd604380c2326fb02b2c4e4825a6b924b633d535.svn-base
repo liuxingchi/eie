@@ -1,0 +1,485 @@
+{% extends 'YdzyJxBundle:Jx:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<script>
+var CATEGORY=1;
+var BRAND=0;
+var PROVINCE=-1;
+var CITY=-1;
+var WORKHOURS_MIN = 0;
+var WORKHOURS_MAX = 99999;
+var FACTORY_MIN = 0;
+var FACTORY_MAX = 100;
+var TONN_MIN = 0;
+var TONN_MAX = 100;
+var PRICE_MIN = 0;
+var PRICE_MAX = 99999;
+var KEYWORD = "";
+var DATESORT = "0";
+var FACTORYSORT = "-1";
+var WORKHOURSSORT = "-1";
+var PRICESORT = "-1";
+</script>
+<script src="{{ asset('bundles/jxbundle/js/page.js') }}"></script>
+<script>
+
+function reloadList(json_data,current){
+	$("#machine_list").html("");
+	var current = current;
+	page(current);
+	
+	if(json_data==""){
+		var json={
+			"mark": "1",
+			"start": "0",
+			"num": "20",
+			"keyword":KEYWORD,
+			"brand_id":BRAND,
+			"category_id":CATEGORY,
+			"province":PROVINCE,
+			"workhours_min":WORKHOURS_MIN,
+			"workhours_max":WORKHOURS_MAX,
+			"tonn_min":TONN_MIN,
+			"tonn_max":TONN_MAX,
+			"sale_price_min":PRICE_MIN,
+			"sale_price_max":PRICE_MAX,
+			'factory_year_min':FACTORY_MIN,
+			'factory_year_max':FACTORY_MAX,
+			"updated_date_sort":DATESORT,
+			"workhours_sort":WORKHOURSSORT,
+			"sale_price_sort":PRICESORT,
+			"factory_year_sort":FACTORYSORT
+			};
+		}else{
+			var json = json_data;
+			}
+  	ajaxPost(
+		'app_dev.php/api/machine/retrieveByFilter',
+		json,
+		function(data, textStatus){
+		  //alert(data.length);
+		  for(var i=0;i<data.length;i++){
+			//alert(data[i].pic_all);
+			var updated_date = data[i].updated_date.substr(0,11);
+			
+			if(data[i].machine_name.length<=28){var machine_name = data[i].machine_name;}
+			else{var machine_name = data[i].machine_name.substr(0,28)+"...";}
+			
+			if(data[i].sale_price==0){var sale_price = "面议";}else{var sale_price = data[i].sale_price+"万";}
+			if(data[i].factory_year_full=="0年月"){var factory_year = "";}else{var factory_year = data[i].factory_year_full;}
+			if(data[i].workhours==0){var workhours = "";}else{var workhours=data[i].workhours+"小时　|　";}
+			if(data[i].tonn==0){var tonn = "";}else{var tonn = data[i].tonn+"吨　|";}
+			if(data[i].province==null){var province = "";var city="";}else{var province = data[i].province+"　";var city=data[i].city+"　";}
+     $("#machine_list").append("<div class=\"col-sm-3\" style=\"border:#cdcdcd 1px solid; height:110px; padding:0;\"> <a href='content/"+data[i].machine_id+"' target='_blank'><ul style=\"width:210px; padding:0; padding-top:2px;\" id=\"list_img_ul\"> <li style=\"float:left;\" id='"+data[i].machine_id+"0'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"1'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"2'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"3'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"4'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"5'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> </ul></a> </div> <div class=\"col-sm-7\" style=\"height:110px;\"> <a href='content/"+data[i].machine_id+"' target='_blank'><p style=\"color:#b40202; text-decoration:underline;font-size:14px;font-weight:700;\">"+machine_name+"</p></a> <p> <span style=\"padding:15px;padding-left:0;\">"+data[i].brand+"</span> | <span style=\"padding:15px;\">"+data[i].model+"</span> | <span style=\"padding:15px;\">"+tonn+"</span><span>"+workhours+"</span><span>"+factory_year+"</span> </p> <p> <span>"+province+"</span> <span>"+city+"</span> <span>"+updated_date+"发布</span> </p> <p> <span style=\"padding:15px;padding-left:0;\">"+data[i].linker+"</span> <span style=\"padding:15px;\">"+data[i].linker_tel+"</span> </p> </div> <div class=\"col-sm-2\" style=\"height:110px; font-size:20px; color:#b40202;line-height:90px;font-weight:500;text-align:right;\">"+sale_price+"</div> <img src=\"{{ asset('bundles/jxbundle/images/list_hr.png') }}\"/>");
+        //判断是否是false，如果不是false，将图片填充上
+        if (data[i].pic_all) {
+          var str = data[i].pic_all;
+          var arr = new Array();
+          arr = str.split(",");
+          //alert(arr[0]);
+          for(var j=0;j<=arr.length-1;j++){
+            //alert(arr[j]);
+            //var lihtml = $("#"+data[i].machine_id+j).attr("id");
+            $("#"+data[i].machine_id+j).html("<img src='"+arr[j]+"'/>");
+            //alert(lihtml);
+          }
+        }; 
+      }//结束循环
+	
+    },
+    function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+				alert('加载数据出现错误，请重试');
+		}
+    }
+  );
+}
+function reloadBrand(id){
+
+	  var json = { "category_id": id};
+            ajaxPost(
+              'app_dev.php/api/brand/retrieve',
+              json,
+              function(data, textStatus){
+           		$("#brand_first").html("");
+				$("#other_brand_div").remove();
+                for(var i=0;i<18;i++){
+                  $("#brand_first").append("　<a href='#' title='"+data[i].id+"' onclick='brandFilter(this)'>"+data[i].brand_name+"</a>");
+                }//结束循环
+				if(data.length>=19){
+					$("#index_brand").append("<div class='btn-group col-sm-1' style='padding-left:5px;' id='other_brand_div'><span data-toggle='dropdown'>其他<span class='caret'></span></span><ul class='dropdown-menu' role='menu' id='other_brand'></ul></div>");
+                for(var i=19;i<data.length;i++){
+					$("#other_brand").append("<li><a href='#' title='"+data[i].id+"' onclick='brandFilter(this)'>"+data[i].brand_name+"</a></li>");
+				  }
+				 }
+              },
+              function(XMLHttpRequest, textStatus, errorThrown){
+                alert("加载品牌出现错误，请刷新重试");
+              }
+          );	
+}
+function loadProvince(){
+		//调取所有的省份
+		var province_json={};
+		ajaxPost(
+		'api/area/retrievePro',
+		province_json,
+		function(data, textStatus){
+		  //alert(data.length);
+		  for(var i=0;i<16;i++){
+			//alert(data[i].pic_all);
+			$("#province_first").append("　<a href='#' title='"+data[i].id+"' onclick='provinceFilter(this)'>"+data[i].area+"</a>");
+		   
+		  }//结束循环
+		  
+		  for(var i=17;i<data.length;i++){
+			//alert(data[i].pic_all);
+			$("#other_province").append("<li><a href='#' title='"+data[i].id+"' onclick='provinceFilter(this)'>"+data[i].area+"</a></li>");
+		   
+		  }
+		},
+		function(XMLHttpRequest, textStatus, errorThrown){
+		  alert("省市调取出现错误，请刷新重试");
+		}
+	  );
+	}
+
+//筛选功能（brand）
+function brandFilter(oClick){
+	var a = document.getElementById('brand_first').getElementsByTagName('a');
+	for(var i=0;i<a.length;i++){
+    a[i].style.color='#000';
+	}
+	$("#index_brand_all").css("color","#000");
+	$("#other_brand a").css("color","#000");
+	oClick.style.color='#b40202';
+	BRAND = oClick.title;
+	
+	reloadList("",0);
+	}
+//筛选province
+function provinceFilter(oClick){
+	PROVINCE = oClick.title;
+	$("#index_province_all").css("color","#000");
+	$("#other_province a").css("color","#000");
+	$("#province_first a").css("color","#000");
+	oClick.style.color='#b40202';
+	
+	reloadList("",0);
+	
+	}
+
+
+$(function(){
+loadnav();
+$("#search_close").attr("style","display:none");
+	$("#search_close").click(function(){
+		$("#search_box").val("");
+		$("#search_close").attr("style","display:none");
+		});
+
+loadProvince();
+reloadBrand(1);
+var json = {"mark": "1",
+			"updated_date_sort":"0",
+			"start": "0",
+			"num": "20",
+			"category_id":"1"
+			};
+reloadList(json,0);		
+
+
+//筛选功能（category）
+$('#index_category > a').click(function(){
+	//alert($(this).attr("value"));
+	var category_id = $(this).attr("value");
+	if(category_id==2){$("#index_zz_tonn").add("#index_zz_price").show();$("#index_other_tonn").add("#index_other_price").hide();}
+	else{$("#index_zz_tonn").add("#index_zz_price").hide();$("#index_other_tonn").add("#index_other_price").show();}
+	
+	$("#index_filter a").css("color","#000");
+	$(".index_filter_all").css("color","#b40202");
+	$('#index_category > a').css("color","#000");
+	$(this).css("color","#b40202");
+	reloadBrand($(this).attr("value"));
+	$("#index_brand_all").css("color","#b40202");
+	CATEGORY = $(this).attr("value");
+	var json = {
+		"mark": "1",
+		"start": "0",
+		"num": "20",
+		"category_id":CATEGORY,
+		"updated_date_sort":"0"
+		};
+	reloadList(json,0);
+	BRAND = 0;
+	PROVINCE = -1;
+	CITY = -1;
+	WORKHOURS_MIN = 0;
+	WORKHOURS_MAX = 99999;
+	FACTORY_MIN = 0;
+	FACTORY_MAX = 100;
+	TONN_MIN = 0;
+	TONN_MAX = 100;
+	PRICE_MIN = 0;
+	PRICE_MAX = 99999;
+	KEYWORD = "";
+	
+	
+	page(0);
+	});
+//brand 全部
+$('#index_brand_all').click(function(){
+	var a = document.getElementById('brand_first').getElementsByTagName('a');
+	for(var i=0;i<a.length;i++){
+    a[i].style.color='#000';
+	}
+	$("#other_brand a").css("color","#000");
+	$(this).css("color","#b40202");
+	BRAND = 0;
+	reloadList("",0);
+	});
+
+//province 全部
+$('#index_province_all').click(function(){	
+	$("#province_first a").css("color","#000");
+	$("#other_province a").css("color","#000");
+	$(this).css("color","#b40202");
+	PROVINCE = -1;
+	reloadList("",0);
+	});
+
+//筛选小时数
+$("#index_workhours a").click(function(){
+	WORKHOURS_MIN = $(this).attr("min");
+	WORKHOURS_MAX = $(this).attr("max");
+	
+	$('#index_workhours a').css("color","#000");
+	$(this).css("color","#b40202");
+	
+	reloadList("",0);
+	});
+
+
+//筛选tonn
+$("#index_other_tonn a").add("#index_zz_tonn a").click(function(){
+	TONN_MIN = $(this).attr("min");
+	TONN_MAX = $(this).attr("max");
+	
+	$('#index_other_tonn a').add("#index_zz_tonn a").css("color","#000");
+	$(this).css("color","#b40202");
+	
+	reloadList("",0);
+	});
+
+
+//筛选price
+$("#index_other_price a").add("#index_zz_price a").click(function(){
+	PRICE_MIN = $(this).attr("min");
+	PRICE_MAX = $(this).attr("max");
+	
+	$('#index_other_price a').add("#index_zz_price a").css("color","#000");
+	$(this).css("color","#b40202");
+
+	reloadList("",0);
+	});
+
+
+
+//筛选出厂年限
+$("#index_factory a").click(function(){
+	FACTORY_MIN = $(this).attr("min");
+	FACTORY_MAX = $(this).attr("max");
+	$('#index_factory a').css("color","#000");
+	$(this).css("color","#b40202");
+	
+	reloadList("",0);
+	});
+
+
+//价钱排序
+$("#index_price_sort").toggle(function(){
+	$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+	$("#index_price_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_red.png') }}");
+	//从高到低
+	DATESORT = "-1";
+	FACTORYSORT = "-1";
+	WORKHOURSSORT ="-1";
+	PRICESORT = "0";
+	
+	reloadList("",0);
+	},function(){
+		$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+		$("#index_price_sort img").attr("src","{{ asset('bundles/jxbundle/images/up_red.png') }}");
+		
+		//从低到高
+	DATESORT = "-1";
+	FACTORYSORT = "-1";
+	WORKHOURSSORT ="-1";
+	PRICESORT = "1";
+	reloadList("",0);
+		});
+
+//出厂日期排序
+$("#index_factory_sort").toggle(function(){
+	$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+	$("#index_factory_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_red.png') }}");
+	//从高到低
+	DATESORT = "-1";
+	FACTORYSORT = "0";
+	WORKHOURSSORT ="-1";
+	PRICESORT = "-1";
+			
+	reloadList("",0);
+	},function(){
+		$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+		$("#index_factory_sort img").attr("src","{{ asset('bundles/jxbundle/images/up_red.png') }}");
+		
+		//从低到高
+	DATESORT = "-1";
+	FACTORYSORT = "1";
+	WORKHOURSSORT ="-1";
+	PRICESORT = "-1";
+	
+	reloadList("",0);
+		});
+
+
+//小时数排序
+$("#index_workhours_sort").toggle(function(){
+	$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+	$("#index_workhours_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_red.png') }}");
+	//从高到低
+	DATESORT = "-1";
+	FACTORYSORT = "-1";
+	WORKHOURSSORT ="0";
+	PRICESORT = "-1";
+	
+	reloadList("",0);
+	},function(){
+		$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+		$("#index_workhours_sort img").attr("src","{{ asset('bundles/jxbundle/images/up_red.png') }}");
+		
+		//从低到高
+	DATESORT = "-1";
+	FACTORYSORT = "-1";
+	WORKHOURSSORT ="1";
+	PRICESORT = "-1";
+	
+	reloadList("",0);
+		});
+
+//发布日期排序
+$("#index_date_sort").toggle(function(){
+	$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+	$("#index_date_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_red.png') }}");
+	//从高到低
+	DATESORT = "0";
+	FACTORYSORT = "-1";
+	WORKHOURSSORT ="-1";
+	PRICESORT = "-1";
+	
+	reloadList("",0);
+	},function(){
+		$(".index_sort img").attr("src","{{ asset('bundles/jxbundle/images/down_grey.png') }}");
+		$("#index_date_sort img").attr("src","{{ asset('bundles/jxbundle/images/up_red.png') }}");
+		
+		//从低到高
+	DATESORT = "1";
+	FACTORYSORT = "-1";
+	WORKHOURSSORT ="-1";
+	PRICESORT = "-1";
+	
+	reloadList("",0);
+		});
+
+
+//搜索
+$("#search_btn").click(function(){
+	var keyword = $("#search_box").val();
+	KEYWORD = keyword;
+	reloadList("",0);
+	});
+
+document.getElementById("search_box").onkeyup = function(e){
+				var me = this;
+				e = e|| window.event;
+				var keycode = e.keyCode;
+				if(keycode === 13){
+				var keyword = $("#search_box").val();
+				KEYWORD = keyword;
+				reloadList("",0);
+				}
+			};
+
+});//function 主函数结束
+
+
+
+</script>
+ 
+  <div class="col-sm-12" id="search_line" style="margin-top:15px; padding:0;">
+  		<!--<div class="col-sm-4" id="search_box" style=" padding:0;height:34px;background-image:url({{ asset('bundles/jxbundle/images/search_box.png') }});background-repeat:no-repeat;"></div>-->
+        
+        <div class="col-sm-6" style="padding:0;">
+        <input type="text" id="search_box" class="form-control" onKeyUp="search_box();" maxlength="100" autocomplete="off" placeholder="支持对品牌,型号,联系电话,联系人,标题的多词搜索,多词用空格间隔"><em id="search_close"></em>
+        </div>
+        <div class="col-sm-2" style="padding:0;"><a href="#"><img id="search_btn" src="{{ asset('bundles/jxbundle/images/search_btn.png') }}"/></a></div>
+        <div class="col-sm-4" id="create_btn" align="right" style="padding-right:5px;"><a href="{{url('jx_publish_sale')}}"><img src="{{ asset('bundles/jxbundle/images/create.png') }}" /></a></div>
+  </div> <!--搜索框结束-->
+  
+  <div id="content" style="position:relative; width:100%; margin-top:10px; padding:0;" class="col-sm-12">
+  <div class="tabs"> <!--tab选择框-->
+    <ul>
+        <li class="first"><div style="float:left; padding-left:20px;"><img src="{{ asset('bundles/jxbundle/images/category_list.png') }}"/></div><div id="category_list_div2">机械选择</div></li>
+        <li class="last"><a href="{{url('jx_map',{'location': '1'})}} " target="_blank">从地图上查看机械</a></li>
+    </ul>
+
+</div>  <!--tab选择框结束-->
+	<div id="index_filter" class="col-sm-12" style="padding:0;"> <!--类别选择框-->
+    
+    <div style="padding-top:15px;" id="index_category" class="col-sm-12"><span class="bold">机种</span>：<a href="#" value="1" style="color:#b40202;">挖掘机</a>　<a href="#" value="2">装载机</a>　<a href="#" value="4">推土机</a>　<a href="#" value="5">起重机</a>　<a href="#" value="6">混凝土设备</a>　<a href="#" value="7">其他机械</a> </div> 
+     
+    <div style="padding-top:10px;" class="col-sm-12"><div class="col-sm-11" style="padding:0;"><span class="bold">省份</span>：<a href="#" id="index_province_all" class="index_filter_all">全部</a> <span id="province_first"></span></div> <div class="btn-group col-sm-1" style="padding-left:5px;"><span data-toggle="dropdown">其他<span class="caret"></span></span><ul class="dropdown-menu" role="menu" id="other_province"></ul></div> </div>
+    
+     <div style="padding-top:10px;" class="col-sm-12" id="index_brand"><div class="col-sm-11" style="padding:0;"><span class="bold">品牌</span>：<a href="#" id="index_brand_all" class="index_filter_all" style="color:#b40202">全部</a> <span id="brand_first"></span></div></div>
+    
+	 <div style="padding-top:10px;" id="index_workhours" class="col-sm-12"><span class="bold">小时</span>：<a href="#" style="padding-right:12px;color:#b40202;" class="index_filter_all">全部</a> <a href="#" min="0" max="2000">0-2000</a>　<a href="#" min="2000" max="4000">2000-4000</a>　<a href="#" min="4000" max="8000">4000-8000</a>　<a href="#" min="8000" max="10000">8000-10000</a>　<a href="#" min="10000" max="15000">10000-15000</a>　<a href="#" min="15000" max="20000">15000-20000</a>　<a href="#" min="20000" max="999999">20000以上</a> </div> 
+
+	 <div style="padding-top:10px;display:none;" id="index_zz_tonn" class="col-sm-12"><span class="bold">吨位</span>：<a href="#" style="padding-right:12px;color:#b40202;" class="index_filter_all">全部</a> <a href="#" min="0" max="3">3吨及以下</a>　<a href="#" min="3" max="4">4吨</a>　<a href="#" min="4" max="5">5吨</a>　<a href="#" min="5" max="99999">5吨以上</a></div> 
+
+	 <div style="padding-top:10px;" id="index_other_tonn" class="col-sm-12"><span class="bold">吨位</span>：<a href="#" style="padding-right:12px;color:#b40202;"class="index_filter_all">全部</a> <a href="#" min="0" max="6">6吨及以下</a>　<a href="#" min="6" max="13">6-13吨</a>　<a href="#" min="13" max="20">13-20吨</a>　<a href="#" min="20" max="25">20-25吨</a>　<a href="#" min="25" max="30">25-30吨</a>　<a href="#" min="30" max="35">30-35吨</a>　<a href="#" min="35" max="99999">35吨以上</a>　</div> 
+
+	 <div style="padding-top:10px;display:none;" id="index_zz_price" class="col-sm-12"><span class="bold">价格</span>：<a href="#" style="padding-right:12px;color:#b40202;" class="index_filter_all">全部</a> <a href="#" min="0" max="10">10万及以下</a>　<a href="#" min="10" max="15">10-15万</a>　<a href="#" min="15" max="35">15-35万</a>　<a href="#" min="35" max="99999">35万以上</a></div> 
+
+	 <div style="padding-top:10px;" id="index_other_price" class="col-sm-12"><span class="bold">价格</span>：<a href="#" style="padding-right:12px;color:#b40202;" class="index_filter_all">全部</a> <a href="#" min="0" max="10">10万以下</a>　<a href="#" min="10" max="20">10-20万</a>　<a href="#" min="20" max="50">20-50万</a>　<a href="#" min="50" max="110">50-110万</a>　<a href="#" min="110" max="99999">110万以上</a></div> 
+
+	 <div style="padding-top:10px;" id="index_factory" class="col-sm-12"><span class="bold">出厂年限</span>：<a href="#" style="padding-right:12px;color:#b40202;" class="index_filter_all">全部</a> <a href="#" min="0" max="2">0-2年</a>　<a href="#" min="2" max="5">2-5年</a>　<a href="#" min="5" max="8">5-8年</a>　<a href="#" min="8" max="10">8-10年</a>　<a href="#" min="10" max="100">10年以上</a> </div> 
+
+    </div> <!--类别选择框结束-->
+  <div class="col-sm-12" style="padding-left:0; padding-right:0; margin-top:20px;">
+  	<div class="col-sm-9" style="overflow:hidden; padding-left:0;"><span style="font-size:16px; font-weight:bold; color:#b40202; padding-left:5px;">机械列表</span><span style="float:left; position:absolute;left:80px; color:#999; font-size:10px; line-height:25px;" id="index_list_num"></span>
+    <span style="float:right; padding-right:5px; line-height:20px;">排序：
+    <a href="#" style="color:#000;" class="index_sort" id="index_price_sort">价格<span><img src="{{ asset('bundles/jxbundle/images/down_grey.png') }}"/></span></a>　
+    <a href="#" style="color:#000;" class="index_sort" id="index_factory_sort">出厂日期<span><img src="{{ asset('bundles/jxbundle/images/down_grey.png') }}"/></span></a>　   
+    <a href="#" style="color:#000;" class="index_sort" id="index_workhours_sort">小时数<span><img src="{{ asset('bundles/jxbundle/images/down_grey.png') }}"/></span></a>　
+    <a href="#" style="color:#000;" class="index_sort" id="index_date_sort">发布日期<span><img src="{{ asset('bundles/jxbundle/images/down_red.png') }}"/></span></a>　
+    </span>
+    <img src="{{ asset('bundles/jxbundle/images/hr.png') }}"/>
+   <div class="col-sm-12" id="machine_list"></div>
+    </div>
+    
+    
+  	<div class="col-sm-3" style="padding-right:0px; padding-left:20px;">
+    	{{ include('YdzyJxBundle:Jx:right.html.twig')}}    
+    </div><!--右侧广告位展示-->
+  </div>
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>  
+    </div><!--分页结束-->
+</div> <!--content结束-->
+{% endblock %}

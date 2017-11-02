@@ -1,0 +1,15 @@
+<html>
+<body>
+
+<form action="/app_dev.php/file/uploadimage" method="post" enctype="multipart/form-data">
+<fieldset> 
+<legend>图片上传</legend> 
+<label for="file">Filename:</label>
+<input type="file" name="imageFile" id="imageFile" /> 
+<br />
+<input type="submit" name="submit" value="Submit" />
+</fieldset>
+</form>
+
+</body>
+</html>

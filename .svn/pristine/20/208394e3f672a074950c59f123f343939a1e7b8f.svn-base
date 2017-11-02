@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+		<head>
+				<title>待租豪宅</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-tab.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-input.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-img.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-list.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-btn.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-box.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-color.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-res.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+	    	<script src="{{ asset('bundles/lzh/js/zy_control.js')}}"></script>
+	    	<script src="{{ asset('bundles/lzh/js/zy_click.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/zy_anim.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/selling.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-ui.js')}}"></script>
+				
+		</head>
+		<body style="background:#f0f0f0;">
+				<div class="ln_a" style="">    <!-- 搜索经纪人 ln_ -->
+						<div class="le_a" style="">				
+								<div class="le_b">		<!-- download App 通用-->
+										<div class="le_c">
+												<img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width='100%'/>
+										</div>
+										<div class="ld_e">
+												<div class="le_f">标题该软件是...</div>
+												<div class="le_g">该软件是丽兹行...</div>
+												<div class="le_h uba uc-a">下载软件</div>
+										</div>
+								</div>	
+						</div>
+						<div class="HTL_1 uc-a" style=""></div>
+						<div class="ln_wln_c" style="">   <!-- display:none;  表示移动  在售豪宅下面全部-->
+								<div class="ln_h uc-a"><input id="ln_all_keyword" type="text" value="请输入关键字" style="margin-left:3%;outline:none;color:#ccc;border:0px;height:100%;width:94%;font-size:20px;" onblur="ln1_LoseFocus(this);" onfocus="ln1_GetFocus(this);"/></div>
+								<div class="ln_i1 uc-a">
+										<div class="ln_j2 ubb" onclick="ln_j3getDistrict();">
+												<div class="ln_k2">商圈</div>
+												<div class="ln_l2">不限</div>
+												<div class="ln_n2">
+														<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+												</div>		
+										</div>
+										<div class="ln_j3"></div>
+										<div class="ln_j5 ubb" onclick="ln_j4displayLoop('ln_j4')">
+												<div class="ln_k3">价格</div>
+												<div class="ln_l3">不限</div>
+												<div class="ln_n3">
+														<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+												</div>		
+										</div>
+										<div class="ln_j4" style="display:none;">
+												<div class="ln_j4a" onclick="ln_j4getMark('ln_j4a')">
+														<div class="ln_j4b">不限</div>
+														<div class="ln_j4c"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%' /></div>	
+												</div>
+												<div class="ln_j4a1" onclick="ln_j4getMark('ln_j4a1')"><div class="ln_j4b">800万以下</div><div class="ln_j4c"></div>	</div>
+												<div class="ln_j4a2" onclick="ln_j4getMark('ln_j4a2')"><div class="ln_j4b">800-1000万</div><div class="ln_j4c"></div>	</div>
+												<div class="ln_j4a3" onclick="ln_j4getMark('ln_j4a3')"><div class="ln_j4b">1000-1500万</div><div class="ln_j4c"></div>	</div>
+												<div class="ln_j4a4" onclick="ln_j4getMark('ln_j4a4')"><div class="ln_j4b">1500-2000万</div><div class="ln_j4c"></div>	</div>
+												<div class="ln_j4a5" onclick="ln_j4getMark('ln_j4a5')"><div class="ln_j4b">2000-3000万</div><div class="ln_j4c"></div>	</div>
+												<div class="ln_j4a6" onclick="ln_j4getMark('ln_j4a6')"><div class="ln_j4b">3000-5000万</div><div class="ln_j4c"></div>	</div>
+												<div class="ln_j4a7" onclick="ln_j4getMark('ln_j4a7')"><div class="ln_j4b">500万以上</div><div class="ln_j4c"></div>	</div>
+										</div>
+										<div class="ln_j6 ubb" onclick="ln_j4displayLoop('ln_j7')">
+												<div class="ln_k4">面积</div>
+												<div class="ln_l4">不限</div>
+												<div class="ln_n4">
+														<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+												</div>		
+										</div>
+										<div class="ln_j7" style="display:none;">
+												<div class="ln_j7a" onclick="ln_j7getMark('ln_j7a')">
+														<div class="ln_j7b">不限</div>
+														<div class="ln_j7c"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%' /></div>	
+												</div>
+												<div class="ln_j7a1" onclick="ln_j7getMark('ln_j7a1')"><div class="ln_j7b">90㎡以下</div><div class="ln_j7c"></div></div>
+												<div class="ln_j7a2" onclick="ln_j7getMark('ln_j7a2')"><div class="ln_j7b">90㎡-110㎡</div><div class="ln_j7c"></div></div>
+												<div class="ln_j7a3" onclick="ln_j7getMark('ln_j7a3')"><div class="ln_j7b">110㎡-140㎡</div><div class="ln_j7c"></div></div>
+												<div class="ln_j7a4" onclick="ln_j7getMark('ln_j7a4')"><div class="ln_j7b">140㎡-170㎡</div><div class="ln_j7c"></div></div>
+												<div class="ln_j7a5" onclick="ln_j7getMark('ln_j7a5')"><div class="ln_j7b">170㎡-200㎡</div><div class="ln_j7c"></div></div>
+										</div>
+										<div class="ln_j8 ubb" onclick="ln_j4displayLoop('ln_j9')">
+												<div class="ln_k5">房型</div>
+												<div class="ln_l5">不限</div>
+												<div class="ln_n5">
+														<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+												</div>		
+										</div>
+										<div class="ln_j9" style="display:none;">
+												<div class="ln_j9a" onclick="ln_j9getMark('ln_j9a')">
+														<div class="ln_j9b">不限</div>
+														<div class="ln_j9c"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%' /></div>	
+												</div>
+												<div class="ln_j9a1" onclick="ln_j9getMark('ln_j9a1')"><div class="ln_j9b">一居</div><div class="ln_j9c"></div></div>
+												<div class="ln_j9a2" onclick="ln_j9getMark('ln_j9a2')"><div class="ln_j9b">二居</div><div class="ln_j9c"></div></div>
+												<div class="ln_j9a3" onclick="ln_j9getMark('ln_j9a3')"><div class="ln_j9b">三居</div><div class="ln_j9c"></div></div>
+												<div class="ln_j9a4" onclick="ln_j9getMark('ln_j9a4')"><div class="ln_j9b">四居</div><div class="ln_j9c"></div></div>
+												<div class="ln_j9a5" onclick="ln_j9getMark('ln_j9a5')"><div class="ln_j9b">五居</div><div class="ln_j9c"></div></div>
+										</div>
+										<div class="ln_j10 ubb" onclick="ln_j4displayLoop('ln_j11')">
+												<div class="ln_k6">特色</div>
+												<div class="ln_l6">不限</div>
+												<div class="ln_n6">
+														<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+												</div>		
+										</div>
+										<div class="ln_j11" style="display:none;height:450px;overflow-y:scroll;">
+												<div class="ln_j11a" onclick="ln_j11getMark('ln_j11a')">
+														<div class="ln_j11b">不限</div>
+														<div class="ln_j11c"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%' /></div>	
+												</div>
+												<div class="ln_j11a1" onclick="ln_j11getMark('ln_j11a1')"><div class="ln_j11b">学区房</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a2" onclick="ln_j11getMark('ln_j11a2')"><div class="ln_j11b">南北通透</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a3" onclick="ln_j11getMark('ln_j11a3')"><div class="ln_j11b">全新房</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a4" onclick="ln_j11getMark('ln_j11a4')"><div class="ln_j11b">景观房</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a5" onclick="ln_j11getMark('ln_j11a5')"><div class="ln_j11b">急售</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a6" onclick="ln_j11getMark('ln_j11a6')"><div class="ln_j11b">花园</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a7" onclick="ln_j11getMark('ln_j11a7')"><div class="ln_j11b">露台</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a8" onclick="ln_j11getMark('ln_j11a8')"><div class="ln_j11b">免税</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a9" onclick="ln_j11getMark('ln_j11a9')"><div class="ln_j11b">钥匙房</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a10" onclick="ln_j11getMark('ln_j11a10')"><div class="ln_j11b">地暖</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a11" onclick="ln_j11getMark('ln_j11a11')"><div class="ln_j11b">明厨明卫</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a12" onclick="ln_j11getMark('ln_j11a12')"><div class="ln_j11b">复式</div><div class="ln_j11c"></div></div>
+												<div class="ln_j11a13" onclick="ln_j11getMark('ln_j11a13')"><div class="ln_j11b">观景阳台</div><div class="ln_j11c"></div></div>
+										</div>
+										<div class="ln_j12" onclick="ln_j4displayLoop('ln_j13')">
+												<div class="ln_k7">类型</div>
+												<div class="ln_l7">不限</div>
+												<div class="ln_n7">
+														<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+												</div>		
+										</div>
+										<div class="ln_j13" style="display:none;height:450px;overflow-y:scroll;">
+												<div class="ln_j13a" onclick="ln_j13getMark('ln_j11a')">
+														<div class="ln_j13b">不限</div>
+														<div class="ln_j13c"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%' /></div>	
+												</div>
+												<div class="ln_j13a1" onclick="ln_j13getMark('ln_j13a1')"><div class="ln_j13b">公寓</div><div class="ln_j13c"></div></div>
+												<div class="ln_j13a2" onclick="ln_j13getMark('ln_j13a2')"><div class="ln_j13b">别墅</div><div class="ln_j13c"></div></div>
+												<div class="ln_j13a3" onclick="ln_j13getMark('ln_j13a3')"><div class="ln_j13b">商铺</div><div class="ln_j13c"></div></div>
+												<div class="ln_j13a4" onclick="ln_j13getMark('ln_j13a4')"><div class="ln_j13b">写字楼</div><div class="ln_j13c"></div></div>
+												<div class="ln_j13a5" onclick="ln_j13getMark('ln_j13a5')"><div class="ln_j13b">车位</div><div class="ln_j13c"></div></div>
+										</div>
+								</div>
+								<div class="ln_o uc-a" onclick="ln_all_SearchHouse();">搜索</div>
+						</div>
+				</div>
+				<script>
+						if({{ House_Type }} == 1){
+								$(".HTL_1").html("在售豪宅");
+						}else if({{ House_Type }} == 2){
+								$(".HTL_1").html("一手豪宅");	
+						}else if({{ House_Type }} == 3){
+								$(".HTL_1").html("顶级豪宅");	
+						}else if({{ House_Type }} == 4){
+								$(".HTL_1").html("待租豪宅");	
+						}else{
+								$(".HTL_1").html("在售豪宅");		
+						}
+						
+				</script>
+		</body>	
+</html>

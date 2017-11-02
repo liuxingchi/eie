@@ -1,0 +1,77 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+$(function(){
+	var json = {};
+	
+    ajaxPost(
+             'app_dev.php/manage/menulist',
+             json,
+             function(data, textStatus){
+            	 for(var i=0;i<data.length;i++){
+  				   $("#checkbox").append("<input type='checkbox' name='checkbox' value='"+data[i].id+"'>"+data[i].name+" <br>"); 
+  		      }//结束循环
+                 },
+             function(XMLHttpRequest, textStatus, errorThrown){}
+         );
+              
+        
+});//function 主函数结束
+function post(){
+	 var str="";
+     $("input[name='checkbox']:checkbox").each(function(){ 
+         if($(this).attr("checked")){
+             str += $(this).val()+","
+         }
+     })
+//      if(str){
+//     	    str = str.substr(1);
+//          }else{
+//         	   str = '';
+//              }
+     if($("#name").val()==''||$("#description").val()==''){
+ 	    alert("必填项请填写完整");
+ 	    return false;
+ 		}
+     var json = {
+    		  "rolelist":str,
+    		  "name":$("#name").val(),
+    		  "description":$("#description").val()
+    	     };
+ 	
+     ajaxPost(
+              'app_dev.php/manage/addrole',
+              json,
+              function(data, textStatus){
+             	 window.location.href="role";
+                  },
+              function(XMLHttpRequest, textStatus, errorThrown){}
+          );
+     //str.split(",");
+     //alert(str[0]);  
+}
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+            
+                  <div class="form-group">
+                    <label>角色名</label>
+                    <input type="text" class="form-control" id="name" placeholder="输入要创建的角色名(必填)">
+                  </div>
+                  <div class="form-group">
+                    <label>角色描述</label>
+                    <input type="text" class="form-control" id="description" placeholder="角色描述(必填)">
+                  </div>
+                 
+                  <div id="checkbox">
+                  </div><br>
+                  <button onclick="post()" class="btn btn-default">保存</button>
+           
+          
+  </div>
+  	
+  
+</div> <!--content结束-->
+
+
+{% endblock %}

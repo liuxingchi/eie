@@ -1,0 +1,12 @@
+Ydzyfile_image_upload:
+    pattern:  /uploadimage
+    defaults: { _controller: YdzyFileBundle:Default:uploadImage }
+Ydzyfile_editor_upload:
+    pattern:  /uploadeditor
+    defaults: { _controller: YdzyFileBundle:File:uploadEditor }
+Ydzyfile_video_upload:
+    pattern:  /uploadvideo
+    defaults: { _controller: YdzyFileBundle:File:uploadVideo }
+Ydzyfile_file_upload:
+    pattern:  /uploadfile
+    defaults: { _controller: YdzyFileBundle:File:uploadFile }

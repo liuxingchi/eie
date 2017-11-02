@@ -1,0 +1,97 @@
+<?php ?>
+<script>
+
+$(function(){
+	//右侧推荐
+var recommend_json={
+	"start":"0",
+	"num":"5",
+	"updated_date_sort":"0",
+	"recommend":"1",
+	"mark":"1"
+	};
+ajaxPost(
+		'app_dev.php/api/machine/retrieveByFilter',
+		recommend_json,
+		function(data, textStatus){
+			for(var i=0;i<data.length;i++){
+				var machine_name = data[i].machine_name;
+				if(machine_name.length<=16){var machine_name_str = machine_name;}
+				else{var machine_name_str = machine_name.substr(0,16)+"...";}
+				$("#index_recommend").append("<li><span>■</span><a style='color:#000' href='content/"+data[i].machine_id+"' target='_blank'>"+machine_name_str+"</a><li>");
+				}
+			},
+		function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+				alert('加载推荐数据出现错误，请重试');
+		}
+    }
+);
+
+
+var post_json={
+	"start":"0",
+	"num":"5",
+	"post":"0"
+	};
+ajaxPost(
+		'app_dev.php/api/follownews',
+		post_json,
+		function(data, textStatus){
+			for(var i=0;i<data.length;i++){
+				var content = data[i].content;
+				if(content.length<=16){var content_str = content;}
+				else{var content_str = content.substr(0,16)+"...";}
+				$("#index_post").append("<li><span>■</span>"+content_str+"<li>");
+				}
+			},
+		function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+				alert('加载推荐数据出现错误，请重试');
+		}
+    }
+);
+
+
+
+	
+	});
+
+
+</script>
+<!--右侧第一个div-->
+    	<div style="border:#999 1px solid;border-radius: 6px; height:auto;"><a href="#Modal" data-toggle="modal" ><img src="{{ asset('bundles/jxbundle/images/right_img1.png') }}" style=" width:264px; height:300px;padding:7px;"/></a></div>
+    	<br/>
+       <!-- 右侧第二个div开始-->
+        <div style="border:#999 1px solid;border-radius:6px; padding:20px;height:auto;">
+        	<span style="font-size:18px; color:#F00; padding:0;" class="bold">最新消息</span>
+        	<img src="{{ asset('bundles/jxbundle/images/right_line.png') }}" style="padding:0;"/>
+          <ul id="right_ul2" style="padding:0;">
+            <li id="index_post"><li>
+          
+           </ul>
+            <img src="{{ asset('bundles/jxbundle/images/right_line.png') }}"/>
+            <span class="red" style="float:right; padding-right:5px;"><a target="_blank" href="{{url('jx_myfollow')}}">查看更多 ></a></span>
+            <br/><br/>
+        </div> <!--右侧第二个div结束-->
+        <br>
+         <!-- 右侧第三个div开始-->
+        <div style="border:#999 1px solid;border-radius:6px; padding:20px;height:auto;">
+        	<span style="font-size:18px; color:#F00; padding:0;" class="bold">热门推荐</span>
+        	<img src="{{ asset('bundles/jxbundle/images/right_line.png') }}" style="padding:0;"/>
+          <ul id="right_ul2" style="padding:0;">
+          <li id="index_recommend"></li>
+          </ul>
+            <img src="{{ asset('bundles/jxbundle/images/right_line.png') }}"/>
+            <span class="red" style="float:right; padding-right:5px;"><a target="_blank" href="{{url('jx_recommend')}}">查看更多 ></a></span>
+            <br/><br/>
+        </div> <!--右侧第三个div结束-->
+        

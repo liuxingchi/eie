@@ -1,0 +1,7 @@
+parameters:
+#    Ydzy_file.example.class: Ydzy\FileBundle\Example
+
+services:
+#    Ydzy_file.example:
+#        class: %Ydzy_file.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

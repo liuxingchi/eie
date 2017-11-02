@@ -1,0 +1,89 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script type="text/javascript" src="{{ asset('js/datetimepicker/js/bootstrap-datetimepicker.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/ckeditor/ckeditor.js') }}"></script>
+<script>
+$(function(){
+	CKEDITOR.replace( 'content' );
+	$(".form_date").datetimepicker({
+        language:  'zh-CN',
+        weekStart: 1,
+        todayBtn:  1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+})
+function dopost(){
+		var content=CKEDITOR.instances.content.getData();
+      var json = {
+    		  "content":content,
+    		  "title":$("#title").val(),
+    		  "showtime":getDateToUnix($("#showtime").val()),
+    		  "showaddress":$("#showaddress").val(),
+    		  "auctiontime":getDateToUnix($("#showtime").val()),
+    		  "auctionaddress":$("#auctionaddress").val()
+    	     };
+ 	
+     ajaxPost(
+              'app_dev.php/api/preshow/add',
+              json,
+              function(data, textStatus){
+             	 window.location.href="preshow";
+                  },
+              function(XMLHttpRequest, textStatus, errorThrown){
+                	  
+               }
+          );
+}
+
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+            
+                  <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" class="form-control" id="title"/>
+                  </div>
+                  <div class="form-group">
+                    <label>预展时间</label>
+                    <div class="input-group date form_date col-sm-4" data-date="" data-date-format="yyyy-mm-dd" data-link-field="showtime" data-link-format="yyyy-mm-dd">
+			         <input class="form-control" size="16" type="text" value="">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+			         </div>
+					<input type="hidden" id="showtime" value="" />
+                  </div>
+                  <div class="form-group">
+                    <label>预展地址</label>
+                    <input type="text" class="form-control" id="showaddress"/>
+                  </div>
+                <div class="form-group">
+                    <label>拍卖时间</label>
+                     <div class="input-group date form_date col-sm-4" data-date="" data-date-format="yyyy-mm-dd" data-link-field="auctiontime" data-link-format="yyyy-mm-dd">
+			         <input class="form-control" size="16" type="text" value="">
+					<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+			         </div>
+					<input type="hidden" id="auctiontime" value="" />
+                  </div>
+                  <div class="form-group">
+                    <label>拍卖地址</label>
+                    <input type="text" class="form-control" id="auctionaddress"/>
+                  </div>
+                  <div class="form-group">
+                    <label>拍卖信息</label>
+                    <textarea class="form-control" name="content" id="content" placeholder="详情（必填）"></textarea>
+                  </div>
+                  <div id="radio"></div><br>
+                  <button onclick="dopost()" class="btn btn-default">保存</button>
+           
+          
+  </div>
+  	
+  
+</div> <!--content结束-->
+
+
+{% endblock %}

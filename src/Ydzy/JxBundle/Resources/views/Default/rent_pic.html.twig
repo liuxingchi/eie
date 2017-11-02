@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+		<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi,width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=yes" />
+        <meta http-equiv="X-UA-Compatible" content="IE=7" />
+        <title>丽兹行图片浏览</title>
+        <link rel="stylesheet" href="{{ asset('bundles/jxbundle/css/slide.css')}}" type="text/css" />
+     <script type="text/javascript" src="{{ asset('bundles/jxbundle/js/iscroll.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/jxxq/jquery-1.10.2.js')}}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/jxbundle/js/hhSwipe.js')}}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/jquery.json-2.3.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/functions.js') }}"></script>
+<?php ?>
+<style>
+#scroller {
+	position: absolute;
+	z-index: 1;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	width: 1024px;
+	height: 100%;
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-text-size-adjust: none;
+	-moz-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
+	text-size-adjust: none;
+}
+</style>
+
+<script>
+window.addEventListener("orientationchange", function() {
+// 宣布新方向的数值
+//alert(window.orientation);
+if(window.orientation==90||window.orientation==-90){
+	//alert("is heng");
+ $(".img_li").css("padding-top",0);
+ if(screen.width>screen.height){
+	 var width = screen.width;
+	 }else{
+		 var width = screen.height;
+		 }
+ 
+ //alert(width);
+ $("#top").css("width",width+"px");
+ $("#bottom").css("width",width+"px");
+ }else{
+	 //alert("is shu");
+	$(".img_li").css("padding-top",250+"px");
+	if(screen.width>screen.height){
+	 var height = screen.height;
+	 }else{
+		 var height = screen.width;
+		 }
+ 
+	
+	$("#top").css("width",height+"px");
+ 	$("#bottom").css("width",height+"px");
+	 }
+}, false);
+
+var arrResult = new Array();
+function bannerMove(index)
+{
+
+	for(var i = 0; i < arrResult.length; i++)
+	{
+		if(arrResult[i].data.indexOf(','+index+',') >=0)
+		{
+			//alert(arrResult[i].key);
+			$('#name_'+i).css('color', '#fff');
+			//break;	
+		}
+		else
+		{
+			//alert(arrResult[i].key);
+			$('#name_'+i).css('color', '#999');
+		}
+	}
+}
+
+$(function(){	
+var myScroll;
+myScroll = new IScroll('#bottom', { scrollX: true, scrollY: false, mouseWheel: true });
+
+var id = $("#id").val();
+var json = 
+            {
+              "landz_id": id,
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/rent/pic',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			var arrtags = new Object();
+			
+			for(var i = 0; i < data.length;i++){
+						
+				if(arrtags[data[i].LX])
+				{
+				arrtags[data[i].LX] += ","+i +","; 
+							
+				}
+				else
+				{
+				arrtags[data[i].LX] = ","+i +","; 
+							
+				}
+			}
+			arrResult = new Array();
+			var i = 0;
+			for(var key in arrtags)
+			{
+				arrResult[i] = new Object();
+				arrResult[i].key = key;
+				arrResult[i].data = arrtags[key];
+				//alert(arrResult[i].key + ":" + arrResult[i].data);	
+				$("#footer").append("<li style='padding:15px;list_style:none;float:left;display:inline;'><span name = '"+arrtags[key]+"' id='name_"+i+"' style='color:#999;font-size:25px;' class='footer_li'>"+arrResult[i].key+"</span></li>");
+				i++;
+			}
+			$(".footer_li").click(function(){
+				
+				var img_id = $(this).attr("name").substr(1);
+				img_id = img_id.substr(0, img_id.indexOf(','));
+				slider.slide(img_id,300);
+				});
+			for(var i=0;i<data.length;i++){
+				//alert(data[i].LX);
+				
+				 $("#scroll_wrap").append("<li class='img_li'><a href='#'><img class='img' id='img_"+i+"' src='http://image.landzestate.com/"+data[i].PIC_BIG_PATH+"' width='100%'/></a></li>");
+						document.getElementById("img_"+i).onload = function() {
+						var haha = this.height;
+						//alert("图片实际高度"+haha);
+						var hehe = this.width;
+						//alert("图片实际宽度"+hehe);
+						var enen = haha/hehe;
+						//alert("高宽比"+enen);
+						var screenH = window.screen.height;
+						//alert(screenH);
+						if(enen<=1){
+							
+								$(this.parentNode.parentNode).css("padding-top",250 + "px");
+								
+							
+							}
+						}; 
+				
+				}
+				
+				
+				var slider = Swipe(document.getElementById('scroll_img'), {
+								auto:100000,
+								continuous: false,
+								callback: function(pos) {
+										var i = bullets.length;
+										while (i--) {
+												bullets[i].className = '';
+										}
+										bullets[pos].className = 'on';
+								}
+						});
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("出现错误，稍后请重试");
+		}
+	});
+
+//电话
+$.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/rent/info',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			$("#tel").attr("href","tel:"+data.MOBILE);
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("出现错误，稍后请重试");
+		}
+	});
+
+
+
+});
+var browser = navigator.userAgent;
+
+
+function exit()
+{
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			window.data.exit_view();
+			
+		}
+	else if(!!browser.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/))
+		{
+				window.location.href ="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/sellinfo/getLinker";
+
+		}
+		else if(browser.indexOf('Android') > -1){
+			
+			     window.location.href="../rentinfo/"+$("#id").val();
+			
+			}else{
+				
+				}
+}
+
+
+</script>
+</head>
+<body>
+<input type="hidden" value="{{id}}" id="id"/>
+<div id="all">
+<article>  
+<div>
+	<div class="scroll_box" id="scroll_img">
+		<ul class="scroll_wrap" id="scroll_wrap">
+        
+        </ul>
+        
+	</div>
+    
+</div>
+</article>
+<!--顶部-->
+<div style="width:100%;height:90px;text-align:center;background:#ccc; background-image:url(../../../../../../bundles/jxbundle/images/02_02.png); background-repeat:repeat-x; position:fixed; top:0;">
+<div style="float:left; padding-top:10px;"><a onclick="exit();"><img src="{{ asset('bundles/jxbundle/images/0.04_03.png')}}"/></a></div>
+<div style="float:right; padding-top:10px;"><a href="tel:" id="tel"><img src="{{ asset('bundles/jxbundle/images/01_13.png')}}"/></a></div>
+</div>
+
+<!--底部-->
+<div id="bottom" style="width:100%;height:90px;text-align:center;background:#ccc;background-image:url(../../../../../../bundles/jxbundle/images/02_03png.png); background-repeat:x-repeat;position:fixed; left:0;bottom:0;">
+<div id="scroller">
+<ul id="footer" style=" padding-top:10px;height:90px;"></ul>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+</body>
+</html>

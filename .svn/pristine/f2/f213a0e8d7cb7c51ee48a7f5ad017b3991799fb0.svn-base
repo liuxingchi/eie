@@ -1,0 +1,96 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+var KEYWORD = "";
+var START = 0;
+var MARK = 6;
+var TOP = 0; 
+</script>
+<script>
+$(function(){	
+    ajaxPost(
+             'app_dev.php/manage/menulist',
+             {},
+             function(data, textStatus){
+            	 for(var i=0;i<data.length;i++){
+  				   $("#checkbox").append("<input type='checkbox' name='checkbox' value='"+data[i].id+"'>"+data[i].name+" <br>"); 
+  				 
+  		      }//结束循环
+  		      var json = {
+  			    	    'roleid':{{ id }}
+  			    	    };
+  			    ajaxPost(
+  			            'app_dev.php/manage/roleinfo',
+  			            json,
+  			            function(data, textStatus){
+  			                  //alert(data.name);
+  			                $("#name").val(data.name);
+  			                $("#description").val(data.description);
+  			                for(var i=0;i<data.rolelist.length;i++){
+  			                    $("input:checkbox[value='"+data.rolelist[i].res_id+"']").attr('checked','true');
+  			   				   //$("#checkbox").append("<input type='checkbox' name='checkbox' value='"+data[i].id+"'>"+data[i].name+" "); 
+  			   		      }//结束循环
+  			                },
+  			            function(XMLHttpRequest, textStatus, errorThrown){}
+  			        );
+                 },
+             function(XMLHttpRequest, textStatus, errorThrown){}
+         );
+    
+              
+        
+});//function 主函数结束
+function post(){
+	//alert("ddd");
+	 var str="";
+     $("input[name='checkbox']:checkbox").each(function(){ 
+         if($(this).attr("checked")){
+             str += $(this).val()+","
+         }
+     })
+     /* if(str){
+    	    str = str.substr(1);
+         }else{
+        	   str = '';
+             } */
+     var json = {
+    	      "roleid":{{ id }},
+    		  "rolelist":str,
+    		  "name":$("#name").val(),
+    		  "description":$("#description").val()
+    	     };
+ 	
+     ajaxPost(
+              'app_dev.php/manage/updaterole',
+              json,
+              function(data, textStatus){
+                  window.location.href="../role";
+                  },
+              function(XMLHttpRequest, textStatus, errorThrown){}
+          );
+}
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+            
+                  <div class="form-group">
+                    <label>角色名</label>
+                    <input type="text" class="form-control" id="name" placeholder="输入要创建的角色名">
+                  </div>
+                  <div class="form-group">
+                    <label>角色描述</label>
+                    <input type="text" class="form-control" id="description" placeholder="角色描述">
+                  </div>
+                 
+                  <div id="checkbox">
+                  </div><br>
+                  <button onclick="post()" class="btn btn-default">保存</button>
+          
+          
+  </div>
+  	
+  
+</div> <!--content结束-->
+
+
+{% endblock %}

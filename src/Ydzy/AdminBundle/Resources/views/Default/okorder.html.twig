@@ -1,0 +1,78 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+
+<script>
+var domain = "http://trendsfit.yingdongzhuoyue.com";
+$(function(){
+    var json = {
+			"user_id":{{ id }}
+			};
+	ajaxPost(
+            'app_dev.php/api/user/getAllPlanByUser',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+            		$("#plan").append("<span>"+data[i].plan_name+data[i].plan_rank+"第"+data[i].day+"天</span><br>");
+                	}
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+
+
+	
+	ajaxPost(
+            'app_dev.php/api/moment/retrieveByFilter',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+            		$("#moment").append("<tr id='"+data[i].id+"'><td><img src='"+domain+data[i].image_url+"' width='75'/></td><td>"+data[i].content+"</td><td>"+data[i].username+"</td><td>"+data[i].likes+"</td><td>"+data[i].create_date+"</td></tr>");
+                	}
+			},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+
+	
+
+});//function 主函数结束
+
+</script>
+ 
+<div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+
+    
+    
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">完成或者正在进行的计划</h3>
+      </div>
+      <div class="panel-body" id="plan"></div>
+    </div>
+    
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">发布的社交动态</h3>
+      </div>
+      <div class="panel-body">
+      <table class="table table-hover">
+  	<thead>
+  	<tr>
+    <th>图片</th>
+    <th width="55%">内容</th>
+    <th>用户</th>
+    <th>点赞数</th>
+	<th>发布日期</th>
+    </tr>
+  	</thead>
+  	<tbody id="moment"></tbody>	
+    </table>
+      </div>
+    </div>
+    
+
+</div> <!--content结束-->
+{% endblock %}

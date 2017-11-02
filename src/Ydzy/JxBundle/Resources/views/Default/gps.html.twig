@@ -1,0 +1,63 @@
+<?php ?>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+body, html{width: 100%;height: 100%;overflow: hidden;margin:0;}
+#l-map{height:60%;width:100%;border-right:2px solid #bcbcbc;}
+#r-result{height:40%;width:100%;overflow: scroll;}
+</style>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+<title>导航</title>
+</head>
+<body>
+<input type="hidden" id="location" value="{{location}}"/>
+<div id="l-map"></div>
+<div id="r-result"></div>
+</body>
+</html>
+<script type="text/javascript">
+
+// 百度地图API功能
+var map = new BMap.Map("l-map");
+map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_BOTTOM_RIGHT, type: BMAP_NAVIGATION_CONTROL_ZOOM}));  //右下角，仅包含缩放按钮
+map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
+var geolocation = new BMap.Geolocation();
+geolocation.getCurrentPosition(function(r){
+    if(this.getStatus() == BMAP_STATUS_SUCCESS){
+        var mk = new BMap.Marker(r.point);
+        //map.addOverlay(mk);
+        map.panTo(r.point);
+        //alert('您的位置：'+r.point.lng+','+r.point.lat);
+        var transit = new BMap.DrivingRoute(map, {
+            renderOptions: {
+				map: map,
+				panel: "r-result",
+				autoViewport: true,
+				enableDragging : false //起终点可进行拖拽
+			 },  
+		    });
+		var location = document.getElementById('location').value;
+		var array_l = location.split(",");
+		var p = new BMap.Point(array_l[0],array_l[1]);
+		transit.search(r.point,p);
+    }
+    else {
+        alert("定位失败！");
+        //alert('failed'+this.getStatus());
+    }        
+},{enableHighAccuracy: true})
+
+ 
+//关于状态码
+//BMAP_STATUS_SUCCESS	检索成功。对应数值“0”。
+//BMAP_STATUS_CITY_LIST	城市列表。对应数值“1”。
+//BMAP_STATUS_UNKNOWN_LOCATION	位置结果未知。对应数值“2”。
+//BMAP_STATUS_UNKNOWN_ROUTE	导航结果未知。对应数值“3”。
+//BMAP_STATUS_INVALID_KEY	非法密钥。对应数值“4”。
+//BMAP_STATUS_INVALID_REQUEST	非法请求。对应数值“5”。
+//BMAP_STATUS_PERMISSION_DENIED	没有权限。对应数值“6”。(自 1.1 新增)
+//BMAP_STATUS_SERVICE_UNAVAILABLE	服务不可用。对应数值“7”。(自 1.1 新增)
+//BMAP_STATUS_TIMEOUT	超时。对应数值“8”。(自 1.1 新增)
+</script>

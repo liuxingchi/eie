@@ -1,0 +1,180 @@
+{% extends 'YdzyJxBundle:Jx:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<script>
+var CATEGORY= "1";
+var MARK = "1";
+</script>
+<script src="{{ asset('bundles/jxbundle/js/recommendpage.js') }}"></script>
+<script>
+
+function reloadList(json_data,current){
+	$("#machine_list").html("");
+	var current = current;
+	page(current);
+	if(json_data==""){
+		var json={
+			"mark": MARK,
+			"recommend":"1",
+			"start": "0",
+			"num": "20",
+			"updated_date_sort":"0",
+			"category_id":CATEGORY
+			};
+		}else{
+			var json = json_data;
+			}
+  	ajaxPost(
+		'app_dev.php/api/machine/retrieveByFilter',
+		json,
+		function(data, textStatus){
+		  //alert(data.length);
+		  var rent_by_num = "";
+		  for(var i=0;i<data.length;i++){
+			//alert(data[i].pic_all);
+			var updated_date = data[i].updated_date.substr(0,11);
+			if(data[i].machine_name.length<=28){var machine_name = data[i].machine_name;}
+			else{var machine_name = data[i].machine_name.substring(0,28)+"...";}
+		if(data[i].mark ==1||data[i].mark ==3||data[i].mark ==-3){
+				if(data[i].sale_price ==0){
+					var sale_price = "面议";
+					}else{
+						var sale_price = data[i].sale_price+"万";
+						}
+				}
+
+		if(data[i].mark ==0||data[i].mark ==2||data[i].mark ==-2){
+			if(data[i].rent_by_month ==0){
+				var sale_price = "面议";
+				}else{
+					var sale_price = data[i].rent_by_month+"万/月";
+					}
+					if(data[i].rent_by_num ==0){
+						rent_by_num = "";
+						}else{rent_by_num = data[i].rent_by_num+"万/台";} 
+						$("#rent_by_num").html(rent_by_num);
+						}
+		
+			if(data[i].factory_year_full=="0年月"){var factory_year = "";}else{var factory_year = data[i].factory_year_full;}
+			if(data[i].workhours==0){var workhours = "";}else{var workhours=data[i].workhours+"小时　|　";}
+			if(data[i].tonn==0){var tonn = "";}else{var tonn = data[i].tonn+"吨　|";}
+			if(data[i].province==""||data[i].province==null){var province = "";var city="";}else{var province = data[i].province;var city=data[i].city;}
+     $("#machine_list").append("<div class=\"col-sm-3\" style=\"border:#cdcdcd 1px solid; height:110px; padding:0;\"> <a href='content/"+data[i].machine_id+"' target='_blank'><ul style=\"width:210px; padding:0; padding-top:2px;\" id=\"list_img_ul\"> <li style=\"float:left;\" id='"+data[i].machine_id+"0'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"1'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"2'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"3'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"4'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"5'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> </ul></a> </div> <div class=\"col-sm-7\" style=\"height:110px;\"> <a href='content/"+data[i].machine_id+"' target='_blank'><p style=\"color:#b40202; text-decoration:underline;font-size:14px;font-weight:700;\">"+machine_name+"</p></a> <p> <span style=\"padding:15px;padding-left:0;\">"+data[i].brand+"</span> | <span style=\"padding:15px;\">"+data[i].model+"</span> | <span style=\"padding:15px;\">"+tonn+"</span><span>"+workhours+"</span><span>"+factory_year+"</span> </p> <p><span>"+rent_by_num+"</span> <span>"+province+"</span> <span>"+city+"</span> <span>"+updated_date+"发布</span> </p> <p> <span style=\"padding:15px;padding-left:0;\">"+data[i].nickname+"</span> <span style=\"padding:15px;\">"+data[i].phone+"</span> </p> </div> <div class=\"col-sm-2\" style=\"height:110px; font-size:20px; color:#b40202;line-height:90px;font-weight:500;text-align:right;\">"+sale_price+"</div> <img src=\"{{ asset('bundles/jxbundle/images/list_hr.png') }}\"/>");
+        //判断是否是false，如果不是false，将图片填充上
+        if (data[i].pic_all) {
+          var str = data[i].pic_all;
+          var arr = new Array();
+          arr = str.split(",");
+          //alert(arr[0]);
+          for(var j=0;j<=arr.length-1;j++){
+            //alert(arr[j]);
+            //var lihtml = $("#"+data[i].machine_id+j).attr("id");
+            $("#"+data[i].machine_id+j).html("<img src='"+arr[j]+"'/>");
+            //alert(lihtml);
+          }
+        }; 
+      }//结束循环
+	
+    },
+    function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+				alert('加载数据出现错误，请重试');
+		}
+    }
+  );
+}
+
+$(function(){
+loadnav();
+var json = {"mark": "1",
+			"updated_date_sort":"0",
+			"start": "0",
+			"num": "20",
+			"recommend":"1",
+			"category_id":"1"
+			};
+reloadList(json,0);
+
+//筛选功能（category）
+$('#index_category > a').click(function(){
+	var category_id = $(this).attr("value");
+		
+	
+	$(".index_filter_all").css("color","#b40202");
+	$('#index_category > a').css("color","#000");
+	$(this).css("color","#b40202");
+	CATEGORY = $(this).attr("value");
+	var json = {
+		"start": "0",
+		"num": "20",
+		"category_id":CATEGORY,
+		"mark":MARK,
+		"recommend":"1",
+		"updated_date_sort":"0"
+		};
+	reloadList(json,0);		
+	page(0);
+	});
+	
+
+//筛选功能（mark）
+$('#mark > a').click(function(){
+	var category_id = $(this).attr("value");
+		
+	$('#mark > a').css("color","#000");
+	$(this).css("color","#b40202");
+	MARK = $(this).attr("ref");
+	var json = {
+		"start": "0",
+		"num": "20",
+		"category_id":CATEGORY,
+		"mark":MARK,
+		"recommend":"1",
+		"updated_date_sort":"0"
+		};
+	reloadList(json,0);		
+	page(0);
+	});
+
+});//function 主函数结束
+
+
+
+</script>
+   
+  <div id="content" style="position:relative; width:100%; margin-top:30px; padding:0;" class="col-sm-12">
+  <div class="tabs"> <!--tab选择框-->
+    <ul>
+        <li class="first"><div style="float:left; padding-left:20px;"><img src="{{ asset('bundles/jxbundle/images/category_list.png') }}"/></div><div id="category_list_div2">机械选择</div></li>
+        <li class="last"><a href="{{url('jx_map',{'location': '1'})}} " target="_blank">从地图上查看机械</a></li>
+    </ul>
+
+</div>  <!--tab选择框结束-->
+	<div id="index_filter" class="col-sm-12" style="padding:0;"> <!--类别选择框-->
+    
+    <div style="padding-top:15px;" id="mark" class="col-sm-12"><span class="bold">租售选择</span>：<a href="#" ref="1">出售</a> <a href="#" ref="0" style="color:#000;">出租</a>　 </div>
+	
+    <div style="padding-top:10px;" id="index_category" class="col-sm-12"><span class="bold">机种选择</span>：<a href="#" value="1" style="color:#b40202;">挖掘机</a>　<a href="#" value="2">装载机</a>　<a href="#" value="4">推土机</a>　<a href="#" value="5">起重机</a>　<a href="#" value="6">混凝土设备</a>　<a href="#" value="7">其他机械</a> </div> 
+ 
+    </div> <!--类别选择框结束-->
+  <div class="col-sm-12" style="padding-left:0; padding-right:0; margin-top:20px;">
+  	<div class="col-sm-9" style="overflow:hidden; padding-left:0;"><span style="font-size:16px; font-weight:bold; color:#b40202; padding-left:5px;">机械列表</span><span style="float:left; position:absolute;left:80px; color:#999; font-size:10px; line-height:25px;" id="index_list_num"></span>
+    <img src="{{ asset('bundles/jxbundle/images/hr.png') }}"/>
+   <div class="col-sm-12" id="machine_list"></div>
+    </div>
+    
+    
+  	<div class="col-sm-3" style="padding-right:0px; padding-left:20px;">
+    	{{ include('YdzyJxBundle:Jx:right.html.twig')}}    
+    </div><!--右侧广告位展示-->
+  </div>
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>  
+    </div><!--分页结束-->
+</div> <!--content结束-->
+{% endblock %}

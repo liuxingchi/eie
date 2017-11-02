@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="">
+		<head>
+				<title>一手豪宅</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-ui.js')}}"></script>
+				
+		</head>
+		<body style="background:#fff;">
+				<div class="ln_a" style="display:none;">    
+						<div class="le_a uc-a" style="">				
+								<div class="le_b">		<!-- download App 通用-->
+										<div class="le_c">
+												<img class="uc-a" src="{{ asset('bundles/jxbundle/images/48+48.png')}}" width='100%'/>
+										</div>
+										<div class="ld_e">
+												<div class="le_f">标题该软件是...</div>
+												<div class="le_g">该软件是丽兹行...</div>
+												<div class="le_h uba uc-a">下载软件</div>
+										</div>
+								</div>	
+						</div>
+				</div>		
+				<div class="fista">
+						<div class="fistb ub" ontouchstart="ShowTwoType('fistf');" onclick="ShowTwoType('fistf');">
+								<div class="fistd1">城区</div>
+								<div class="fiste1"><img src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" width='100%'/></div>
+						</div>
+						<div class="fistf" style="display:none;z-index:8888;background:#f0f0f0;">				<!-- 城区 -->
+								<div class="fistg" onclick="addMark('fistg');">
+										<div class="fisth">不限</div>	
+										<div class="fisti"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%'/></div>	
+								</div>
+								<div class="fistg1" onclick="addMark('fistg1');"><div class="fisth">朝阳</div><div class="fisti"></div></div>
+								<div class="fistg2" onclick="addMark('fistg2');"><div class="fisth">海淀</div><div class="fisti"></div></div>
+								<div class="fistg3" onclick="addMark('fistg3');"><div class="fisth">顺义</div><div class="fisti"></div></div>
+								<div class="fistg4" onclick="addMark('fistg4');"><div class="fisth">通州</div><div class="fisti"></div></div>
+								<div class="fistg5" onclick="addMark('fistg5');"><div class="fisth">东城</div><div class="fisti"></div></div>
+								<div class="fistg6" onclick="addMark('fistg6');"><div class="fisth">西城</div><div class="fisti"></div></div>
+						</div>
+						<div class="fistc" ontouchstart="ShowTwoType('fistf1');" onclick="ShowTwoType('fistf1');">
+								<div class="fistd2">类型</div>
+								<div class="fiste2"><img src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" width='100%'/></div>
+						</div>
+						<div class="fistf1" style="display:none;z-index:8888;background:#f0f0f0;">				<!-- 类型 -->
+								<div class="fistg7" onclick="addMark1('fistg7');">
+										<div class="fisth">不限</div>	
+										<div class="fisti"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%'/></div>	
+								</div>
+								<div class="fistg8" onclick="addMark1('fistg8');"><div class="fisth">公寓</div><div class="fisti"></div></div>
+								<div class="fistg9" onclick="addMark1('fistg9');"><div class="fisth">别墅</div><div class="fisti"></div></div>
+								<div class="fistg10" onclick="addMark1('fistg10');"><div class="fisth">商铺</div><div class="fisti"></div></div>
+						</div>
+				</div>
+				<div class="fistj"></div>
+				<script>
+						var AREA = "";  			//区域
+						var HOUSETYPE = "";  	//类型
+						var StartNum = "0"
+						function ShowTwoType(obj){
+								$(".fistf").css("display","none");	
+								$(".fistf1").css("display","none");	
+								$("."+obj).css("display","block");	
+						}
+						function addMark(obj){
+								$(".fisti").html("");
+								$("."+obj+" .fisti").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%'>");
+								AREA = $("."+obj+" .fisth").html();
+								if($("."+obj+" .fisth").html() == "不限"){
+										$(".fistd1").html("城区");
+										AREA = "";	
+								}else{
+										$(".fistd1").html(AREA);
+								}
+								$(".fistf").css("display","none");
+								$(".fistj").html("");
+								StartNum = "0";
+								getfirsthouse();
+						}
+						function addMark1(obj){
+								$(".fisti").html("");
+								$("."+obj+" .fisti").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%'>");
+								HOUSETYPE = $("."+obj+" .fisth").html();
+								if($("."+obj+" .fisth").html() == "不限"){
+										$(".fistd2").html("类型");	
+								}else{
+										$(".fistd2").html(HOUSETYPE);
+								}
+								if($("."+obj+" .fisth").html() == "不限"){
+										HOUSETYPE = "";	
+								}else if($("."+obj+" .fisth").html() == "公寓"){
+										HOUSETYPE = 1;		
+								}else if($("."+obj+" .fisth").html() == "别墅"){
+										HOUSETYPE = 3;		
+								}else if($("."+obj+" .fisth").html() == "商铺"){
+										HOUSETYPE = 2;		
+								}
+								$(".fistf1").css("display","none");
+								$(".fistj").html("");
+								StartNum = "0";
+								getfirsthouse();
+						}
+						function getfirsthouse(){
+								//alert(AREA+"--"+HOUSETYPE);
+								var HL5json = {
+								 	  "bd_id":AREA,												//地区
+								 	  "jzlx":HOUSETYPE,										//建筑类型
+								 	  "start":StartNum,
+								 	  "num":10
+							  };	
+							  $.ajax({
+						        type: "POST",
+						        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/one/retrieveByFilter",
+						        data: $.toJSON(HL5json),
+						        dataType: 'json',
+						        success: function(data){
+						        		//alert(data.length);
+						        		var la_list2 = "";
+	     		        			for(var i=0;i<data.length;i++){
+					        					la_list2 += "<div class='la_f ubb' onclick='gotofirst("+data[i].oid+")'><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+							           		+data[i].HJ_HOUSE_URL+
+							           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1'>"
+							           		+data[i].name+
+							           		"</div><div class='la_k'><div class='la_m1' style='width:60%;'>"
+							           		+"商圈:"+data[i].BBD_ID+
+								           	"</div></div><div class='la_l'><div class='' style='float:left;width:68%;'>"
+								           	+data[i].property_year+"年产权"+data[i].BUILD_FINISHED_YEAR+"年入住"+
+								           	"</div><div class='' style='float:left;width:30%;color:red;'>"
+								           	+data[i].totalPrice+"万元"+
+								           	"</div></div></div></div></div>";
+						        		}
+						        		//$(".fistj").html("");
+						           	$(".fistj").append(la_list2);
+								    },
+								    error: function(){}
+								});	
+						}
+						getfirsthouse();
+						function gotofirst(obj){		//跳转至详情页
+								window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/oneinfo/"+obj;
+						}
+						$(window).scroll(function(){
+								var scrollTop = $(this).scrollTop();
+								var scrollHeight = $(document).height();
+								var windowHeight = $(this).height();
+								if(scrollTop + windowHeight == scrollHeight){
+										var tempnum = parseInt(StartNum);
+										StartNum = tempnum+10;
+										getfirsthouse();
+								}	
+						});
+				</script>
+		</body>	
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

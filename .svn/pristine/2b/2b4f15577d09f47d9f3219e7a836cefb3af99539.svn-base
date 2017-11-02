@@ -1,0 +1,103 @@
+﻿ <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>管理平台</title>
+
+<link href="{{ asset('css/menu.css') }}" rel="stylesheet" type="text/css" />
+{# <link href="{{ asset('js/jquery-ui-1.8.23.custom.css') }}" rel="stylesheet" type="text/css"/>#}
+<script type="text/javascript" src="{{ asset('js/jquery-1.8.0.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jquery-ui-1.8.23.custom.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jquery.json-2.3.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jquery.cookie.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/functions.js') }}"></script>
+<style>
+.show{
+font-size:18px;
+font-weight:bold;
+}
+</style>
+<script>
+$(function(){
+	$('#accordion').accordion();
+	var role = $('#role').val();
+	var uid = $('#uid').val();
+	var username = $('#username').val();
+	$.cookie('username', username);
+	$.cookie('uid', uid);
+    $('.mylist').bind("click",function(){
+	       $('.mylist').removeClass("show");
+		   $(this).addClass("show");
+		});
+	/* $('.mylist').click(function(){
+	       $('.mylist').removeClass("show");
+		   $(this).addClass("show");
+		}); */
+});
+
+function doLogout()
+{
+	if (confirm("确定注销登录吗？")){
+		showHint($('#logout_hint'), '', '正在注销……', 1);
+		ajaxPost(
+			'/app_dev.php/manage/logout',
+			{},
+			function(){
+				window.parent.location.href="/manage/login";
+			},
+			function(){
+				window.parent.location.href="/manage/login";
+			}
+		);
+		
+	}
+}
+</script>
+</head>
+
+<body>
+<table border="0" width="100%">
+	<tr><td align="left" style="font-family: 黑体,宋体; font-size:24pt;">管理平台</td></tr>
+	<tr><td id="logout_hint" align="right" style="font-size:10pt;">欢迎你，{{username}}!<a href="#" onclick="doLogout()">[注销]</a></td></tr>
+	<input id="role" value="{{role[0]}}" type="hidden"/>
+	<input id="uid" value="{{uid}}" type="hidden"/>
+	<input id="username" value="{{username}}" type="hidden"/ >
+</table>
+
+<div id="accordion">
+    
+{# 	<div class="menu1" id="manage"><a href="#">管理员</a></div>#}
+{# 	<ul id="manage_ul">#}
+	    
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_order_top') }}" target="page">任务推荐</a></li>#}
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_order') }}" target="page">任务列表</a></li>#}
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_user_top') }}" target="page">高手推荐</a></li>#}
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_user') }}" target="page">高手列表</a></li>#}
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_leaveword') }}" target="page">反馈管理</a></li>#}
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_push') }}" target="page">推送通知</a></li>#}
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_pay') }}" target="page">订单赔偿</a></li>#}
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_recharge') }}" target="page">充值列表</a></li>#}
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_getcharge') }}" target="page">提现列表</a></li>#}
+{# 		<li><a class="mylist" href="{{ url('ydzy_admin_version') }}" target="page">版本上传</a></li>#}
+{# 	</ul>	#}
+    <div class="menu1" id="manage"><a href="#"></a></div>
+	<ul id="manage_ul">
+            {% for menu in menuList %}
+            <li><a class="mylist" href="{{ menu.URL }}" target="page">{{ menu.name }}</a></li>
+            {% endfor %}
+	   
+	
+	</ul>
+	
+		
+</div>
+
+<p></p>
+<div id="Foot">
+<div class="copyright">
+	<span></span>
+</div>
+</div>
+	
+</body>
+</html>

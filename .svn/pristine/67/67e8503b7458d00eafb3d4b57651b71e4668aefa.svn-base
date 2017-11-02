@@ -1,0 +1,120 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+var KEYWORD = "";
+var START = 0;
+</script>
+
+<style>
+</style>
+
+<script>
+var domain = "http//eie.club/";
+function reloadList(){
+	$("#order_list").html("");
+  	var json = {
+			};
+  	ajaxPost(
+            'app_dev.php/api/recommended/categoryList',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+                	 $("#order_list").append("<tr id='"+data[i].id+"'><td>"+data[i].id+"</td><td>"+data[i].name+"</td><td><a href='#' onclick='update("+data[i].id+")'>编辑</a></td></tr>"); 
+		      }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function detailInfo(id){
+	location.href="goodsdetail/"+id;
+}
+function del(id){
+	
+	var json = {
+			"recommended_id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/recommended/del',
+            json,
+            function(data, textStatus){
+            	$("#"+id).remove();
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+$(function(){
+reloadList();
+$("#add_btn").click(function(){
+	location.href="addgoods";
+	});
+
+});//function 主函数结束
+
+function print_array(arr){
+	for(var key in arr){
+		if(typeof(arr[key])=='array'||typeof(arr[key])=='object'){//递归调用  
+			print_array(arr[key]);
+		}else{
+			document.write(key + ' = ' + arr[key] + '<br>');
+		}
+	}
+}
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+    <div class="col-sm-12">
+    <div><button type="button" class="btn col-sm-1 btn-default" id="add_btn" onclick="add();">添加</button></div>
+    
+    </div>
+    
+    <div style="padding-top:20px;" class="col-sm-12">
+    <table class="table table-hover">
+  	<thead>
+  	<tr>
+    <th>编号</th>
+    <th>类型</th>
+	<th>操作</th>
+    </tr>
+  	</thead>
+  	<tbody id="order_list"></tbody>	
+    </table>
+    </div>
+  	
+  </div>
+  
+  
+</div> <!--content结束-->
+
+
+<!-- Modal -->
+<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">类型</h4>
+      </div>
+      <div class="modal-body" id="myModalContent">
+      
+      <form class="form-horizontal">
+          <div class="form-group">
+            <div class="col-sm-12">
+              
+              <input type="text" class="form-control" id="money" placeholder="输入定金">
+            </div>
+          </div>
+          
+         
+          <div class="form-group">
+            <div class="col-sm-12">
+              <button type="submit" class="btn btn-default" id="btnCreate">确认</button>
+            </div>
+          </div>
+      </form>
+    
+	    
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script type="text/javascript" src="{{ asset('js/swfupload.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/swfupload.queue.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/fileprogress.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/handlers.js') }}"></script>
+<script>
+
+
+var swfu;
+
+window.onload = function() {
+      var settings = {
+        flash_url : "{{ asset('js/swfupload.swf') }}",//swfupload.swf文件的绝对或相对地址
+        upload_url: "{{url('Ydzyfile_image_upload')}}",  //处理上传文件的服务器端页面的url地址
+        file_post_name : "imageFile",//用普通的文件域上传文件时的name属性
+        file_size_limit : "100 MB",
+        file_types : "*.jpg;*.jpeg;*.gif;*.png;*.bmp;",
+        file_types_description : "All Files",//指定在文件选取窗口中显示的文件类型描述，起一个提示和说明的作用吧
+        file_upload_limit : 10,  //指定最多能上传多少个文件
+        file_queue_limit : 0,//指定文件上传队列里最多能同时存放多少个文件
+        custom_settings : {
+          progressTarget : "fsUploadProgress"
+        },
+        debug: false,
+
+        // Button settings
+        button_image_url: "{{ asset('images/upload_btn.png') }}",
+        button_width: "137",
+        button_height: "34",
+        button_placeholder_id: "spanButtonPlaceHolder",//指定一个dom元素的id,该dom元素在swfupload实例化后会被Flash按钮代替
+        button_text: '',//指定Flash按钮上的文字，也可以是html代码
+        button_text_style: "",
+        button_text_left_padding: 0,
+        button_text_top_padding: 0,
+        
+        file_queued_handler : fileQueued,//fileQueued事件侦听函数
+		file_queue_error_handler : fileQueueError,
+		file_dialog_complete_handler : fileDialogComplete,
+		upload_start_handler : uploadStart,
+		upload_progress_handler : uploadProgress,
+		upload_error_handler : uploadError,
+		upload_success_handler : uploadSuccess,//文件上传成功后触发的事件处理函数
+		upload_complete_handler : uploadComplete,
+		queue_complete_handler : queueComplete
+      };
+      swfu = new SWFUpload(settings);
+};
+
+		
+function fileDialogComplete(selectedNum, queuedNum) {
+	if (queuedNum > 0) {//选择并添加到上传队列的文件数大于0
+		this.startUpload();//开始上传
+	}
+}
+
+
+$(function(){
+    var json = {
+			"recommended_id": {{ id }}
+			};
+	ajaxPost(
+            'api/recommended/info',
+            json,
+            function(data, textStatus){
+            	$("#content").html(data.content);
+            	$("#price").val(data.price);
+            	$("#cid").val(data.cid);
+            	$("#firstImageUrl").val(data.image_url);
+            	var urlHtmls="";
+            	$.each(data.image_urls,function(i,v){
+            		urlHtmls+="<div id='image_"+v.id+"' style='width:200px;float:left;text-align:center;'><img width='200' height='200' src='"+v.url+"'><br><button type='button' class='btn btn-sm default' onclick='doDelete("+v.id+")'>删除</button></div>";
+            		var image_url = $('#image_url').val();
+					$('#image_url').val(image_url+","+v.id);
+            	});
+            	$("#goodsImageUrls").html(urlHtmls);
+            	},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+    //loadWannaBuyerList(0);
+});//function 主函数结束
+function doDelete(pic_id){
+	if (confirm("确定删除吗？")){
+		var image_url = $('#image_url').val();
+		$('#image_url').val(image_url.replace(','+pic_id, ""));
+		$('#image_'+pic_id).remove();
+		
+	}
+	
+}
+function dopost(){
+	var urls = $("#image_url").val();
+	var image_url = $("#goodsImageUrls").children().eq(0).html();
+	var reg =  /<[img|href][^>]*src\s*=\s*('|")?([^'">]*)\1([^>])*>/ig;
+	var result =  reg.exec(image_url);
+	alert(result);
+      var json = {
+    		  "content":$("#content").val(),
+    		  "price":$("#price").val(),
+    		  "cid":$("#cid").val(),
+    		  "id":"{{ id }}",
+    		  "image_ids":urls.substring(1),
+    		  "image_url":$("#firstImageUrl").val()
+    	     };
+ 	
+//      ajaxPost(
+//               'app_dev.php/api/recommended/update',
+//               json,
+//               function(data, textStatus){
+//             	 window.location.href="../goodsdetail/{{ id }}";
+//                   },
+//               function(XMLHttpRequest, textStatus, errorThrown){
+                	  
+//                }
+//           );
+}
+function checkNum(obj) {
+     //检查是否是非数字值
+     if (isNaN(obj.value)) {
+         obj.value = "";
+     }
+     if (obj != null) {
+         //检查小数点后是否对于两位
+         if (obj.value.toString().split(".").length > 1 && obj.value.toString().split(".")[1].length > 2) {
+             alert("小数点后多于两位！");
+             obj.value = "";
+         }
+     }
+ };
+</script>
+
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+            
+                  <div class="form-group">
+                    <label>类别id</label>
+                    <select id="cid">
+                    	{% for ca in categoryList %}
+                    	<option value="{{ca.id}}">{{ca.name}}</option>
+			            {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>详情</label>
+                    <textarea class="form-control" id="content" placeholder="详情（必填）"></textarea>
+                  </div>
+                 <div class="form-group">
+                    <label>价格</label>
+                    <input type="text" class="form-control" id="price" placeholder="价格(必填)" 
+                    onkeyup="checkNum(this)"  onafterpaste="checkNum(this)"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>图片</label>
+                    <div id="spanButtonPlaceHolder"></div>
+                    <div class="col-sm-12" style="padding:0;" id="fsUploadProgress"></div>
+                    <input type="text" class="form-control" id="firstImageUrl" placeholder="firstImageUrl"/>
+                    <input type="hidden" class="form-control" id="image_url" placeholder="image_url"/>
+                    <input type="hidden" class="form-control" id="image_url1" placeholder="image_url1"/>
+                    <input type="hidden" class="form-control" id="image_url2" placeholder="image_url2"/>
+                    <div class="col-sm-12" id="goodsImageUrls"></div>
+                  </div>
+                  <div id="radio"></div><br>
+                  <button onclick="dopost()" class="btn btn-default">保存</button>
+           
+          
+  </div>
+  	
+  
+</div> <!--content结束-->
+
+
+{% endblock %}

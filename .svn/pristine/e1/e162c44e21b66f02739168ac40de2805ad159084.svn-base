@@ -1,0 +1,40 @@
+ydzy_test_homepage:
+    pattern:  /
+    defaults: { _controller: YdzyTestBundle:Default:index }
+ydzy_test_menu:
+    pattern:  /menu
+    defaults: { _controller: YdzyTestBundle:Default:menu }
+ydzy_test_user:
+    pattern:  /user
+    defaults: { _controller: YdzyTestBundle:Default:user }
+ydzy_test_adminuser:
+    pattern:  /manage
+    defaults: { _controller: YdzyTestBundle:Default:manage }
+ydzy_test_recommended:
+    pattern:  /recommended
+    defaults: { _controller: YdzyTestBundle:Default:recommended }
+ydzy_test_publish:
+    pattern:  /publish
+    defaults: { _controller: YdzyTestBundle:Default:publish }
+ydzy_test_news:
+    pattern:  /news
+    defaults: { _controller: YdzyTestBundle:Default:news }
+ydzy_test_market:
+    pattern:  /market
+    defaults: { _controller: YdzyTestBundle:Default:market }
+ydzy_test_preshow:
+    pattern:  /preshow
+    defaults: { _controller: YdzyTestBundle:Default:preshow }
+ydzy_test_image:
+    pattern:  /image
+    defaults: { _controller: YdzyTestBundle:Default:image }	
+ydzy_test_file:
+    pattern:  /file
+    defaults: { _controller: YdzyTestBundle:Default:file }	
+ydzy_test_leaveword:
+    pattern:  /leaveword
+    defaults: { _controller: YdzyTestBundle:Default:leaveword }	
+ydzy_test_bbs:
+    pattern:  /bbs
+    defaults: { _controller: YdzyTestBundle:Default:bbs }	
+

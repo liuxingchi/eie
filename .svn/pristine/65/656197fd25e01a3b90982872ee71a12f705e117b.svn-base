@@ -1,0 +1,517 @@
+<?php
+namespace Ydzy\ApiBundle\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Symfony\Component\HttpFoundation;
+
+
+class PublishController extends Controller
+{
+	
+	//------------------------------------------------
+	// 申诉类别
+	//------------------------------------------------
+    public function appealAction(Request $request)
+    {
+		$this->get('my_datebase')->connection();
+		
+		$sql = "select * from appeal where upid=0";
+		//return new Response($sql);
+		$result = mysql_query($sql);
+		$array_result = array();
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+		    
+		    $array_result[] = $row;
+			}
+			
+		
+		return new JsonResponse($array_result);
+		
+    }
+    //------------------------------------------------
+    // 二级申诉类别
+    //------------------------------------------------
+    public function secondAppealAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('appeal_id',0);
+        $this->get('my_datebase')->connection();
+    
+        $sql = "select * from appeal where upid=$id";
+        //return new Response($sql);
+        $result = mysql_query($sql);
+        $array_result = array();
+        while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+    
+            $array_result[] = $row;
+        }
+        	
+    
+        return new JsonResponse($array_result);
+    
+    }
+    //------------------------------------------------
+    // 二级申诉类别add
+    //------------------------------------------------
+    public function secondAppealAddAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('appeal_id',0);
+        $name = $json->get('name',0);
+        $this->get('my_datebase')->connection();
+    
+        $sql = "insert into appeal set upid = $id ,name='$name'";
+        //return new Response($sql);
+        mysql_query($sql);
+        return new JsonResponse('插入成功了',200);
+    
+    }
+    
+    //------------------------------------------------
+    // 推荐列表总数据
+    //------------------------------------------------
+    public function retrieveByFilterNumAction(Request $request)
+    {
+        $this->get('my_datebase')->connection();
+    
+        $sql = "select count(*) from recommended";
+        //return new Response($sql);
+        $result = mysql_query($sql);
+        $num = mysql_num_rows($result);
+        if(!$num){
+            return  new Response(0);
+        }
+       
+        $count = mysql_result($result,0);
+        	
+        return new Response($count);
+    
+    }
+   /*
+    * 推荐info
+    */
+    public function infoAction(Request $request){
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('id',0);
+        $this->get('my_datebase')->connection();
+        if($id){
+            $result = mysql_query("select a.*,b.name as category,c.username,d.name as appeal from recommended as a left join category as b on a.cid = b.id left join user as c on a.user_id = c.id left join appeal as d on a.appeal_id = d.id  where a.id = $id limit 1");
+        }
+        $array_result = array();
+        $array_result = mysql_fetch_array($result,MYSQL_ASSOC);
+        
+        $image_result = mysql_query("select b.url from recommended_image as a left join images as b on a.image_id = b.id where a.recommended_id = $id");
+        $image_array = array();
+        while ($row = mysql_fetch_array($image_result, MYSQL_ASSOC)) {
+        
+            $image_array[] = $row;
+        }
+        $array_result['image_urls'] = $image_array;
+        $array_result['creation_date'] = date('Y-m-d',$array_result['creation_date']);
+        return new JsonResponse($array_result);
+        
+        
+    }
+    
+    /*
+     * 想购买的人的列表
+     */
+    public function retrieveWantBuyListAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $recommended_id = $json->get('recommended_id',0);
+        $start = $json->get('start',0);
+        $num = $json->get('num',10);
+    
+    
+        
+        $this->get('my_datebase')->connection();
+    
+        $sql = "select b.* from user_recommended as a left join user as b on a.user_id = b.id where a.recommended_id = $recommended_id limit $start,$num";
+        //return new Response($sql);
+        $result = mysql_query($sql);
+        $num = mysql_num_rows($result);
+        if (! $num) {
+            return new Response('', 400);
+        }
+        $array_result = array();
+        while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+    
+            $array_result[] = $row;
+        }
+        return new JsonResponse($array_result);
+    
+    }
+    
+	//------------------------------------------------
+	// 发布
+	//------------------------------------------------
+    public function addAction(Request $request)
+    {
+    	
+		$json = $this->get('json_parser')->parse($request);
+		$content = $json->get('content','');
+		$cid = $json->get('cid',0);
+		$appeal_id = $json->get('appeal_id',0);//申诉的类别
+		$image_url = $json->get('image_url','');
+		$image_ids = $json->get('image_ids','');
+		
+		$user_id = $this->get('login')->checkLogin($request);
+		if(!$user_id){
+			return new Response('你得登陆才能发布！！',403);
+		}
+		
+		//return new Response(date('Y-m-d','1357401600'));
+		if(!$image_ids){
+		    return new Response('得有图片啊大哥！',401);
+		}
+		$current = time();
+		
+		
+		
+		$image_array = explode(',', $image_ids);
+		if(!$image_url){
+			$image_url = mysql_result(mysql_query("select original_image from images where id =".$image_array[0]." limit 1"),0);
+		}
+		$this->get('my_datebase')->connection();
+		$sql = "insert into recommended set user_id = $user_id,cid = $cid,appeal_id = $appeal_id,content = '$content',image_url = '$image_url', status = 0,creation_date = $current,updated_date=$current";
+		//return new Response($sql);
+		mysql_query($sql);
+		$id = mysql_insert_id();
+		while ($image_one = current($image_array)) {
+			//printf("%s <br />", $step_one);
+			$image_sql = "insert into recommended_image set recommended_id =$id ,image_id = $image_one";
+			mysql_query($image_sql);
+			next($image_array);
+			}
+		
+		return new JsonResponse($id);
+		
+    }
+    /*
+     *类别列表
+     */
+    public function categoryListAction(Request $request){
+    
+        $this->get('my_datebase')->connection();
+        $sql = "select * from category";
+        //return new Response($sql);
+        $result = mysql_query($sql);
+        $array_result = array();
+        while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+        
+            $array_result[] = $row;
+        }
+        	
+        
+        return new JsonResponse($array_result);
+    }
+    /*
+     *类别（包括一级分类和二级分类）列表
+     */
+    public function categoryAllListAction(Request $request){
+    
+    	$this->get('my_datebase')->connection();
+    	$sql = "select * from appeal where upid != 0";
+    	//return new Response($sql);
+    	$result = mysql_query($sql);
+    	$array_result = array();
+    	while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+    
+    		$array_result[] = $row;
+    	}
+    	
+    	$result = mysql_query("select * from appeal where upid = 0");
+    	
+    	while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+    			
+	    	$array[$row['id']] = array();
+					   foreach($array_result as $rs){
+						   if($row['id']==$rs['upid']){
+						    array_push($array[$row['id']],$rs);
+							
+							   $array_last[$row['id']] = array(
+								 'id'=>$row['id'],
+								 'name'=>$row['name'],
+								 'list'=>$array[$row['id']]
+								 );
+								 
+						   }
+					  }
+				  
+    	}
+    		
+    	
+    	
+    	
+    	return new JsonResponse(array_values($array_last));
+    }
+    /*
+     *删除 
+     */
+    public function delAction(Request $request){
+        
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('recommended_id',-1);
+        $this->get('my_datebase')->connection();
+        
+        mysql_query("delete from recommended where id = $id");
+        mysql_query("delete from recommended_image where recommended_id = $id");
+        return new Response('删除成功',200);
+    }
+	/*
+	 * 是否评价
+	 */
+    public function commentOrNotAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('id',0);//要评价的商品
+        //uid判断
+        $user_id = $this->get('login')->checkLogin($request);
+        if(!$user_id){
+            return new Response('你得登陆才能发布！！',403);
+        }
+        $result = mysql_query("select b.name,b.appeal_id from publish_comment as a left join appeal as b on a.appeal_id = b.id where a.user_id = $user_id and a.publish_id = $id limit 1");
+        
+        $num = mysql_num_rows($result);
+        if($num){
+            $name = mysql_result($result, 0,'name');
+            return new Response($name);
+        }else{
+            return new Response('还没有评价过',400);
+        }
+        
+        
+    }
+	//------------------------------------------------
+	//商家评价
+	//------------------------------------------------
+    public function commentAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$id = $json->get('id',0);//要评价的商品
+		$appeal_id = $json->get('appeal_id',0);
+		//uid判断
+		$user_id = $this->get('login')->checkLogin($request);
+		if(!$user_id){
+			return new Response('你得登陆才能发布！！',403);
+		}
+		$mark = $this->get('login')->returnMark($request);
+		if($mark==0){
+			return new Response('你得是个商家才行啊！！',401);
+		}
+		$this->get('my_datebase')->connection();
+		//判断是不是已经评价过
+	    $num = mysql_num_rows(mysql_query("select * from publish_comment where user_id = $user_id and publish_id = $id limit 1"));
+        if($num){
+            return new Response('已经评价过了啊，怎么又来了！',402);
+        }
+		$current = time();
+		
+		
+		mysql_query("insert into publish_comment set user_id = $user_id ,appeal_id = $appeal_id,publish_id = $id,creation_date = $current,updated_date = $current");
+		return new Response('插入成功了！！',200);
+		
+    }
+    
+    /*
+     *my
+     *
+     */    
+    public function myAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $start = $json->get('start',0);
+        $num = $json->get('num',20);
+        $this->get('my_datebase')->connection();
+        //uid判断
+        $user_id = $this->get('login')->checkLogin($request);
+        if(!$user_id){
+            return new Response('你得登陆才能发布！！',403);
+        }
+        //recommended status = 0
+        $result = mysql_query("select a.*,b.name as appeal from recommended as a left join appeal as b on a.appeal_id = b.id where a.user_id = $user_id limit $start,$num");
+        $num = mysql_num_rows($result);
+        if(!$num){
+            return new Response('',400);
+        }
+        $array_result = array();
+        while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+            
+            $mysql = "select count(b.name) as num,b.name from publish_comment as a left join appeal as b on a.appeal_id = b.id where a.publish_id = $row[id] GROUP BY appeal_id";
+            $myresult = mysql_query($mysql);
+            $my_result = array();
+            while($row1 = mysql_fetch_array($myresult,MYSQL_ASSOC)){
+                $my_result[] = $row1;
+            }
+            
+             
+            $row['list'] = $my_result;
+            
+            $array_result[] = $row;           
+            
+        }
+        return new JsonResponse($array_result);
+    }
+	//------------------------------------------------
+	// appealNum 个人发布的信息的总评价结果数
+	//------------------------------------------------
+    public function appealNumAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$id = $json->get('id',-1);
+		
+		$this->get('my_datebase')->connection();
+		
+        $sql = "select count(b.name) as num,b.name from publish_comment as a left join appeal as b on a.appeal_id = b.id where a.publish_id = $id GROUP BY appeal_id";
+		$result = mysql_query($sql);
+	    $array_result = array();
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+			$array_result[] = $row;
+			}
+		
+		return new JsonResponse($array_result);
+		
+    }
+    //------------------------------------------------
+    // appealSale 个人发布的信息de出售，商品跟进
+    //------------------------------------------------
+    public function appealSaleAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('id',-1);
+    
+        $this->get('my_datebase')->connection();
+    
+        $sql = "select * from publish_follow where publish_id = $id order by id desc";
+        $result = mysql_query($sql);
+        $array_result = array();
+        while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+            $row['creation_date'] = date('Y-m-d H:i:s',$row['creation_date']);
+            $array_result[] = $row;
+        }
+    
+        return new JsonResponse($array_result);
+    
+    }
+    //------------------------------------------------
+    // appealSale 发布商品跟进
+    //------------------------------------------------
+    public function addMessageAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('id',-1);
+        $message = $json->get('message','');
+    
+        $this->get('my_datebase')->connection();
+        $current = time();
+        $sql = "insert into publish_follow set status=1,publish_id = $id ,message = '$message',creation_date = $current,updated_date = $current";
+        mysql_query($sql);    
+        return new JsonResponse('',200);
+    
+    }
+
+	//------------------------------------------------
+	// 所有的发布的个人商品
+	//------------------------------------------------
+    public function PublishAllAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$start = $json->get('start',0);
+		$num = $json->get('num',10);
+		
+		//分页
+		$limit = (($start==-1&&$num==-1)||($start==-1))?"":" limit $start,$num ";
+		
+		$this->get('my_datebase')->connection();
+		
+		$sql = "select a.*,b.name as category,c.username,d.name as appeal from recommended as a left join category as b on a.cid = b.id left join user as c on a.user_id = c.id left join appeal as d on a.appeal_id = d.id  where a.status = 0 ".$limit;
+		//return new Response($sql);
+		$result = mysql_query($sql);
+		$num = mysql_num_rows($result);
+		if(!$num){
+			return  new Response('没有值返回啊',400);
+		}
+		$array_result = array();
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+		    
+		    $mysql = "select count(b.name) as num,b.name from publish_comment as a left join appeal as b on a.appeal_id = b.id where a.publish_id = $row[id] GROUP BY appeal_id";
+		    $myresult = mysql_query($mysql);
+		    $my_result = array();
+		    while($row1 = mysql_fetch_array($myresult,MYSQL_ASSOC)){
+		        $my_result[] = $row1;
+		    }
+		    
+		   
+		    $row['list'] = $my_result;
+		    
+		    $array_result[] = $row;
+			}
+			
+		
+		return new JsonResponse($array_result);   
+    }
+    
+    /*
+     * appeal评论
+     */
+    public function chooseAppealAction(Request $request){
+    	$json = $this->get('json_parser')->parse($request);
+    	$recommended_id = $json->get('id',0);
+    	$appeal_id = $json->get('appeal_id',0);
+    	$uid = $json->get('uid',0);
+    	
+    	$this->get('my_datebase')->connection();
+    	
+    	$sql = "select * from user_publish_recommended where user_id=$uid and recommended_id = $recommended_id limit 1";
+    	$result = mysql_query($sql);
+    	if(mysql_num_rows($result)){
+    		return new Response('',401);
+    	}
+    	
+    	$sql = "insert into user_publish_recommended set user_id=$uid,recommended_id = $recommended_id,appeal_id = $appeal_id";
+    	mysql_query($sql);
+    	return new Response('',200);
+    }
+    /*
+     * 是否评论过
+     */
+    public function isChooseAction(Request $request){
+    	$json = $this->get('json_parser')->parse($request);
+    	$recommended_id = $json->get('id',0);
+    	$uid = $json->get('uid',0);
+    	 
+    	$this->get('my_datebase')->connection();
+    	 
+    	$sql = "select * from user_publish_recommended where user_id=$uid and recommended_id = $recommended_id limit 1";
+    	$result = mysql_query($sql);
+    	if(mysql_num_rows($result)){
+    		return new Response(1);
+    	}else{
+    		return new Response(0);
+    	}
+    }
+    
+    /*
+     * 当前recommend_id的选择统计
+     */
+    
+    public function countAction(Request $request){
+    	$json = $this->get('json_parser')->parse($request);
+    	$recommended_id = $json->get('id',0);
+    
+    	$this->get('my_datebase')->connection();
+    
+    	$sql = "select * from user_publish_recommended where recommended_id = $recommended_id";
+    	$result = mysql_query($sql);
+    	$array = array();
+    	while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+    		$array[]=$row;
+    	}
+    	return new JsonResponse($array);	
+    	
+    }
+    
+}

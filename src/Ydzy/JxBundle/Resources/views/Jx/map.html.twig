@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<?php ?>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>万吉工程机械交易网</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ asset('bundles/jxbundle/css/bootstrap.css') }}" rel="stylesheet">
+	<!-- Custom styles for this template -->
+    <link href="{{ asset('bundles/jxbundle/css/grid.css') }}" rel="stylesheet">
+	<script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/jquery-ui-1.8.23.custom/js/jquery-1.8.0.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/functions.js') }}"></script>
+    
+
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  </head>
+
+  <body>
+  <div id="container" class="container">
+  
+  
+<div>
+		<div id="float_search_bar" class="form-group">
+				
+				<div class="col-sm-4">
+                <input type="hidden" id="lnglat" value="{{location}}"/>
+				<input type="text" id="keyword" class="form-control" placeholder="点击地图或标注获取坐标"/>
+				</div>
+				<div class="col-sm-1">
+				<button id="search_button" class="btn btn-danger">查找</button>
+				</div>
+				<div class="col-sm-1" id="result">
+				
+				</div>
+				<div class="col-sm-1">
+				<a href="javascript:window.opener=null;window.open('','_self');window.close();"><button type="button" class="btn btn-danger">确定</button></a>
+				</div>
+		</div>
+		<br>
+		<br>
+	   <div id="preview" class="col-sm-12">
+			<div id="map_container" style="height: 700px;"></div>
+		</div>
+	</div> 
+	
+   	<script type="text/javascript" src="http://api.map.baidu.com/getscript?v=1.2&ak=&services=&t=20130716024057"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/jxbundle/css/bmap.css') }}"/>
+	
+    <script type="text/javascript" src="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js"></script>
+    <script type="text/javascript" src="{{ asset('bundles/jxbundle/js/MarkerClusterer.js') }}"></script>
+	<script type="text/javascript">
+			
+		var lnglat = $('#lnglat').val();
+		if(lnglat==1){
+		var point = new BMap.Point(116.487344,39.952556);
+		var marker_trick = false;
+		var map = new BMap.Map("map_container");
+		map.centerAndZoom(point, 5);
+		}else{
+			var location_array = lnglat.split(",");
+			var point = new BMap.Point(location_array[0],location_array[1]);
+			var marker_trick = false;
+			var map = new BMap.Map("map_container");
+			map.centerAndZoom(point, 18);
+			}
+		//alert(Object.prototype.toString.apply(lnglat));
+		
+		map.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
+		map.enableScrollWheelZoom();
+		var marker = new BMap.Marker(point, {
+            enableMassClear: false,
+            raiseOnDrag: true
+		 });
+		marker.enableDragging();
+		map.addOverlay(marker);
+		
+		
+		marker.addEventListener("dragend", function(e){
+			setResult(e.point.lng, e.point.lat);
+		});
+	
+	
+		
+		
+		var local = new BMap.LocalSearch(map, {
+			renderOptions:{map: map},
+			 pageCapacity: 1
+		});
+		local.setSearchCompleteCallback(function(results){
+			if(local.getStatus() !== BMAP_STATUS_SUCCESS){
+				alert("无结果");
+			} else {
+				 marker.hide();
+			 }
+		});
+		local.setMarkersSetCallback(function(pois){
+			for(var i=pois.length; i--; ){
+				var marker = pois[i].marker;
+				marker.addEventListener("click", function(e){
+					marker_trick = true;
+					var pos = this.getPosition();
+					setResult(pos.lng, pos.lat);
+					
+				});
+			}
+		});
+	
+$(function(){	
+		
+		//从数据库中调取所有的有位置的机器
+		var json = {};
+		var  markers=[];
+		var titles = [];
+		var points = [];
+		  ajaxPost(
+			'app_dev.php/api/area/retrieveAllMachine',
+			json,
+			function(data, textStatus){
+			  for(var i=0;i<data.length;i++){
+				var rent_by_num = data[i].rent_by_num==0?"面议":data[i].rent_by_num+"元/台 ";
+				var rent_by_month = data[i].rent_by_month==0?"":data[i].rent_by_month+"元/月 ";
+				var workhours = data[i].workhours==0?"":data[i].workhours+"小时 ";
+				var sale_price = data[i].sale_price==0?"":data[i].sale_price+"万 ";
+				var tonn = data[i].tonn==0?"":data[i].tonn+"吨 ";
+				if(data[i].lng!=0){
+					if(data[i].sale_price!=0){
+					var txt = data[i].brand+" "+data[i].model, mouseoverTxt = txt + " <br>" + tonn+workhours+sale_price;						
+					}else{
+					var txt = data[i].brand+" "+data[i].model, mouseoverTxt = txt + " <br>" + tonn+workhours+rent_by_num+rent_by_month+"<br><span style='float:right;'><a href='/jx/content/"+data[i].machine_id+"' target='_blank'>查看机械</a></span>";
+					}
+					var lng = data[i].lng;
+					var lat = data[i].lat;
+					var point = new BMap.Point(lng,lat);
+					markers.push(new BMap.Marker(point));
+					titles.push(mouseoverTxt);
+					points.push(point);
+					//var myCompOverlay11 = new ComplexCustomOverlay(point,txt,mouseoverTxt);
+					//map.addOverlay(myCompOverlay);
+				}
+				
+				
+			  }//结束循环
+			  var markerClusterer = new BMapLib.MarkerClusterer(map, {markers:markers,titles:titles,points:points});
+			  
+			},
+			function(XMLHttpRequest, textStatus, errorThrown){
+			 	alert("加载地图失败，请刷新重试"); 
+			}
+		  );
+		  
+		
+	
+});	
+	window.onload = function(){
+		document.getElementById("search_button").onclick = function(){
+				local.search(document.getElementById("keyword").value);
+			};
+			
+			document.getElementById("keyword").onkeyup = function(e){
+				var me = this;
+				e = e|| window.event;
+				var keycode = e.keyCode;
+				if(keycode === 13){
+					local.search(document.getElementById("keyword").value);
+				}
+			};
+
+		};
+		function setResult(lng, lat){
+			  $('#lng').val(lng);
+			  $('#lat').val(lat);
+			  document.getElementById("result").innerHTML = lng + "  " + lat;
+		}
+		$(".BMap_center").css("width","252px");
+   </script>
+  
+</div> <!--container结束-->
+   
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript" src="{{ asset('bundles/ydzyadmin/js/jquery.json-2.3.min.js') }}"></script>
+    <script src="{{ asset('bundles/jxbundle/js/bootstrap.min.js') }}"></script>
+  </body>
+</html>

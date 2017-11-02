@@ -1,0 +1,611 @@
+{% extends 'YdzyJxBundle:Default:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<style>
+tr { line-height:30px;}
+# community_a{color:#000;}
+</style>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+<script>
+function after_share(){
+var url = window.location.href;
+var loc = url.substring(url.lastIndexOf('?flag=')+6, url.length);
+//alert(loc);
+//根据loc获得agent信息	
+  if(loc!=0){
+  var json = 
+            {
+              "uid": loc
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/userprofilebyid',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:false,
+		async:false,
+		success: function (data, textStatus) {
+			$(".agent_name").html(data.nickname);
+			$(".mobile").html(data.phone);
+			$("#mobile_tel").attr("href","tel:"+data.phone);
+			if(data.icon!=""){
+		  $(".icon").html("<img class='img-rounded' src='http://image.landzestate.com/"+data.icon+"' height='80px'/>");
+		  $("#sicon").attr("src","http://image.landzestate.com/"+data.icon);
+		  }else{
+			 $(".icon").html("<img class='img-rounded' src='/bundles/jxbundle/images/03_03.png' height='80px'/>");
+		     $("#sicon").attr("src","/bundles/jxbundle/images/03_03.png");
+			  }
+			},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {}
+  
+  
+  });
+  }
+}
+
+$(function(){	
+$("#back-to-top").click(function(){
+          $('body,html').animate({scrollTop:0},1000);
+          return false;
+ });
+$("#btn_map").click(function(){
+	GPS();
+	});		
+/*$("#allview").click(function(){
+	AllView($(this).attr("ref"));
+	});		
+*/$(".map_value").click(function(){
+	var value = $(this).children("span").html();
+	if (value == "商铺超市"){value="超市";}
+	aroundInfo(value,$("#lng").val(),$("#lat").val(),"");
+	});		
+var id = $("#id").val();
+var json = 
+            {
+              "landz_id": id,
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/rent/info',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			getCommunity(data.COMMUNITY_ID);
+			getTrade(data.COMMUNITY_ID);	
+	      $("#house_title").html(data.HOUSE_TITLE);
+		  var info = data.HOUSE_INFO;
+		  if(info!=null){
+		  if(info.length>=100){
+			  var info_up = info.substr(0,100)+"...";
+			  $("#info_foot").html("<img src='/bundles/jxbundle/images/01_03.png' width='20px'/>");
+			  
+			  }else{
+				  var info_up = info;
+				  }
+		  $("#info_foot").click(function(){
+			$("#house_info").html(info);
+			$("#info_foot").html("");
+			$("#info_foot1").html("<img src='/bundles/jxbundle/images/01_04.png' width='20px'/>");
+			});
+		  $("#info_foot1").click(function(){
+			  $("#house_info").html(info_up);
+			  $("#info_foot1").html("");
+			  $("#info_foot").html("<img src='/bundles/jxbundle/images/01_03.png' width='20px'/>");
+			  });
+			  
+		  $("#house_info").html(info_up);
+		  }else{
+			   $("#house_info").html("");
+			  }
+		  $(".agent_name").html(data.AGENT_NAME);
+		  $("#ad_id").val(data.CREATOR_ID);
+		  $(".mobile").html(data.MOBILE);
+		  $("#mobile_tel").attr("href","tel:"+data.MOBILE);
+		  $("#price").html(data.RENT_PRICE);		  
+		  $("#per_price").html(data.per_price);
+		  $("#house_type").html(data.BEDROOM_NUMS+"室"+data.HALL_NUMS+"厅");
+		  $("#area").html(data.AREA+"㎡");
+		  $("#floor").html(data.FLOOR_NO+"/"+data.TOTAL_FLOORS);
+		  $("#cx").html(data.cx);
+		  $("#zx").html(data.zx);
+		  $("#lat").val(data.BAIDU_LATITUDE);
+		  $("#lng").val(data.BAIDU_LONGITUDE);
+		  $("#year").html(data.FINISHED_YEAR);
+		  //alert(data.FINISHED_YEAR);
+		  $("#recommend").html(data.PERSONAL_RECOMMEND_REASON);
+		  $("#address").html(data.BRIEF_ADDR);
+		  $("#COMMUNITY_NAME").html(data.COMMUNITY_NAME);
+		  
+		   if(data.IS_RING ==1){
+			  $("#allview").css("color","#90F");
+		      $("#allview").attr("href",data.HJ_HOUSE_URL2);
+		  }//不支持环景看房
+		  
+		  if(data.FULL_VIEW_PATH!='(NULL)'){
+			  $("#img").attr("src","http://image.landzestate.com/"+data.FULL_VIEW_PATH);
+			  }
+		  
+		  $("#img_a").attr("onclick","topic("+data.landz_id+")");
+		  var huxing = data.huxing;
+		  if(huxing!=""){
+			  $("#img_huxing").attr("src","http://image.landzestate.com/"+data.huxing);
+			   $("#img_huxing_a").click(function(){
+				   $('#Modal').modal('show');
+				   $("#img_huxing_big").attr("src","http://image.landzestate.com/"+data.huxing);
+				   });
+			  }
+		  
+		  
+		  var shareContent={
+				 "title":$("#house_title").html(),
+				 "link":window.location.href,
+				 "content":"售价："+$("#price").html()+"万元\n面积："+$("#area").html()+"\n房型："+$("#house_type").html()+" \n楼盘名称："+$("#COMMUNITY_NAME").html(),
+				 "img_url":$("#img").attr("src")
+			};
+			if(browser.indexOf('ydzyBrowser_android') > -1)
+			{
+				window.data.getInfo(JSON.stringify(shareContent));
+			}
+		  
+		  
+		  var lng = data.BAIDU_LONGITUDE;
+		  var lat = data.BAIDU_LATITUDE;
+		  
+		 aroundInfo("交通设施",data.BAIDU_LONGITUDE,data.BAIDU_LATITUDE,"one");
+		  
+		  $("#map").html("<img class='img-responsive' src='http://api.map.baidu.com/staticimage?markers="+data.BAIDU_LONGITUDE+","+data.BAIDU_LATITUDE+"&width=300&height=200&markerStyles=l&zoom=14'/>");
+		  
+		  if(data.SMALL_PHOTO_PATH!=""){
+		  $(".icon").html("<img class='img-rounded' src='http://image.landzestate.com/"+data.SMALL_PHOTO_PATH+"' height='80px'/>");
+		  $("#sicon").attr("src","http://image.landzestate.com/"+data.SMALL_PHOTO_PATH);
+		  }
+		  var fytd = data.fytd; //房源特点
+		  var fytds= new Array();  
+		  if(fytd=="无;"){
+			  fytd = "";
+			  }
+		  fytds=fytd.split(";");  
+	      for (i=0;i<fytds.length ;i++ ) 
+			{
+			 if(fytds[i]!=""){
+			$("#fytd").append("<button type='button' class='btn btn-default' disabled='disabled' style='margin-bottom:5px;'>"+fytds[i]+"</button>");
+			$(".fytd").append(fytds[i]+"/");
+			 }
+			}//房源特点结束 
+			
+	  after_share();
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("出现错误，稍后请重试");
+		}
+	});
+});
+var browser = navigator.userAgent;
+
+//IOS
+function getShare(){
+	var shareContent={
+				 "title":$("#house_title").html(),
+				 "link":window.location.href,
+				 "content":"售价："+$("#price").html()+"万元\n面积："+$("#area").html()+"\n房型："+$("#house_type").html()+" \n楼盘名称："+$("#COMMUNITY_NAME").html(),
+				 "img_url":$("#img").attr("src"),
+				 "phone":$("#mobile").html()
+			};
+		return JSON.stringify(shareContent); 
+	}
+
+function getLinker(){
+	var content = {
+		"name":$("#agent_name").html(),
+		"tel":$("#mobile").html(),
+		"uid":$("#ad_id").val()
+		};
+	return JSON.stringify(content); 
+}
+function getSMS(){
+	return ($("#mobile").html()); 
+}
+function getPIC(){
+	return ("http://landz.yingdongzhuoyue.cn/app_dev.php/jx/rentpic/"+$("#id").val()); 
+}
+function getGPS(){
+	var gpsContent = {
+		"lat":$("#lat").val(),
+		"lng":$("#lng").val()
+		}
+	return JSON.stringify(gpsContent); 
+}
+function CallPhone()
+{
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			//alert("ddd");
+			window.data.callPhone($("#mobile").html());
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/getLinker";
+		}
+	else{
+			window.location.href = "tel:"+$("#mobile").html();	
+		}
+}
+function GPS()
+{
+	
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			//alert($("#lat").val());
+			window.data.startNavi($("#lat").val(),$("#lng").val());
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/getGPS";
+		}
+	else{
+			window.location.href ="../gps/"+$("#lng").val()+","+$("#lat").val();
+		}
+}
+function to_other(id)
+{
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			//alert($("#lat").val());
+			window.data.to_Other(id,3);
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/"+id+"/getOther";
+		}
+	else{
+				window.location.href = "../rentinfo/"+id;	
+				}
+}
+function topic(id)
+{
+	
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			//alert($("#lat").val());
+			window.data.to_Pic("http://landz.yingdongzhuoyue.cn/app_dev.php/jx/rentpic/"+id);
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/getPIC";
+		}
+	else{
+				window.location.href="../rentpic/"+id;
+				}
+}
+function AllView(url)
+{
+	
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			window.data.to_720(url);
+			
+		}
+	else if(!!browser.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/))
+		{
+				window.location.href ="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/sellinfo/getLinker";
+
+		}
+		else if(browser.indexOf('Android') > -1){
+			window.location.href =url;
+			}else{
+				
+				}
+}
+function SMS()
+{
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			window.data.send_Msg($("#mobile").html(),"");
+			
+		}
+	else if(browser.indexOf('ydzyBrowser_ios') > -1)
+		{
+			window.location.href = "/getSMS";
+		}
+	else{
+			window.location.href = "sms:"+$("#mobile").html();
+		}
+}
+function agent()
+{
+	if(browser.indexOf('ydzyBrowser_android') > -1)
+		{
+			window.data.agent_detail($("#ad_id").val());
+			
+		}
+	else if(!!browser.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/))
+		{
+				window.location.href ="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/sellinfo/getLinker";
+
+		}
+		else if(browser.indexOf('Android') > -1){
+			
+			}else{
+				
+				}
+}
+function getCommunity(community_id){
+	var community_id = community_id;		
+	var json = 
+            {
+              "community_id": community_id,
+			  "start":"0",
+			  "num":"5",
+			  "recommend":"1"
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/rent/retrieveByFilter',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			for(var i=0;i<data.length;i++){
+				//$("#community_a").append("<a href='../rentinfo/"+data[i].landz_id+"' class='list-group-item'>"+data[i].title+"<span style='float:right;'>"+data[i].rent_price+"元/月</span></a>");
+				$("#community_a").append("<tr><td><a onclick='to_other("+data[i].landz_id+");' style='color:black;'>"+data[i].title+"</a></td><td style='width:20%;'>"+data[i].rent_price+"元/月</td></tr>");
+				
+				}
+			},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {}
+  
+  
+  });
+
+	
+	}
+
+function getTrade(community_id){
+	var community_id = community_id;		
+	var json = 
+            {
+              "community_id": community_id,
+			  "start":"0",
+			  "num":"5"
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/community/trade',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			
+			for(var i=0;i<data.length;i++){
+				$("#trade_a").append("<a class='list-group-item'>"+data[i].floor+"层-"+data[i].bedroom_num+"室"+data[i].hall_num+"厅-"+data[i].area+"平方米<span style='float:right;width:30%;text-aglin:center;'>"+data[i].trade_price+"万</span></a>");
+				}
+			},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {}
+  
+  
+  });
+
+	
+	}
+
+
+</script>
+<input type="hidden" value="{{id}}" id="id"/>
+<input type="hidden" value="" id="lat"/>
+<input type="hidden" value="" id="lng"/>
+<div style="margin:10px; height:100px;padding-top:10px;padding-bottom:10px;border-radius:0.5em;background-color:#FFF;">
+<div class="col-xs-3 icon"><img src="{{ asset('bundles/jxbundle/images/sicon.png') }}" width="80px"/></div>
+<div class="col-xs-9" style="padding-left:25px; padding-top:8px;"><span style="font-family:黑体;">很高兴为你服务，我是丽兹行豪宅专家<strong><span class="agent_name"></span></strong>，下面为你体验在租好房</span></div>
+</div>
+
+<div style="padding-left:15px; padding-right:15px;">这套房源很有性价比,您看是否符合您的要求</div>
+<div style=" padding-left:15px; padding-right:15px;font-size:16px; margin-bottom:10px;" id="house_title"></div>
+
+<div style="margin:10px;padding:15px;background-color:#FFF;border-radius:0.5em">
+房源描述：<br />
+<div id="house_info"></div>
+<div id="info_foot" style="text-align:center;"></div>
+<div id="info_foot1" style="text-align:center;"></div>
+</div>
+
+<div class="btn-group" style=" padding:5px;width:100%;text-align:center;">
+  <a href="#base_info" class="btn btn-default col-xs-3 btn-sm" style="padding:10px;" role="button">基本信息</a>
+  <a href="#near" class="btn btn-default col-xs-3 btn-sm" style="padding:10px;" role="button">周边设施</a>
+  <a href="#" id='allview' class="btn btn-default col-xs-3 btn-sm" style="padding:10px;" role="button">环景看房</a>
+  <a href="#recommend_a" class="btn btn-default col-xs-3 btn-sm" style="padding:10px;" role="button">推荐房源</a>
+</div>
+
+<div style="margin:10px;padding:20px;padding-left:15px;padding-right:15px; background-color:#FFF;border-radius:0.5em">
+<span>为您精心拍摄的房源实堪图</span><span style="float:right;color:red; font-size:10px;">(点击查看大图)</span><br /><br />
+<div style="height:auto;box-shadow: -20px -20px 0px #f1f0f0; margin:10px; margin-left:20px;">
+<a id="img_a" href="#"><img class="img-responsive" id="img" style="box-shadow: -10px -10px 0px #e6e6e6;" src="{{ asset('bundles/jxbundle/images/03_03.png') }}"/></a>
+</div>
+
+</div>
+
+<div style="margin:10px;padding:20px; padding-left:15px; padding-right:15px; background-color:#FFF;border-radius:0.5em">
+<span>户型图</span><span style="float:right;color:red; font-size:10px;">(点击查看大图)</span><br />
+<div style="border:#CCC solid 1px; height:auto; padding:10px; margin:15px 0;">
+<a id='img_huxing_a'><img class="img-responsive" id="img_huxing" src="{{ asset('bundles/jxbundle/images/03_03.png') }}"/></a>
+</div>
+</div>
+
+<div style="margin:10px;padding:20px; padding-left:15px; padding-right:15px; background-color:#FFF;border-radius:0.5em" id="base_info">
+这是此房的基本信息<br /><br />
+<div id="fytd">
+</div>
+<br />
+租金:<span id="price" style="color:#F00;"></span>元/月<br />
+<table width="100%" style="margin-top:10px;">
+<tr><td>户型：<span id="house_type"></span></td><td>面积:<span id="area"></span></td></tr>
+<tr><td>楼层：<span id="floor"></span></td><td>朝向:<span id="cx"></span></td></tr>
+<tr><td>装修：<span id="zx"></span></td><td>年代:<span id="year"></span></td></tr>
+<tr><td>楼盘名称：<span id="COMMUNITY_NAME"></span></td></tr>
+</table>
+</div>
+
+<div style="margin:10px;padding:20px; padding-left:15px; padding-right:15px; background-color:#FFF;border-radius:0.5em">
+房源点评：<br />
+<span id="recommend"></span>
+</div>
+
+<div style="margin:10px;padding:20px; padding-left:15px; padding-right:15px; background-color:#FFF;border-radius:0.5em">
+地址：<span id="address"></span><span style="float:right; padding:10px;"><button type="button" class="btn btn-default col-lg-2" id="btn_map">导航</button></span>
+<br />
+
+<div id="map" style="display:none;"></div><!--显示的静态的地图图片-->
+<div id="allmap"  class="col-lg-12" style="margin-top:40px;height:300px;"></div> <!--不显示的动态的地图图片-->
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.2"></script>
+<script type="text/javascript">
+function aroundInfo(value,lng,lat,time)
+{	
+	
+	$("#map_result").html("");
+	var map2 = new BMap.Map("allmap");
+	var point2 = new BMap.Point(lng,lat);
+	map2.centerAndZoom(point2, 15);
+	var marker1 = new BMap.Marker(point2);  // 创建标注
+    map2.addOverlay(marker1);              // 将标注添加到地图中
+	if(time=="one"){var mapshow = "";}
+	else{var mapshow=map2;}
+	var options = {
+			renderOptions:{
+				map:mapshow,
+				autoViewport:true,
+				selectFirstResult: false
+			},
+			onSearchComplete: function (results){
+				//test results
+				//alert(results);
+				//判断状态是否正确
+				if(local.getStatus() == BMAP_STATUS_SUCCESS){
+					var s = [];
+					//for(var i = 0;i<results.getCurrentNumPois(); i ++){
+					for(var i = 0;i<5; i ++){
+						//alert(results.getPoi(i).point.lng);
+						var jindu = results.getPoi(i).point.lng;
+						var weidu = results.getPoi(i).point.lat;
+						//var jindu = lng;
+						//var weidu = lat;
+						//alert("经度："+jindu+"纬度:"+weidu);
+						var pointStart = new BMap.Point(jindu,weidu);
+						//两点之间的距离
+						var distance = Math.round(map2.getDistance(pointStart,point2));
+						//计算步行时间
+						//定义每分钟步行米数
+						var perMinuteWalk = 80;
+						var minutes = Math.round(distance/perMinuteWalk);
+						//alert(results.getPoi(i).title);
+						//s.push("<ul><li class='fli'>【"+results.getPoi(i).title+"】</li><li class='tli'>步行"+distance+"米，约"+minutes+"分钟</li></ul>");
+						
+						$("#map_result").append("<a class='list-group-item'>【"+results.getPoi(i).title+"】 步行"+distance+"米，约"+minutes+"分钟</a>");
+						
+					}
+				}else{
+
+				}
+			}
+		};
+		var local = new BMap.LocalSearch(map2, options);
+	
+	//var local = new BMap.LocalSearch(map2, {renderOptions:{map: map2, autoViewport:true,selectFirstResult: false}});
+	//调用这个范围之内的数据
+	local.searchInBounds(value, map2.getBounds()); 
+	//目前地理位置的附近的数据
+	//local.searchNearby(v, point2);
+}
+</script>
+
+</div>
+
+
+<div style="margin:10px; height:100px;padding-top:10px;padding-bottom:10px;border-radius:0.5em;background-color:#FFF;" id="near">
+<div class="col-xs-3 icon"><img src="{{ asset('bundles/jxbundle/images/sicon.png') }}" width="80px"/></div>
+<div class="col-xs-9" style="padding-left:25px; padding-top:3px;"><span style="font-family:黑体;">配套设施是很多人购房时容易忽略的问题，本小区周边设施完完备，无论是家居生活还是投资，您都值得拥有</span></div>
+</div>
+
+<div style="padding:10px;">
+<button type="button" style="padding:10px;" class="btn btn-default col-xs-4 map_value"><img src="{{ asset('bundles/jxbundle/images/03_07.png') }}" width="20px;"/><span>交通设施</span></button>
+<button type="button" style="padding:10px;" class="btn btn-default col-xs-4 map_value"><img src="{{ asset('bundles/jxbundle/images/02_09.png') }}" width="20px;"/><span>教育机构</span></button>
+<button type="button" style="padding:10px;" class="btn btn-default col-xs-4 map_value"><img src="{{ asset('bundles/jxbundle/images/02_12.png') }}" width="20px;"/><span>商铺超市</span></button>
+</div>
+
+<div style="padding:10px; margin-top:30px; padding-bottom:0px;">
+<div class="list-group" id="map_result">
+  <a class="list-group-item active" style="background-color: #dfdfdf;border-color: #dfdfdf; color:#000; height:40px;">
+    <div style=" float:left;width:50%; text-align:center">设施名称</div> <div style=" float:left;width:50%; text-align:center;">距离</div>
+  </a>
+</div>
+</div>
+
+
+
+<div style="margin:10px;margin-top:0px;margin-bottom:0px;height:100px;padding-top:10px;padding-bottom:10px;border-radius:0.5em;background-color:#FFF;" id="recommend_a">
+<div class="col-xs-3 icon"><img src="{{ asset('bundles/jxbundle/images/sicon.png') }}" width="80px"/></div>
+<div class="col-xs-9" style="padding-left:25px; padding-top:3px;"><span style="font-family:黑体;">除了完善的设施，此房源的亮点在于<strong><span class="fytd"></span></strong>，周边同类房源还有下面几套供您参考</span></div>
+</div>
+
+<div style="padding:10px; margin-top:5px; padding-bottom:0px;">
+<div class="list-group" id="">
+  <a class="list-group-item active"  style="background-color: #dfdfdf;border-color: #dfdfdf; color:#000; height:40px;">
+    <div style=" float:left;width:50%; text-align:center"><img src="{{ asset('bundles/jxbundle/images/04_18.png') }}" width="20px;" style=" padding-bottom:5px;"/>房源</div> <div style=" float:left;width:50%; text-align:center;"><img src="{{ asset('bundles/jxbundle/images/04_21.png') }}"  style=" padding-bottom:5px;" width="20px;"/>售价</div>
+  </a>
+  <table id="community_a" class="table table-hover" style="background-color:#FFF; border-radius:0.5em; border:#CCC solid 1px;">
+ 
+  </table>
+</div>
+</div>
+
+
+<div style="margin:10px;margin-top:0px;margin-bottom:0px;height:100px;padding-top:10px;padding-bottom:10px;border-radius:0.5em;background-color:#FFF;">
+<div class="col-xs-3 icon"><img src="{{ asset('bundles/jxbundle/images/sicon.png') }}" width="80px"/></div>
+<div class="col-xs-9" style="padding-left:25px; padding-top:8px;"><span style="font-family:黑体;">本小区过去的三个月价格商城中，最近成交房源您看一下</span></div>
+</div>
+
+<div style="padding:10px; margin-top:5px; padding-bottom:0px;">
+<div class="list-group" id="trade_a">
+  <a class="list-group-item active" style="background-color: #dfdfdf;border-color: #dfdfdf; color:#000; height:40px;">
+    <div style=" float:left;width:50%; text-align:center"><img src="{{ asset('bundles/jxbundle/images/04_18.png') }}" width="20px;" style=" padding-bottom:5px;"/>房源</div> <div style=" float:left;width:50%; text-align:center;"><img src="{{ asset('bundles/jxbundle/images/04_21.png') }}"  style=" padding-bottom:5px;" width="20px;"/>售价</div>
+  </a>
+</div>
+</div>
+<div style="padding-left:40px; padding-right:15px; margin-bottom:10px;"><a href='tel:4008889950' role="button" class="btn btn-default"> 更多问题，请拨打联系电话4008889950</a></div>
+
+<div style="padding-right:10px;"><button id="back-to-top" type="button" style="padding:10px; float:right;" class="btn btn-default col-xs-3">返回顶部</button></div>
+
+<div style="padding:0;margin-top:70px;" class="col-xs-12"></div>
+
+<div style="padding:0; margin-top:20px; position:fixed; bottom:0px; z-index:999;" class="col-xs-12">
+
+<div class="col-xs-5" style="padding:0;background-color:#adacac; color:#FFF; height:60px;">
+ <div class="col-xs-4" style="line-height:60px;padding-left:5px;">
+ <img id="sicon" class="img-rounded" src="{{ asset('bundles/jxbundle/images/sicon.png') }}" height="45px"/>
+ </div>
+ <div class="col-xs-8" style=" padding-left:10px;padding-top:10px;">
+  <input type="hidden" value="" id="ad_id"/>
+  <span class="agent_name" id="agent_name"></span><br />
+  <span style="font-size:12px;" id="mobile" class="mobile"></span>
+ </div>
+</div>
+
+<a href="tel:" id="mobile_tel"><div class="col-xs-4" style=" padding:0;text-align:center;background-color:#088711;color:#FFF; height:60px; line-height:60px;"><img src="{{ asset('bundles/jxbundle/images/05_26.png') }}" width="25px" style="padding-bottom:10px;padding-right:1px;"/><span style="font-size:18px;">致电</span></div></a>
+
+<div class="col-xs-3" style="padding:0;text-align:center;background-color:#321344;color:#FFF; height:60px;line-height:60px;" onclick="SMS();"><img src="{{ asset('bundles/jxbundle/images/05_29.png') }}" width="20px" style="padding-bottom:10px;"/><span style="font-size:18px;">短信</span></div>
+
+</div>
+{% endblock %}

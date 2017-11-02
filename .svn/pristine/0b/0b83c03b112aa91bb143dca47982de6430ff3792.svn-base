@@ -1,0 +1,53 @@
+{% extends 'YdzyJxBundle:Jx:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<script>
+$(function(){
+	
+	$("#1").click(function(){
+		
+		$('#myalert').modal('show');
+        $('#myalert_content').html("<h3>主要职责：</h3>1、参与产品设计，在产品经理的指导和设计师的帮助下完成产品的网页原型设计；<br/>2、独立完成项目管理，包括项目进度跟进，现场问题分析，反馈修正，文档整理；<br/>3、产品运营跟进，包括收集用户反馈，整理产品需求，运营数据分析等，提出产品改进建议。<br/></div><div><h3>岗位要求：</h3>1、热爱互联网行业，承压能力高。<br/>2、了解基本的互联网相关技术，计算机、信息管理等技术专业本科毕业优先；<br/>3、1年互联网产品或者IT产品设计相关工作经验；<br/>4、协调沟通能力，可以积极主动沟通，工作细心，具备良好的团队合作精神；<br/>5、较强的学习能力，逻辑思维能力强、擅长分析总结，优秀的文字处理和表达能力；<br/>6、熟练使用Word、Excel等office软件，熟悉MindManager、Axure等产品原型工具更好。</div>");
+		
+		});
+	
+	
+	});
+</script>
+  <div class="col-sm-12">
+  	<div class="col-sm-12" style="margin-top:20px;"><img src="http://job.anjuke.com/upload/recruit/1367138813-mecyn.jpg" /></div>
+    <br /><br />
+    <div class="col-sm-12" style="margin-top:20px;">
+    <ul class="list-group">
+    <li id="1" class="list-group-item">产品经理<span style="position:absolute;left:250px;">薪酬：8000-10000</span><span style="position:absolute;left:520px;">招聘期限：2014年6月1日</span><span style="position:absolute;left:830px;">发布日期：2014年4月1日</span></li>
+    <li id="2" class="list-group-item">软件工程师<span style="position:absolute;left:250px;">薪酬:4000-8000</span><span style="position:absolute;left:520px;">招聘期限：2014年6月1日</span><span style="position:absolute;left:830px;">发布日期：2014年4月1日</span></li>
+    <li id="3" class="list-group-item">手机UI设计师<span style="position:absolute;left:250px;">薪酬:3000-7000</span><span style="position:absolute;left:520px;">招聘期限：2014年6月1日</span><span style="position:absolute;left:830px;">发布日期：2014年4月1日</span></li>
+    <li id="4" class="list-group-item">文员<span style="position:absolute;left:250px;">薪酬:2000-4000</span><span style="position:absolute;left:520px;">招聘期限：2014年6月1日</span><span style="position:absolute;left:830px;">发布日期：2014年4月1日</span></li>
+    </ul>
+    </div>
+    
+    
+  </div>
+  
+  
+  
+  
+ <!-- Modal -->
+<div class="modal" id="myalert" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;margin:200px auto;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">职位要求</h4>
+      </div>
+      <div class="modal-body" id="myalert_content">
+        ...
+      </div>
+      <div class="modal-footer"> 
+        <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+       </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{% endblock %}

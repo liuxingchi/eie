@@ -1,0 +1,259 @@
+{% extends 'YdzyJxBundle:Jx:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<script type="text/javascript" src="{{ asset('bundles/jxbundle/js/slide.js') }}"></script>
+<script>
+var timer = null;
+var offset = 5000;
+var index = 0;
+var maxIndex  = 6;
+//大图交替轮换
+function slideImage(i){
+    var id = 'big_'+ i;
+    $('#'+ id)
+        .animate({opacity: 1}, 800, '').show()
+        .siblings(':visible')
+        .animate({left: 'hide'},'fast',function(){
+            $(this).animate({opacity: 0}, 800).hide();
+        });
+}
+/*function auto(){
+	index++;
+    if (index > $("#image_length").val()){
+        index = 0;
+    }
+	slideImage(index);
+    timer = window.setTimeout(auto, offset);
+}*/
+$(function(){ 
+loadnav();
+var machine_id = $("#machine_id").val();
+var json = 
+            {
+              "machine_id": machine_id,
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/machine/info',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			if(data.mark ==0||data.mark==2||data.mark==-2){if(data.rent_by_month ==0){var sale_price = "面议";}else{var sale_price = data.rent_by_month+"万/月";}if(data.rent_by_num ==0){var rent_by_num = "";}else{var rent_by_num = data.rent_by_num+"万/台班";} $("#rent_by_num").html(rent_by_num);}
+		if(data.mark ==1||data.mark==3||data.mark==-3){if(data.sale_price ==0){var sale_price = "面议";}else{var sale_price = data.sale_price+"万";}}
+		if(data.workhours ==0){var workhours = "";}else{var workhours = data.workhours+"小时";}
+		if(data.factory_year =="0"){var factory_year = "";}else{var factory_year = data.factory_year.substring(0,4)+"年"+data.factory_year.substring(4,2)+"月";}
+		if(data.tonn ==0){var tonn = "";}else{var tonn = data.tonn+"吨";}
+	  $("#machine_title").html(data.machine_name);
+	  $("#sale_price").html(sale_price);
+	  $("#category_name").html(data.category);
+	  $("#updated_date").html(data.creation_date.substring(0,10));
+	  $("#brand_name").html(data.brand_name);
+	  $("#brand_model").html(data.brand_model);
+	  $("#tonn").html(tonn);
+	  $("#workhours").html(workhours);
+	  $("#factory_year").html(factory_year);
+	  $("#province").html(data.province+data.city);
+	  $("#nickname").html(data.linker);
+	  $("#phone").html(data.linker_tel);
+	  $("#description").html(data.description);
+	  $("#info").attr("href","../info/"+data.uid);
+	  var roles = data.roles;
+	  if(roles!="{}"){$("#content_bottom").hide();}
+	  //百度地图
+		lat = data.lat;
+		lng = data.lng;
+		if(lat==0){
+			$("#map").html("<img  src='http://api.map.baidu.com/staticimage?markers="+lng+","+lat+"&width=1020&height=429&markerStyles=l&zoom=14'/>");
+			}else{
+				$("#map").html("<a href='/app_dev.php/jx/map/"+lng+","+lat+"' target='_blank'><img  src='http://api.map.baidu.com/staticimage?markers="+lng+","+lat+"&width=1020&height=429&markerStyles=l&zoom=14'/> </a>");
+				}
+		//alert(data.image.length);
+	  
+	  $("#image_length").val(data.image.length);
+	  var image2_length = data.image2.length;
+	  var image_length = data.image.length;
+	  
+	   for(var i=0;i<data.image.length;i++){
+		var url = data.image[i].url;
+		var postfix = url.split("/").slice(-1).join("").substr(1);
+		var img_big = url.substr(0,url.length-5);
+		//alert(postfix.substr(1));
+	   	//var img_big = (data.image[i].url).substring(0,48);
+		//var  postfix = (data.image[i].url).substring(49);
+	   	var big = img_big+"0"+ postfix;
+		
+	     $("#"+machine_id+i).attr("src",data.image[i].url);
+		 $("#"+machine_id+i).attr("alt",i);
+		 $("#"+machine_id+i).attr("onclick","show(this)");
+		 $("#image_big").append("<img src='"+big+"' height='600px' width='800px' id='big_"+i+"'/>");
+		 $("#image_small_list").append("<li><a href='Javascript:;' onclick='change(this)' rel='"+i+"'><img width='86px' height='57px' src='"+data.image[i].url+"'/></a></li>");
+		}
+		
+		if(image2_length!=0){
+			maxIndex = image2_length+image_length;
+			for(var i=image_length;i<maxIndex;i++){
+			var url = data.image2[i-image_length].url;
+			var postfix = url.split("/").slice(-1).join("").substr(1);
+			var img_big = url.substr(0,url.length-5);
+			var big = img_big+"0"+ postfix;
+			
+			$("#"+machine_id+i).attr("src",data.image2[i-image_length].url);
+			$("#"+machine_id+i).attr("alt",i);
+			$("#"+machine_id+i).attr("onclick","show(this)");
+			$("#image_big").append("<img src='"+big+"' height='600px' width='800px' id='big_"+i+"'/>");
+			$("#image_small_list").append("<li><a href='Javascript:;' onclick='change(this)' rel='"+i+"'><img width='86px' height='57px'  src='"+data.image2[i-image_length].url+"'/></a></li>");
+				}
+			
+			}
+	   
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("出现错误，稍后请重试");
+		}
+	});
+$("#image_area").mouseover(function(){
+	$(".bigbtnPrev").add(".bigbtnNext").show();
+	});
+$("#image_area").mouseout(function(){
+	$(".bigbtnPrev").add(".bigbtnNext").hide();
+	});
+$('#big_play_prev').add("#big_play_next").click(function(){
+            if (timer){
+                clearTimeout(timer);
+            }
+            var id = this.id;
+            if (id == 'big_play_prev') {
+                index--;
+                if (index < 0) index = maxIndex;
+            }else{
+                index++;
+                if (index > maxIndex) index = 0;
+            }
+            slideImage(index);
+            timer = window.setTimeout(auto, offset);
+        });	
+
+
+$('#image_small_list').bxCarousel({
+		display_num: 10, 
+		move: 10,
+		margin: 10 
+	});
+
+});
+function change(oClick){
+	if (timer) {
+		clearTimeout(timer);
+	}                
+	var index = oClick.rel;
+	slideImage(index); 
+	timer = window.setTimeout(auto, offset);  
+	this.blur(); 
+};
+function show(oClick){
+	if (timer) {
+		clearTimeout(timer);
+	}                
+	var index = oClick.alt;
+	slideImage(index); 
+	timer = window.setTimeout(auto, offset);
+};	
+</script>
+<!--列表开始-->
+  <div class="col-sm-12" id="list">
+  <input type="hidden" value= "{{id}}" id="machine_id"/>
+  <input type="hidden" value= "" id="image_length"/>
+  <input type="hidden" value= "" id="image2_length"/>
+   <div  id="top">
+		<center><span id="machine_title"></span></center>
+   </div>
+   <div class="col-sm-7" style="max-width:630px; margin-bottom:10px;">
+   <ul style="list-style:none;">
+   	<li style="float:left;margin:2px;"><img id="{{id}}0"  width="181px" height="121px" src=""></li>
+    <li style="float:left;margin:2px;"><img id="{{id}}1"  width="181px" height="121px" src=""></li>
+    <li style="float:left;margin:2px;"><img id="{{id}}2"  width="181px" height="121px" src=""></li>
+    <li style="float:left;margin:2px;"><img id="{{id}}3"  width="181px" height="121px" src=""></li>
+    <li style="float:left;margin:2px;"><img id="{{id}}4"  width="181px" height="121px" src=""></li>
+    <li style="float:left;margin:2px;"><img id="{{id}}5"  width="181px" height="121px" src=""></li>
+    <li style="float:left;margin:2px;"><img id="{{id}}6" width="181px" height="121px" src=""></li>
+    <li style="float:left;margin:2px;"><img id="{{id}}7" width="181px" height="121px" src=""></li>
+    <li style="float:left;margin:2px;"><img id="{{id}}8" width="181px" height="121px" src=""></li>
+    </ul>
+    
+    
+   </div>
+   <div class="col-sm-5">
+   	<div><span style="font-size:24px; color:#b40202 !important;"><span id="sale_price"></span><span id="rent_by_num" style="font-size:15px; color:#999; padding-left:10px;"></span></span></div>
+    <table style=" margin-top:10px; width:100%">
+    <tr style="height:50px;"><td style="width:50%;">机种：<span id="category_name"></span></td><td>发布日期：<span id="updated_date"></span></td></tr>
+    <tr style="height:50px;"><td style="width:50%;">品牌：<span id="brand_name"></span></td><td>机型：<span id="brand_model"></span></td></tr>
+    <tr style="height:50px;"><td style="width:50%;">小时数：<span id="workhours"></span></td><td>出厂日期：<span id="factory_year"></span></td></tr>
+    <tr style="height:50px;"><td style="width:50%;">吨位：<span id="tonn"></span></td><td>所在地：<span id="province"></span></td></tr>
+    </table>
+       <div style="border: 1px solid #B40202; border-radius:3px; margin-top:25px;height:115px;">
+   			<span style="padding-left:15px;height:35px; line-height:35px; font-size:16px; font-weight:800;">联系人：<span id="nickname"></span></span>
+      
+    	<div style="margin-top:5px; margin-bottom:10px;margin-left:5px; min-width:380px !important;">
+         <div style="float:left;padding-left:15px;"><img src="{{ asset('bundles/jxbundle/images/phone.png') }}"></div>
+         <div style="float:left; margin-left:10px; margin-bottom:10px;">
+         	<span style="font-size:30px; color:#b40202 !important; font-weight:bold" id="phone"></span><br>
+         	<span style="color:#999 !important;">欢迎来电咨询，请说明是在万吉网上看见的</span>
+         </div>
+		</div>
+       
+   	</div>
+    
+   </div>
+   
+   
+  
+
+  </div>
+  <!--列表结束-->
+  <hr style="width:100%; color:#333 !important; size:5px;">
+  <!--center开始-->
+  <div class="col-sm-10" style="margin:0; margin-bottom:30px; padding:0;">
+  <!--大图-->
+  <div style="width:800px; height:600px; overflow:hidden;" id="image_area">
+  <p class="bigbtnPrev" style="display:none;"><span id="big_play_prev"></span></p>
+  <div id="image_big" style="text-align:center;"></div>
+  <p class="bigbtnNext"  style="display:none;"><span id="big_play_next"></span></p>
+  </div>
+  </div>
+  <div class="col-sm-2">
+  	<span style="font-family:'微软雅黑'; color:#b40202; font-size:18px;">详情介绍</span><br><br>
+    <div style="font-family:'微软雅黑'; font-size:18px; text-indent:2em !important; line-height:32px;" id="description"> </div>
+  </div><br>
+  <!--center结束-->
+  <!--轮换开始-->
+  <div style="clear:both"></div>
+   <div class="col-sm-12" style="margin:0; padding:0;">
+ 		
+        <div class="bx_wrap"><a class="prev" href="">left</a><a class="next" href="">right</a>
+ 	
+    	<div class="bx_container"><ul id="image_small_list"></ul></div>
+		
+        </div>
+	</div>
+    <br>
+  <br>
+  <!--轮换结束-->
+  <!--地图开始-->
+  <div style="font-size:24px; color:#b40202;font-family:'微软雅黑'; margin:20px 0px;padding-top:20px;">设备位置</div>
+ <div id="map" align="center"></div>
+  <!--地图结束-->
+  
+  <div id="content_bottom" style="border:1px solid #B40202; border-radius:3px; margin-top:40px; margin-left:65px;width:1024px;height:50px;">
+  
+   	<a href="#" id="info" target="_blank">
+    <div style="height:50px;"><img style="position:relative;top:5px;left:335px;" width='25px' src="/bundles/jxbundle/images/fabur.png"><span style=" position:relative; left:350px;top:10px;font-family:'微软雅黑';font-size:20px; color:#b40202 !important; font-weight:bold" id="phone">点击查看发布人的其他设备</span></div>
+		
+      
+   </div></a>
+  
+
+{% endblock %}

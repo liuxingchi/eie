@@ -1,0 +1,352 @@
+{% extends 'YdzyJxBundle:Jx:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<script>
+var MARK = "1";
+</script>
+<script src="{{ asset('bundles/jxbundle/js/infopage.js') }}"></script>
+<script>
+
+function reloadList(json_data,current){
+	$("#machine_list").html("");
+	var current = current;
+	page(current);
+	if(json_data==""){
+		var json={
+			"mark": MARK,
+			"recommend":"1",
+			"start": "0",
+			"num": "20",
+			"updated_date_sort":"0",
+			"uid":$("#uid").val()
+			};
+		}else{
+			var json = json_data;
+			}
+  	ajaxPost(
+		'app_dev.php/api/machine/retrieveByFilter',
+		json,
+		function(data, textStatus){
+		  //alert(data.length);
+		  var rent_by_num = "";
+		  for(var i=0;i<data.length;i++){
+			//alert(data[i].pic_all);
+			var updated_date = data[i].updated_date.substr(0,11);
+			if(data[i].machine_name.length<=28){var machine_name = data[i].machine_name;}
+			else{var machine_name = data[i].machine_name.substring(0,28)+"...";}
+			if(data[i].mark ==1){if(data[i].sale_price ==0){var sale_price = "面议";}else{var sale_price = data[i].sale_price+"万";}}
+
+		if(data[i].mark ==0){if(data[i].rent_by_month ==0){var sale_price = "面议";}else{var sale_price = data[i].rent_by_month+"万/月";}if(data[i].rent_by_num ==0){rent_by_num = "";}else{rent_by_num = data[i].rent_by_num+"万/台";} $("#rent_by_num").html(rent_by_num);}
+		
+			if(data[i].factory_year_full=="0年月"){var factory_year = "";}else{var factory_year = data[i].factory_year_full;}
+			if(data[i].workhours==0){var workhours = "";}else{var workhours=data[i].workhours+"小时　|　";}
+			if(data[i].tonn==0){var tonn = "";}else{var tonn = data[i].tonn+"吨　|";}
+			if(data[i].province==""||data[i].province==null){var province = "";var city="";}else{var province = data[i].province;var city=data[i].city;}
+     $("#machine_list").append("<div class=\"col-sm-3\" style=\"border:#cdcdcd 1px solid; height:110px; padding:0;\"> <a href='../content/"+data[i].machine_id+"' target='_blank'><ul style=\"width:210px; padding:0; padding-top:2px;\" id=\"list_img_ul\"> <li style=\"float:left;\" id='"+data[i].machine_id+"0'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"1'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"2'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"3'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"4'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> <li style=\"float:left;\" id='"+data[i].machine_id+"5'> <img src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/> </li> </ul></a> </div> <div class=\"col-sm-7\" style=\"height:110px;\"> <a href='../content/"+data[i].machine_id+"' target='_blank'><p style=\"color:#b40202; text-decoration:underline;font-size:14px;font-weight:700;\">"+machine_name+"</p></a> <p> <span style=\"padding:15px;padding-left:0;\">"+data[i].brand+"</span> | <span style=\"padding:15px;\">"+data[i].model+"</span> | <span style=\"padding:15px;\">"+tonn+"</span><span>"+workhours+"</span><span>"+factory_year+"</span> </p> <p><span>"+rent_by_num+"</span> <span>"+province+"</span> <span>"+city+"</span> <span>"+updated_date+"发布</span> </p> <p> <span style=\"padding:15px;padding-left:0;\">"+data[i].nickname+"</span> <span style=\"padding:15px;\">"+data[i].phone+"</span> </p> </div> <div class=\"col-sm-2\" style=\"height:110px; font-size:20px; color:#b40202;line-height:90px;font-weight:500;text-align:right;\">"+sale_price+"</div> <img src=\"{{ asset('bundles/jxbundle/images/list_hr.png') }}\"/>");
+        //判断是否是false，如果不是false，将图片填充上
+        if (data[i].pic_all) {
+          var str = data[i].pic_all;
+          var arr = new Array();
+          arr = str.split(",");
+          //alert(arr[0]);
+          for(var j=0;j<=arr.length-1;j++){
+            //alert(arr[j]);
+            //var lihtml = $("#"+data[i].machine_id+j).attr("id");
+            $("#"+data[i].machine_id+j).html("<img src='"+arr[j]+"'/>");
+            //alert(lihtml);
+          }
+        }; 
+      }//结束循环
+	
+    },
+    function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+		}
+    }
+  );
+}
+
+$(function(){
+loadnav();
+var json = {
+			"mark": "1",
+			"updated_date_sort":"0",
+			"start": "0",
+			"num": "20",
+			"uid":$("#uid").val()
+			};
+reloadList(json,0);
+
+//筛选功能（mark）
+$('#sale').add("#rent").click(function(){
+		
+	$('#mark > a').css("color","#000");
+	$(this).css("color","#b40202");
+	MARK = $(this).attr("ref");
+	var json = {
+		"start": "0",
+		"num": "20",
+		"mark":MARK,
+		"updated_date_sort":"0",
+		"uid":$("#uid").val()
+		};
+	reloadList(json,0);		
+	page(0);
+	});
+
+
+var info_json={
+	"uid":$("#uid").val()
+	}
+ajaxPost(
+		'app_dev.php/userprofilebyid',
+		info_json,
+		function(data, textStatus){
+				var follow = data.follow;
+				var nickname = data.nickname;
+				var phone = data.phone;
+				var signature = data.signature;
+				$("#card_name").html("<span style='color:red;padding-right:10px;'>■</span>"+nickname);
+				$("#card_tel").html("<span style='color:red;padding-right:10px;'>■</span>"+phone);
+				$("#follow_id").html(data.follow_id);
+				if(signature!=""){$("#card_signature").html("<span style='color:red;padding-right:10px;'>■</span>"+signature);}
+				if(follow==1){$("#follow").text("取消关注");$("#follow").attr("onclick","cancelfollow(this)");}
+			},
+		function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			case 403: //没登陆
+				$("#card_name").html("<span style='padding-right:10px;'>登陆后查看</span>");
+				$("#follow").hide();
+				break;
+			default:
+				alert('加载个人信息出现错误，请重试');
+		}
+    }
+);
+
+//右侧推荐
+var recommend_json={
+	"start":"0",
+	"num":"5",
+	"updated_date_sort":"0",
+	"recommend":"1",
+	"mark":"1"
+	}
+ajaxPost(
+		'app_dev.php/api/machine/retrieveByFilter',
+		recommend_json,
+		function(data, textStatus){
+			for(var i=0;i<data.length;i++){
+				var machine_name = data[i].machine_name;
+				if(machine_name.length<=16){var machine_name_str = machine_name;}
+				else{var machine_name_str = machine_name.substr(0,16)+"...";}
+				$("#index_recommend").append("<li><span>■</span><a style='color:#000' href='../content/"+data[i].machine_id+"' target='_blank'>"+machine_name_str+"</a><li>");
+				}
+			},
+		function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+				alert('加载推荐数据出现错误，请重试');
+		}
+    }
+);
+
+//右侧我的关注
+var follow_json={}
+ajaxPost(
+		'app_dev.php/api/myfollow',
+		follow_json,
+		function(data, textStatus){
+			for(var i=0;i<data.length;i++){
+				var phone = data[i].phone;
+				
+				
+				$("#follow_list").append("<li><span>■</span><a style='color:#000' href='../info/"+data[i].uid+"' target='_blank'>"+phone+"</a><span style='float:right;'>"+data[i].count+"</span><li>");
+				}
+			},
+		function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+		}
+    }
+);
+
+
+$("#driver").click(function(){
+	$('#mark > a').css("color","#000");
+	$(this).css("color","#b40202");
+	
+	var json = {
+		"start": "0",
+		"num": "20",
+		"updated_date_sort":"0",
+		"uid":$("#uid").val()
+		};
+		driver_page(0);
+		$("#machine_list").html("");
+		ajaxPost(
+		'app_dev.php/api/driver/retrieve',
+		json,
+		function(data, textStatus){
+		  //alert(data.length);
+		  for(var i=0;i<data.length;i++){
+			//alert(data[i].pic_all);
+			var updated_date = data[i].updated_date.substr(0,11);
+			if(data[i].salary==0){var salary = "面议";}else{var salary = data[i].salary+"元";}
+			if(data[i].province==null){var province = "";var city="";}else{var province = "工作地点："+data[i].province+" ";var city=data[i].city+"　";}
+     $("#machine_list").append("<div class=\"col-sm-3\" style=\"border:#cdcdcd 1px solid; height:110px; padding:0;\"> <a href='driver_content/"+data[i].driver_id+"' target='_blank'><div id='"+data[i].driver_id+"0'><img width='200px' height='108px' src=\"{{ asset('bundles/jxbundle/images/list_small.png') }}\"/></div></a></div> <div class=\"col-sm-7\" style=\"height:110px;\"> <a href='../driver_content/"+data[i].driver_id+"' target='_blank'><p style=\"color:#b40202; text-decoration:underline;font-size:14px;font-weight:700;\">"+data[i].model+"</p></a> <p><span>工作经验："+data[i].workyears+"</span> | <span>"+province+"</span><span>"+city+"</span></p> <p><span>"+updated_date+"发布</span> </p></div> <div class=\"col-sm-2\" style=\"height:110px; font-size:20px; color:#b40202;line-height:90px;font-weight:500;\">"+salary+"</div> <img src=\"{{ asset('bundles/jxbundle/images/list_hr.png') }}\"/>");
+        //判断是否是false，如果不是false，将图片填充上
+        if (data[i].pic) {
+          var str = data[i].pic;
+		   $("#"+data[i].driver_id+"0").html("<img src='"+str+"' width='200px' height='108px'/>");
+            //alert(lihtml);
+          
+        }; 
+      }//结束循环
+	
+    },
+    function(XMLHttpRequest, textStatus, errorThrown){
+		 switch(XMLHttpRequest.status)
+		{
+			case 400: //没数据
+				break;
+			default:
+		}
+    }
+  );
+	
+		
+	});
+
+
+});//function 主函数结束
+
+function follow(oClick){
+	var id = $("#uid").val();
+	var json = {
+		followed_uid:id
+		};
+	ajaxPost(
+		'app_dev.php/api/follow',
+		json,
+		function(data, textStatus){
+			$("#follow").text("取消关注");
+			$("#follow").attr("onclick","cancelfollow(this)");
+			},
+		function(XMLHttpRequest, textStatus, errorThrown){
+				 switch(XMLHttpRequest.status)
+				{
+					case 403: //没登陆
+						window.location.href="{{url('jx_login')}}";
+						break;
+					default:
+						alert('关注失败，请刷新重试');
+				}
+			});
+	
+	}
+function cancelfollow(oClick){
+	var id = $("#follow_id").html();
+	var json = {
+		follow_id:id
+		};
+	ajaxPost(
+		'app_dev.php/api/cancelfollow',
+		json,
+		function(data, textStatus){
+			$("#follow").text("关注发布人");
+			$("#follow").attr("onclick","follow(this)");
+			},
+		function(XMLHttpRequest, textStatus, errorThrown){
+				 switch(XMLHttpRequest.status)
+				{
+					case 403: //没登陆
+						window.location.href="{{url('jx_login')}}";
+						break;
+					default:
+						alert('取消关注失败，请刷新重试');
+				}
+			});
+	
+	}
+</script>
+   <input id="uid" value="{{id}}" type="hidden" />
+  <div id="content" style="position:relative; width:100%; margin-top:30px; padding:0;" class="col-sm-12">
+  <div class="tabs"> <!--tab选择框-->
+    <ul>
+        <li class="first"><div style="float:left; padding-left:20px;"><img src="{{ asset('bundles/jxbundle/images/category_list.png') }}"/></div><div id="category_list_div2">机械选择</div></li>
+        <li class="last"><a href="{{url('jx_map',{'location': '1'})}} " target="_blank">从地图上查看机械</a></li>
+    </ul>
+
+</div>  <!--tab选择框结束-->
+	<div id="index_filter" class="col-sm-12" style="padding:0;"> <!--类别选择框-->
+    
+    <div style="padding-top:15px;padding-bottom:15px;" id="mark" class="col-sm-12"><a href="#" id="sale" ref="1">机械出售</a>　<a href="#" id="rent" ref="0" style="color:#000;">机械出租</a>　<a href="#" id="driver" style="color:#000;">司机招聘</a> </div>
+	 
+    </div> <!--类别选择框结束-->
+  <div class="col-sm-12" style="padding-left:0; padding-right:0; margin-top:20px;">
+  	<div class="col-sm-9" style="overflow:hidden; padding-left:0;"><span style="font-size:16px; font-weight:bold; color:#b40202; padding-left:5px;">机械列表</span><span style="float:left; position:absolute;left:80px; color:#999; font-size:10px; line-height:25px;" id="index_list_num"></span>
+    <img src="{{ asset('bundles/jxbundle/images/hr.png') }}"/>
+   <div class="col-sm-12" id="machine_list"></div>
+    </div>
+    
+    
+  	<div class="col-sm-3" style="padding-right:0px; padding-left:20px;">
+    	<!--右侧第一个div-->
+    	<div style="border:#999 1px solid;border-radius: 6px; padding:20px;height:auto;">
+       <span style="font-size:18px; color:#F00; padding:0;" class="bold">发布人信息</span>
+        	<img src="{{ asset('bundles/jxbundle/images/right_line.png') }}" style="padding:0;"/>
+        <ul>
+          <li style="padding-bottom:10px;" id="card_name"></li>
+          <li style="padding-bottom:10px;" id="card_tel"></li>
+          <li style="padding-bottom:10px;" id="card_signature"></li>
+          <li style="padding-bottom:10px; display:none;" id="follow_id"></li>
+          <li style="text-align:right;"><button type="button" id="follow" onclick="follow(this)" class="btn btn-danger">关注发布人</button></li>
+         </ul>
+      </div>
+    	<br/>
+       <!-- 右侧第二个div开始-->
+        <div style="border:#999 1px solid;border-radius:6px; padding:20px;height:auto;">
+        	<span style="font-size:18px; color:#F00; padding:0;" class="bold">我的关注</span>
+        	<img src="{{ asset('bundles/jxbundle/images/right_line.png') }}" style="padding:0;"/>
+          <ul id="right_ul2" style="padding:0;">
+            <li id="follow_list"><li>
+           </ul>
+           
+            <br/><br/>
+        </div> <!--右侧第二个div结束-->
+        <br>
+         <!-- 右侧第三个div开始-->
+        <div style="border:#999 1px solid;border-radius:6px; padding:20px;height:auto;">
+        	<span style="font-size:18px; color:#F00; padding:0;" class="bold">热门推荐</span>
+        	<img src="{{ asset('bundles/jxbundle/images/right_line.png') }}" style="padding:0;"/>
+          <ul id="right_ul2" style="padding:0;">
+          <li id="index_recommend"></li>
+          </ul>
+            <img src="{{ asset('bundles/jxbundle/images/right_line.png') }}"/>
+            <span class="red" style="float:right; padding-right:5px;"><a target="_blank" href="{{url('jx_recommend')}}">查看更多 ></a></span>
+            <br/><br/>
+        </div> <!--右侧第三个div结束-->
+        
+
+    </div><!--右侧广告位展示-->
+  </div>
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>  
+    </div><!--分页结束-->
+</div> <!--content结束-->
+{% endblock %}

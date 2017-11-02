@@ -1,0 +1,134 @@
+<?php
+namespace Ydzy\ApiBundle\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+
+class MarketController extends Controller
+{
+	
+	//------------------------------------------------
+	// 列表
+	//------------------------------------------------
+    public function retrieveByFilterAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$start = $json->get('start',0);
+		$num = $json->get('num',10);
+		
+		$this->get('my_datebase')->connection();
+		
+		$sql = "select * from market order by id desc limit $start,$num";
+		//return new Response($sql);
+		$result = mysql_query($sql);
+		$num = mysql_num_rows($result);
+		if(!$num){
+			return  new Response('',400);
+		}
+		$array_result = array();
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+			$row['creation_date'] = $this->get('login')->tranTime($row['creation_date']);
+		    $array_result[] = $row;
+			}
+			
+		
+		return new JsonResponse($array_result);
+		
+    }
+    //------------------------------------------------
+    // 推荐列表总数据
+    //------------------------------------------------
+    public function retrieveByFilterNumAction(Request $request)
+    {
+        $this->get('my_datebase')->connection();
+    
+        $sql = "select count(*) from market";
+        //return new Response($sql);
+        $result = mysql_query($sql);
+        $num = mysql_num_rows($result);
+        if(!$num){
+            return  new Response(0);
+        }
+       
+        $count = mysql_result($result,0);
+        	
+        return new Response($count);
+    
+    }
+   /*
+    * 新闻info
+    */
+    public function infoAction(Request $request){
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('market_id',0);
+        $this->get('my_datebase')->connection();
+        if($id){
+            $result = mysql_query("select * from market where id = $id limit 1");
+        }
+        $array_result = array();
+        
+        while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        
+            $array_result= $row;
+        }
+        return new JsonResponse($array_result);
+        
+        
+    }
+   
+    
+	//------------------------------------------------
+	// 发布market
+	//------------------------------------------------
+    public function addAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$content = $json->get('content','');
+		$title = $json->get('title','');
+		$image_url = $json->get('image_url','');
+		$image_ids = $json->get('image_ids','');
+		
+		if(!$image_ids){
+			return new Response('得有图片啊大哥！',401);
+		}
+		
+		//return new Response(date('Y-m-d','1357401600'));
+		
+		$current = time();
+		
+		$this->get('my_datebase')->connection();
+		$sql = "insert into market set title = '$title',content = '$content',image_url = '$image_url', creation_date = $current,updated_date=$current";
+		//return new Response($sql);
+		mysql_query($sql);
+		$id = mysql_insert_id();
+		
+		$image_array = explode(',', $image_ids);
+		while ($image_one = current($image_array)) {
+			//printf("%s <br />", $step_one);
+			$image_sql = "insert into market_image set market_id =$id ,image_id = $image_one";
+			mysql_query($image_sql);
+			next($image_array);
+		}
+		
+		return new JsonResponse($id);
+		
+    }
+    
+    /*
+     *删除 
+     */
+    public function delAction(Request $request){
+        
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('market_id',-1);
+        $this->get('my_datebase')->connection();
+        
+        mysql_query("delete from market where id = $id");
+        return new JsonResponse('删除成功',200);
+    }
+	
+	
+    
+}

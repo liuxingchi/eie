@@ -1,0 +1,861 @@
+<?php
+namespace Ydzy\ApiBundle\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+
+class OrderController extends Controller
+{
+    public function indexAction(Request $request)
+    {
+        return new Response("medicine order");
+    }
+	
+	
+	//------------------------------------------------
+	// 订单列表
+	//------------------------------------------------
+    public function retrieveAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$cid = $json->get('cid',-1);
+
+		$start = $json->get('start',0);
+		$num = $json->get('num',10);
+		
+		
+		
+		$this->get('my_datebase')->connection();
+		
+		$sql = "select a.*,b.username from orderlist as a left join user as b on a.user_id = b.id order by a.id desc limit $start,$num";
+		$result = mysql_query($sql);
+		$num = mysql_num_rows($result);
+		$array_result = array();
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+			$row['creation_date'] = date("Y-m-d", $row['creation_date']);
+			$row['updated_date'] = date("Y-m-d", $row['updated_date']);
+		    $array_result[] = $row;
+			}
+			
+		
+		return new JsonResponse($array_result);
+		
+    }
+    //------------------------------------------------
+    // 订单列表num
+    //------------------------------------------------
+    public function retrieveByFilterNumAction(Request $request)
+    {
+         $json = $this->get('json_parser')->parse($request);
+		$cid = $json->get('cid',-1);
+
+		$start = $json->get('start',0);
+		$num = $json->get('num',10);
+		
+		
+		
+		$this->get('my_datebase')->connection();
+		
+		$sql = "select count(a.id) from orderlist as a left join user as b on a.user_id = b.id order by a.id desc limit $start,$num";
+			
+        $result = mysql_query($sql);
+        $num = mysql_num_rows($result);
+        if(!$num){
+            return  new Response(0);
+        }
+       
+        $count = mysql_result($result,0);
+        	
+        return new Response($count);
+    
+    }
+    /*
+     * 发回到订单中心
+     */
+    public function postBackAction(Request $request){
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('id',0);//订单的id
+        $status = $json->get('status',0);//0需支付订单、1定金支付成功、2定金支付失败、3交易成功、4交易失败 5取消订单
+		$current = time();
+        
+        if($status==1){
+        	mysql_query("update orderlist set status = 3,updated_date = $current,status_message='交易成功' where id = $id");
+        }else if($status==3){
+        	mysql_query("update orderlist set status = 5,updated_date = $current,status_message='交易取消' where id = $id");
+        }else{
+        	mysql_query("update orderlist set status = 4,updated_date = $current,status_message='交易失败' where id = $id");
+        }
+        
+        
+        return new Response('',200);
+        
+        
+    }
+    
+    //------------------------------------------------
+    // 商品跟进
+    //------------------------------------------------
+    public function followMessagesAction(Request $request)
+    {
+    	$json = $this->get('json_parser')->parse($request);
+    	$id = $json->get('id',-1);
+    
+    	$this->get('my_datebase')->connection();
+    
+    	$sql = "select * from order_follow where order_id = $id order by id desc";
+    	$result = mysql_query($sql);
+    	$array_result = array();
+    	while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+    		$row['creation_date'] = date('Y-m-d H:i:s',$row['creation_date']);
+    		$array_result[] = $row;
+    	}
+    
+    	return new JsonResponse($array_result);
+    
+    }
+    //------------------------------------------------
+    // 发布商品跟进
+    //------------------------------------------------
+    public function addMessageAction(Request $request)
+    {
+    	$json = $this->get('json_parser')->parse($request);
+    	$id = $json->get('id',-1);
+    	$message = $json->get('message','');
+    
+    	$this->get('my_datebase')->connection();
+    	$current = time();
+    	$sql = "insert into order_follow set status=1,order_id = $id ,message = '$message',creation_date = $current,updated_date = $current";
+    	mysql_query($sql);
+    	return new JsonResponse('',200);
+    
+    }
+    
+    
+    
+    /*
+     * 获得我的通知条数
+     */
+   public function retrieveMyNodifyAction(Request $request){
+       $current = time();
+       //uid判断
+       $user = $this->getUser();
+       if($user){
+           $login_uid = $user->getId();
+       }else{
+           $login_uid = 0;
+           return new Response('没有登陆',403);
+       }
+      
+           //首先查找nodify表，知道上次最近的查看时间
+           $result = mysql_query("select updated_date from nodify where uid = $login_uid and mark = 1 order by id desc limit 1");
+           $num = mysql_num_rows($result);
+           if(!$num){
+               $last_updated_date = 0;
+               mysql_query("insert into nodify set updated_date = 0,uid = $login_uid,mark=1");
+           }else{
+               $last_updated_date = mysql_result($result,0);
+           }
+           //$last_updated_date = mysql_result(mysql_query("select updated_date from nodify where uid = $login_uid and mark = 1 order by id desc limit 1"),0);
+           //find userorder 
+           $count1 = mysql_result(mysql_query("select count(id) as num from orderlist where touid = $login_uid and updated_date>$last_updated_date"),0);
+           //return new response("select * as num from userorder where touid = $login_uid and updated_date>$last_updated_date");
+      
+           //获得他的发单记录的条数，同样首先查找nodify
+           $result = mysql_query("select updated_date from nodify where uid = $login_uid and mark = 0 order by id desc limit 1");
+           $num = mysql_num_rows($result);
+           if(!$num){
+               $last_updated_date = 0;
+               mysql_query("insert into nodify set updated_date = 0,uid = $login_uid,mark=0");
+           }else{
+               $last_updated_date = mysql_result($result,0);
+           }
+           $count2 = mysql_result(mysql_query("select count(id) as num from orderlist where uid = $login_uid and updated_date>$last_updated_date"),0);
+           
+           return new JsonResponse(array('public'=>$count2,'accept'=>$count1));
+       
+       
+   }
+   /*
+    * 更改我的通知条数
+    */
+   public function changeMyNodifyAction(Request $request){
+       $json = $this->get('json_parser')->parse($request);
+       $mark = $json->get('mark',0);//0 我的发单    1 我的接单
+       $current = time();
+       //uid判断
+       $user = $this->getUser();
+       if($user){
+           $login_uid = $user->getId();
+       }else{
+           $login_uid = 0;
+           return new Response('没有登陆',403);
+       }
+       if($mark == 1){
+           //然后将当前的时间更新到nodify表
+           mysql_query("update nodify set updated_date = $current where uid = $login_uid and mark = 1");
+           return new Response('',200);
+       }else{
+           mysql_query("update nodify set updated_date = $current where uid = $login_uid and mark = 0");
+           return new Response('',200);
+       }
+        
+   }
+	//------------------------------------------------
+	// 发布订单（草稿）
+	//------------------------------------------------
+    public function publishAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$touid = $json->get('touid',0);
+		$draft = $json->get('draft',0);
+		$cid = $json->get('cid',0);
+		$title = $json->get('title','');
+		$end_date = $json->get('end_date',0);
+		$workdescription = $json->get('workdescription','');
+		$total_price = $json->get('total_price',0);
+		$original_price = $json->get('original_price',0);
+		$discount = $json->get('discount',0);
+		$attr = $json->get('attr','');
+		$step = $json->get('step','');
+		//return new Response(date('Y-m-d','1357401600'));
+		//uid判断
+		$user = $this->getUser();
+		if(!$user){
+			return new Response('',403);
+			}
+		$uid = $user->getId();
+		$current = time();
+		$ordercode = ($current/100).rand(10,99);
+		//return new Response($ordercode);
+		if($touid){
+		    $mark=2;
+		}else{
+		    $mark=0;
+		}
+		
+		$this->get('my_datebase')->connection();
+		$sql = "insert into orderlist set uid = $uid,mark=$mark,cid = $cid,touid = $touid, title='$title',end_date =$end_date,workdescription = '$workdescription',order_code=$ordercode,total_price = $total_price,original_price=$original_price,true_price = $total_price,draft=$draft,discount = $discount,creation_date = $current,updated_date=$current";
+		//return new Response($sql);
+		mysql_query($sql);
+		$id = mysql_insert_id();
+		//如果存在touid,将此信息保存到userorder里
+		if($touid){
+		    mysql_query("insert into userorder set uid = $uid ,touid = $touid,oid = $id,creation_date = $current,updated_date = $current");
+		}
+		if($attr!=''){
+		$attr_array = json_decode($attr,true);
+		while (list($key, $val) = each($attr_array)){
+			//echo "$key => $val<br />";
+			$attr_sql = "insert into orderattr set oid =$id ,aid = $key,num = $val";
+			mysql_query($attr_sql);
+			}
+        }
+		if($step!=''){	
+		$step_array = explode(',',$step);
+		while ($step_one = current($step_array)) {
+			//printf("%s <br />", $step_one);
+			$step_sql = "insert into orderstep set oid=$id,sid = $step_one";
+			mysql_query($step_sql);
+			next($step_array);
+			}
+		}
+		return new JsonResponse($id);
+		
+    }
+    
+    /*
+     *订单(草稿)删除 
+     */
+    public function delAction(Request $request){
+        
+        $json = $this->get('json_parser')->parse($request);
+        $oid = $json->get('oid',-1);
+        $this->get('my_datebase')->connection();
+        //uid判断
+        $user = $this->getUser();
+        if(!$user){
+            return new Response('',403);
+        }
+        mysql_query("delete from orderlist where id = $oid");
+        return new JsonResponse('删除成功',200);
+    }
+	
+	//------------------------------------------------
+	// 后台生成文章
+	//------------------------------------------------
+    public function createArticleAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$content = $json->get('content','');
+		$title = $json->get('title','');
+		$current = time();
+		
+		$this->get('my_datebase')->connection();
+		
+		
+		echo $sql = "insert into article set title='$title',content='$content' ,creation_date = $current,status = 1";
+		mysql_query($sql);
+		return new JsonResponse(array('id'=>mysql_insert_id()));
+		
+    }
+    
+    /*
+     * 显示文章
+     */
+    
+    public function showArticleAction(Request $request)
+    {
+        
+        $id = $request->get('id');
+        $this->get('my_datebase')->connection();
+        $result = mysql_query("select content,title from article where id = $id");
+        $content = mysql_result($result,0,'content');
+        $title = mysql_result($result,0,'title');
+    
+        return $this->render('YdzyApiBundle:Default:News.html.twig',array('content'=>$content,'title'=>$title));
+        
+        
+    
+    }
+	//------------------------------------------------
+	// 订单的所有接单人信息
+	//------------------------------------------------
+    public function touidlistAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$oid = $json->get('oid',-1);
+		
+		$this->get('my_datebase')->connection();
+		//uid判断
+		$user = $this->getUser();
+		if(!$user){
+			return new Response('',403);
+			}
+		
+        $sql = "select a.*,b.icon,b.phone,b.username,b.email,b.qq,c.area as city,b.summary,b.cid,b.offdateastouid,b.speed,b.attitude,b.quality from userorder as a left join fos_user as b on a.touid = b.id left join area as c on b.cityid = c.id where a.oid = $oid";
+		$result = mysql_query($sql);
+		if(!mysql_num_rows($result)){
+			return new Response('没数据',400);
+			}
+	    $array_result = array();
+	    $session = $this->getRequest()->getSession();
+	    $quality_session = $session->get('quality');
+	    $speed_session = $session->get('speed');
+	    $attitude_session = $session->get('attitude');
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+		    $row['quality_ave'] = $quality_session;
+		    $row['speed_ave']=$speed_session;
+		    $row['attitude_ave']=$attitude_session;
+		    $result1 = mysql_query("select count(id) as count,sum(total_price) as price from orderlist where mark = 14  and touid = $row[touid]");
+		    $row['count']=mysql_result($result1,0,'count');
+		    $row['price']=mysql_result($result1,0,'price');
+		    $row['city']==null?$row['city']="":$row['city']=$row['city'];
+		    $row['price']==null?$row['price']="":$row['price']=$row['price'];
+		    $row['summary']==null?$row['summary']="":$row['summary']=$row['summary'];
+			$array_result[] = $row;
+			}
+		
+		return new JsonResponse($array_result);
+		
+    }
+	
+	//------------------------------------------------
+	// 订单信息查询
+	//------------------------------------------------
+    public function infoAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$id = $json->get('id',-1);
+		
+		$this->get('my_datebase')->connection();
+		
+		$sql = "select a.order_num,a.status_message,a.money,a.id as order_id,a.status,b.content,b.image_url,b.price,b.id,b.creation_date,c.name as category from orderlist as a left join recommended as b on a.publish_id = b.id left join category as c on c.id = b.cid where a.id = $id";
+		$result = mysql_query($sql);
+		if(!mysql_num_rows($result)){
+			return new JsonResponse('没数据',400);
+			}
+		$array_result = array();
+		
+		$array_result = mysql_fetch_array($result,MYSQL_ASSOC);
+		$array_result['creation_date'] = date('Y-m-d',$array_result['creation_date']);
+		$order_id = $array_result['order_id'];
+		$recommended_id = $array_result['id'];
+		$image_result = mysql_query("select b.original_image as url from recommended_image as a left join images as b on a.image_id = b.id where a.recommended_id = $recommended_id");
+        //return new Response("select b.url from recommended_image as a left join images as b on a.image_id = b.id where a.recommended_id = $id");
+        $image_array = array();
+        while ($row = mysql_fetch_array($image_result, MYSQL_ASSOC)) {
+        
+            $image_array[] = $row;
+        }
+        $array_result['image_urls'] = $image_array;
+		
+        $message_result = mysql_query("select message,creation_date from order_follow where order_id = $order_id");
+        //return new Response("select b.url from recommended_image as a left join images as b on a.image_id = b.id where a.recommended_id = $id");
+        $message_array = array();
+        while ($row = mysql_fetch_array($message_result, MYSQL_ASSOC)) {
+        	$row['creation_date'] = date('Y-m-d',$row['creation_date']);
+        	$message_array[] = $row;
+        }
+        $array_result['message'] = $message_array;
+        
+        
+		return new JsonResponse($array_result);
+		
+    }
+	
+	
+	//------------------------------------------------
+	// 发单者和接单者对order的评价
+	//------------------------------------------------
+    public function commentAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$oid = $json->get('oid',-1);
+		$content = $json->get('content','');
+		$rate = $json->get('rate',-1);
+		$quality = $json->get('quality',-1);
+		$speed = $json->get('speed',-1);
+		$attitude = $json->get('attitude',-1);
+		$mark = $json->get('mark',-1);
+		$current = time();
+		
+		$this->get('my_datebase')->connection();
+		
+		$result = mysql_query("select uid,touid from orderlist where id = $oid");
+		$uid = mysql_result($result,0,'uid');
+		$touid = mysql_result($result,0,'touid');
+		if($mark==1){
+			$sql="insert into comment set oid=$oid,uid=$uid,touid=$touid,rate=$rate,content='$content',mark=1,creation_date=$current";
+			}else if($mark==0){
+				$sql = "insert into comment set oid=$oid,uid=$uid,touid=$touid,quality=$quality,speed=$speed,attitude=$attitude,content='$content',mark=0,creation_date=$current";
+				}
+		$result = mysql_query($sql);
+		$id = mysql_insert_id();
+		return new JsonResponse($id);    
+    }
+	
+	
+	//------------------------------------------------
+	// 订单(草稿)的状态改变
+	//------------------------------------------------
+    public function updateAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$id = $json->get('id',-1);
+		$mark = $json->get('mark',-1);
+		$flag = $json->get('flag',-1);
+		$draft = $json->get('draft',-1);
+		$touid = $json->get('touid',-1);
+		$cid = $json->get('cid',-1);
+		$title = $json->get('title','');
+		$top = $json->get('top',-1);
+		$end_date = $json->get('end_date','');
+		$workdescription = $json->get('workdescription','');
+		$original_price = $json->get('original_price','');
+		$total_price = $json->get('total_price','');
+		$true_price = $json->get('true_price','');
+		$discount = $json->get('discount','');
+		$message = $json->get('message','');
+		$endreason = $json->get('endreason','');
+		$uidreport = $json->get('uidreport','');
+		$touidreport = $json->get('touidreport','');
+		$attr = $json->get('attr','');
+		$step = $json->get('step','');
+		$current = time();
+		$this->get('my_datebase')->connection();
+		//首先获得此订单的发单人
+		$uid = mysql_result(mysql_query("select uid from orderlist where id =$id "),0);
+		if($mark==6){
+		  //更改他的offdateasuid加一
+		  mysql_query("update fos_user set `offdateasuid` = `offdateasuid` + 1 where id = $uid"); 
+		}
+		if($mark==11){
+		    //更改uploadresult  上传成果的时间
+		    mysql_query("update orderlist set `uploadresult` = $current where id = $id");
+		}
+		$mark!=-1?$mark_sql = " mark = $mark,":$mark_sql = "";
+		$flag!=-1?$flag_sql = " flag = $flag,":$flag_sql = "";
+		$top!=-1?$top_sql = " top = $top,":$top_sql = "";
+		$draft!=-1?$draft_sql = " draft = $draft,":$draft_sql = "";
+		$touid!=-1?$touid_sql = " touid = $touid,":$touid_sql = "";
+		$cid!=-1?$cid_sql = " cid = $cid,":$cid_sql = "";
+		$title!=''?$title_sql = " title = '$title',":$title_sql = "";
+		$end_date!=''?$end_date_sql = " end_date = $end_date,":$end_date_sql = "";
+		$workdescription!=''?$workdescription_sql = " workdescription = '$workdescription',":$workdescription_sql = "";
+		$total_price!=''?$total_price_sql = " total_price = $total_price,":$total_price_sql = "";
+		$original_price!=''?$original_price_sql = " original_price = $original_price,":$original_price_sql = "";
+		$true_price!=''?$true_price_sql = " true_price = $true_price,":$true_price_sql = "";
+		$discount!=''?$discount_sql = " discount = $discount,":$discount_sql = "";
+		$message!=''?$message_sql = " message = '$message',":$message_sql = "";
+		$endreason!=''?$endreason_sql = " endreason = '$endreason',":$endreason_sql = "";
+		$uidreport!=''?$uidreport_sql = " uidreport = '$uidreport',":$uidreport_sql = "";
+		$touidreport!=''?$touidreport_sql = " touidreport = '$touidreport',":$touidreport_sql = "";
+		if($uidreport){
+		      //首先获得到endreason
+		      $report = $uidreport;
+		}elseif($touidreport){
+		    $report = $touidreport;
+		}else{
+		    $report= $endreason;
+		}
+		
+		$dbendreason = mysql_result(mysql_query("select endreason from orderlist where id = $id"), 0);
+		if($dbendreason==''||$dbendreason==null){
+		    $endreason_sql = "endreason = '$report',";
+		}
+		
+		//$recommend!=-1?$recommend_sql = " recommend = '$recommend'":$recommend_sql = "";
+		//$torecommend!=-1?$torecommend_sql = " torecommend = '$torecommend'":$torecommend_sql = "";
+		
+		
+		
+		$sql = "update orderlist set ".$mark_sql.$top_sql.$flag_sql.$draft_sql.$touid_sql.$cid_sql.$title_sql.$end_date_sql.$workdescription_sql.$original_price_sql.$total_price_sql.$true_price_sql.$discount_sql.$endreason_sql.$message_sql.$uidreport_sql.$touidreport_sql."updated_date = $current where id = $id ";
+		//return new Response($sql);
+		mysql_query($sql);
+		if($attr!=""){
+			//先删除所有的数据
+			mysql_query("delete from orderattr where oid = $id");
+			$attr_array = json_decode($attr,true);
+			while (list($key, $val) = each($attr_array)){
+			$attr_sql = "insert into orderattr set oid =$id ,aid = $key,num = $val";
+			mysql_query($attr_sql);
+			}
+		}
+		if($step!=""){
+			mysql_query("delete from orderstep where oid = $id");
+			$step_array = explode(',',$step);
+			while ($step_one = current($step_array)) {
+			$step_sql = "insert into orderstep set oid=$id,sid = $step_one";
+			mysql_query($step_sql);
+			next($step_array);
+			}
+
+			}
+			if(mysql_query($sql)){
+			    return new JsonResponse('更改成功',200);
+			}else{
+			    return new Response('',500);
+			}   
+    }
+	//------------------------------------------------
+	// 查看所有的折扣信息
+	//------------------------------------------------
+    public function discountlistAction(Request $request)
+    {
+		
+		$this->get('my_datebase')->connection();
+		
+		$sql = "select * from discount";
+		$result = mysql_query($sql);
+		$array_result = array();
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+			$array_result[] = $row; 
+			}
+		return new JsonResponse($array_result);
+		
+    }
+	
+	//------------------------------------------------
+	// 工作阶段
+	//------------------------------------------------
+    public function stepAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$end_date = $json->get('end_date',-1);
+		$flag = $json->get('flag',-1);
+		$workcontent = $json->get('workcontent','');
+		$percent = $json->get('percent','');
+		
+		$this->get('my_datebase')->connection();
+		
+		$sql = "insert into step set flag = '$flag',percent = $percent, workcontent='$workcontent',end_date =$end_date";
+		mysql_query($sql);
+		$id = mysql_insert_id();
+		return new JsonResponse($id);    
+    }
+    
+    //------------------------------------------------
+    // 工作阶段的更改
+    //------------------------------------------------
+    public function stepupdateAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('id',0);
+        $end_date = $json->get('end_date',-1);
+        $flag = $json->get('flag',-1);
+        $workcontent = $json->get('workcontent','');
+        $percent = $json->get('percent','');
+        
+        $end_date!=-1?$end_date_sql = " end_date = $end_date,":$end_date_sql = "";
+        $flag!=-1?$flag_sql = "flag = '$flag',":$flag_sql = "";
+        $workcontent!=''?$workcontent_sql = " workcontent = '$workcontent',":$workcontent_sql = "";
+        $percent!=''?$percent_sql = " percent = $percent,":$percent_sql = "";
+    
+        $this->get('my_datebase')->connection();
+    
+        $sql = "update step set ".$end_date_sql.$flag_sql.$workcontent_sql.$percent_sql." status = 1 where id = $id";
+        mysql_query($sql);
+        return new JsonResponse($id);
+    }
+    //------------------------------------------------
+    // 工作阶段的删除
+    //------------------------------------------------
+    public function stepdelAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $id = $json->get('id',0);
+    
+        
+    
+        $this->get('my_datebase')->connection();
+    
+        $sql = "delete from step where id = $id";
+        mysql_query($sql);
+        return new JsonResponse('删除成功',200);
+    }
+
+	//------------------------------------------------
+	// 折扣的修改和发布
+	//------------------------------------------------
+    public function discountAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$discount = $json->get('discount','');
+		
+		$this->get('my_datebase')->connection();
+		
+		$sql = "insert into discount set discount = '$discount'";
+		mysql_query($sql);
+		$id = mysql_insert_id();
+		return new JsonResponse($id);    
+    }
+
+	//------------------------------------------------
+	// 接单者进度安排
+	//------------------------------------------------
+    public function rateAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$rate = $json->get('rate','');
+		$oid = $json->get('oid','');
+		$vids = $json->get('vids','');
+		$content = $json->get('content','');
+		$current = time();
+		$this->get('my_datebase')->connection();
+		//首先先看有没有100%
+		$num = mysql_num_rows(mysql_query("select id from orderrate where oid = $oid and rate = 100 limit 1"));
+		if($num){
+		    return new Response('此订单已经完成到100%，不能再添加',415);
+		}
+		$sql = "insert into orderrate set rate = $rate,oid=$oid,content='$content',creation_date=$current";
+		mysql_query($sql);
+		$id = mysql_insert_id();
+		if($vids!=""){
+		    $vids_array = explode(',',$vids);
+		    
+		    for($index=0;$index<count($vids_array);$index++){
+		        //echo $vids_array[$index];
+		        mysql_query("insert into orderversion set oid = $oid ,rid = $id,vid=$vids_array[$index],creation_date=$current,updated_date=$current");
+		    }
+		}
+		return new JsonResponse($id);    
+    }
+    
+    //------------------------------------------------
+    // 进度安排的列表页
+    //------------------------------------------------
+    public function retrieverateAction(Request $request)
+    {
+        $oid = $request->get('oid',0);
+        $start = $request->get('start',0);
+        $num = $request->get('num',10);
+    
+        $this->get('my_datebase')->connection();
+    
+        $sql = "select * from orderrate where oid = $oid order by id desc limit $start,$num";
+        $result = mysql_query($sql);
+        $array_result= array();
+       
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+		    //$row['filepath'] == null?$row['filepath']="":$row['filepath']=$row['filepath'];
+		    //echo $row['id'];
+		    $sql1 = "select b.* from orderversion as a left join Version as b on a.vid = b.id where rid = $row[id] order by a.id desc";
+		    $result1 = mysql_query($sql1);
+		    $array_result1= array();
+		    while($rs = mysql_fetch_array($result1,MYSQL_ASSOC)){
+		        $array_result1[] = array(
+		            'id'=>$rs['id'],
+		            'name'=>$rs['name'],
+		            'filepath'=>$rs['filepath'] 
+		        );
+		    }
+		    
+		    $row['creation_date'] = date('Y-m-d H:i:s',$row['creation_date']);
+			$array_result[] = array(
+			    'id'=>$row['id'],
+			    'oid'=>$row['oid'],
+			    'rate'=>$row['rate'],
+			    'content'=>$row['content'],
+			    'recommend'=>$row['recommend'],
+			    'creation_date'=>$row['creation_date'],
+			    'file'=>$array_result1
+			);
+			//print_r($array_result1);
+			//$array_result2[] = array_merge_recursive($array_result,array('file'=>$array_result1));
+		}
+			
+		return new JsonResponse($array_result);
+    }
+    
+	//------------------------------------------------
+	// 发单者对接单者进度安排的评价
+	//------------------------------------------------
+    public function raterecommendAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$rid = $json->get('rid','');
+		$recommend = $json->get('recommend',0);
+		
+		$this->get('my_datebase')->connection();
+		
+		$sql = "update orderrate set recommend = $recommend where id = $rid";
+		mysql_query($sql);
+		return new JsonResponse($rid);    
+    }
+
+	//------------------------------------------------
+	// 完成者和订单的关系
+	//------------------------------------------------
+    public function compaleterateAction(Request $request)
+    {
+		$json = $this->get('json_parser')->parse($request);
+		$oid = $json->get('oid','');
+		$vids = $json->get('vids','');
+		$usernamerate = $json->get('usernamerate','');
+		$content = $json->get('content','');
+		$current = time();
+        $attr_array = json_decode($usernamerate,true);
+		
+		while (list($key, $val) = each($attr_array)){
+			$sql = "insert into compaleterate set rate = $val,oid=$oid,username='$key'";
+			mysql_query($sql);
+			}
+		mysql_query("insert into orderrate set rate = 100,oid=$oid,content='$content',creation_date=$current");
+		$id = mysql_insert_id();
+		//将mark值变成10，flag变成3
+		mysql_query("update orderlist set mark = 11, flag = 3,updated_date = $current,`uploadresult` = $current where id = $oid");
+		if($vids!=""){
+		    $vids_array = explode(',',$vids);
+		
+		    for($index=0;$index<count($vids_array);$index++){
+		        //echo $vids_array[$index];
+		        mysql_query("insert into orderversion set oid = $oid ,rid = $id,vid=$vids_array[$index],creation_date=$current,updated_date=$current");
+		    }
+		}
+		return new JsonResponse('成功',200);     
+    }
+    //------------------------------------------------
+    // 订单的完成者列表
+    //------------------------------------------------
+    public function compaleteratelistAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $oid = $json->get('oid','');
+        $this->get('my_datebase')->connection();
+        
+    
+        $sql = "select * from compaleterate where oid=$oid";
+        $result = mysql_query($sql);
+        $array_result = array();
+        while($rs = mysql_fetch_array($result,MYSQL_ASSOC)){
+            
+            $array_result[] = $rs;
+        
+        }
+        $sql1 = "select * from orderrate where oid=$oid  order by id desc limit 1";
+        $result1 = mysql_query($sql1);
+        $array_result1 = array();
+        while($rs = mysql_fetch_array($result1,MYSQL_ASSOC)){
+            $rs['creation_date'] = date('Y-m-d H:i:s',$rs['creation_date']);
+            $array_result1 = $rs;
+        
+        }
+        $json_result = array(
+            'rate'=>$array_result1,
+            'compalete'=>$array_result
+            
+        );
+        return new JsonResponse($json_result);
+    }
+    
+    //------------------------------------------------
+    // 附件增加说明
+    //------------------------------------------------
+    public function versiondesAction(Request $request)
+    {
+    	$json = $this->get('json_parser')->parse($request);
+    	$vid = $json->get('vid',0);
+    	$description = $json->get('description',0);
+    
+    	$this->get('my_datebase')->connection();
+    
+    	mysql_query("update Version set description = '$description' where id=$vid");
+    	return new Response($vid);
+    }
+    //------------------------------------------------
+    // 订单和附件的关系表
+    //------------------------------------------------
+    public function orderversionAction(Request $request)
+    {
+    	$json = $this->get('json_parser')->parse($request);
+    	$oid = $json->get('oid',0);
+    	$vid = $json->get('vid',0);
+    	$rid = $json->get('rid',0);
+    	$current = time();
+    
+    	$this->get('my_datebase')->connection();
+    
+    	mysql_query("insert into orderversion set rid=$rid,oid = $oid,vid=$vid,creation_date='$current',updated_date='$current',status=1");
+    	$id = mysql_insert_id();
+    	return new JsonResponse($id);
+    }
+    //------------------------------------------------
+    // 查看附件的详情
+    //------------------------------------------------
+    public function versioninfoAction(Request $request)
+    {
+    	$json = $this->get('json_parser')->parse($request);
+    	$vid = $json->get('vid',0);
+    
+    	$this->get('my_datebase')->connection();
+    
+    	$result = mysql_query("select * from Version where id = $vid");
+    	$num = mysql_num_rows($result);
+		if(!$num){
+			return  new Response('',400);
+		}
+		$array_result = array();
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC)){
+			$array_result[] = $row;
+		}
+    	return new JsonResponse($array_result);
+    }
+    /*
+     * 根据id来更改ordernum
+     */
+    public function ordernumAction(Request $request)
+    {
+        $json = $this->get('json_parser')->parse($request);
+        $orderlist = $json->get('orderlist','');
+        $this->get('my_datebase')->connection();
+        foreach($orderlist as $key=>$order){
+            $sql = "update orderlist set ordernum = $key where id = $order";
+            mysql_query($sql);
+        }
+        
+        return new JsonResponse('',200);
+    }
+    
+}

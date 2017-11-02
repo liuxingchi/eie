@@ -1,0 +1,40 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script src="{{ asset('js/ajaxfileupload.js') }}"></script> 
+<script>
+var domain = "http://trendsfit.yingdongzhuoyue.com";
+function reloadList(){
+	
+  	ajaxPost(
+            '/app_dev.php/api/user/retrieveGroupsList',
+            {},
+            function(data, textStatus){
+            	for(var i = 0;i<data.length;i++){
+                    $("#list_area").append("<div class='panel panel-default'><div class='panel-heading'><h3 class='panel-title'>"+data[i].name+"</h3></div><div class='panel-body'>主持人:"+data[i].owner+"<br>拍卖描述:"+data[i].desc+"<br>拍卖结果:"+data[i].result+"</div></div>");
+                    }
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+
+}
+
+$(function(){
+
+reloadList();
+
+
+});//function 主函数结束
+
+
+
+
+</script>
+  
+  <div class="col-sm-12" id="list_area" style="margin-top:15px; padding:0;">
+	
+  </div>
+  
+  
+  
+</div> <!--content结束-->
+{% endblock %}

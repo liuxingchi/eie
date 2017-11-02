@@ -1,0 +1,86 @@
+{% extends 'YdzyJxBundle:Jx:layout.html.twig' %}
+{% block body %}
+<?php ?>
+<script>
+$(function(){ 
+loadnav();
+var driver_id = $("#driver_id").val();
+var json = 
+            {
+              "driver_id": driver_id,
+            };
+
+  $.ajax({
+		type:"POST",
+		url:'/app_dev.php/api/driver/info',
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:false,
+		success: function (data, textStatus) {
+			
+		if(data.salary ==0){var salary = "面议";}else{var salary = data.salary+"元";}
+
+	  $("#category").html(data.category);
+	  $("#salary").html(salary);
+	  $("#category_name").html(data.category);
+	  $("#updated_date").html(data.updated_date.substring(0,10));
+	  $("#model").html(data.model);
+	  $("#workyears").html(data.workyears);
+	  $("#province").html(data.province);
+	  $("#description").html(data.description);
+	  $("#nickname").html(data.nickname);
+	  $("#phone").html(data.phone);
+	  //alert(data.image.pic);
+		$("#image").attr("src",data.image.pic);		
+
+	   
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			alert("出现错误，稍后请重试");
+		}
+	});
+
+});
+</script>
+<!--列表开始-->
+  <div class="col-sm-12" id="list">
+  <input type="hidden" value= "{{id}}" id="driver_id"/>
+   <div  id="top">
+		<center><span id="machine_title"></span></center>
+   </div>
+   <div class="col-sm-7" style="max-width:630px; margin-bottom:10px;">
+   <img id="image" width="610px" height="385px" src="{{ asset('bundles/jxbundle/images/1.jpg') }}">
+   </div>
+   <div class="col-sm-5">
+   	<div><span style="font-size:24px; color:#b40202 !important;"><span id="sale_price"></span><span id="rent_by_num" style="font-size:15px; color:#999; padding-left:10px;"></span></span></div>
+    <table style=" margin-top:10px; width:100%">
+    <tr style="height:50px;"><td style="width:50%;">机种：<span id="category"></span></td><td>机型：<span id="model"></span></td></tr>
+    <tr style="height:50px;"><td style="width:50%;">薪酬：<span id="salary"></span></td><td>工作经验：<span id="workyears"></span></td></tr>
+    <tr style="height:50px;"><td style="width:50%;">发布日期：<span id="updated_date"></span></td><td>所在地：<span id="province"></span></td></tr>
+    </table>
+    <div style="border: 1px solid #B40202; border-radius:3px; margin-top:25px;height:115px;">
+   			<span style="padding-left:15px;height:35px; line-height:35px;">联系人：<span id="nickname"></span></span>
+      
+    	<div style="margin-top:5px; margin-bottom:10px;margin-left:5px; min-width:380px !important;">
+         <div style="float:left;padding-left:15px;"><img src="{{ asset('bundles/jxbundle/images/phone.png') }}"></div>
+         <div style="float:left; margin-left:10px; margin-bottom:10px;">
+         	<span style="font-size:30px; color:#b40202 !important; font-weight:bold" id="phone"></span><br>
+         	<span style="color:#999 !important;">欢迎来电咨询，请说明是在万吉网上看见的</span>
+         </div>
+		</div>
+       
+   	</div>
+    
+   </div>
+   
+  
+
+  </div>
+     <span id="description" style="font-size:24px; color:#b40202 !important;"></span> 
+<!--列表结束-->
+  <hr style="width:100%; color:#333 !important; size:5px;">
+  
+
+{% endblock %}

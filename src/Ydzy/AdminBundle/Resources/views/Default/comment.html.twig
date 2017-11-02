@@ -1,0 +1,67 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+</script>
+
+<style>
+</style>
+<script>
+var domain = "http//eie.ren/";
+function reloadList(){
+	$("#order_list").html("");
+  	var json = {
+  		  	'id':{{ id }}
+			};
+  	ajaxPost(
+            'app_dev.php/api/publish/retrieveComment',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+                	 $("#order_list").append("<tr id='"+data[i].id+"'><td>"+data[i].username+"</td><td>"+data[i].comment+"</td><td>"+data[i].creation_date+"</td></tr>");
+		      }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+
+$(function(){
+reloadList();
+
+});//function 主函数结束
+
+function print_array(arr){
+	for(var key in arr){
+		if(typeof(arr[key])=='array'||typeof(arr[key])=='object'){//递归调用  
+			print_array(arr[key]);
+		}else{
+			document.write(key + ' = ' + arr[key] + '<br>');
+		}
+	}
+}
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+{#     <div class="col-sm-12"><div class="col-sm-6"><input type="text" id="search_box" class="form-control" onKeyUp="search_box();" maxlength="100" autocomplete="off" placeholder="关键词搜索"></div><div><button type="button" class="btn col-sm-1 btn-default" id="search_btn" >搜索</button></div>#}
+    
+    </div>
+    
+    <div style="padding-top:20px;" class="col-sm-12">
+    <table class="table table-hover">
+  	<thead>
+  	<tr>
+    <th>评论者</th>
+    <th>评论内容</th>
+    <th>评论时间</th>
+    </tr>
+  	</thead>
+  	<tbody id="order_list"></tbody>	
+    </table>
+    </div>
+  	
+  </div>
+  
+
+</div> <!--content结束-->
+
+
+{% endblock %}

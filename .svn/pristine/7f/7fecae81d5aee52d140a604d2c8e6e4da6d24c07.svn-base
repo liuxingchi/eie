@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="">
+		<head>
+				<title>楼盘鉴赏</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-ui.js')}}"></script>
+				
+		</head>
+		<body style="background:#fff;">
+				<div class="ln_a" style="">    
+						<div class="le_a uc-a" style="display:none">				
+								<div class="le_b">		<!-- download App 通用-->
+										<div class="le_c">
+												<img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width='100%'/>
+										</div>
+										<div class="ld_e">
+												<div class="le_f">标题该软件是...</div>
+												<div class="le_g">该软件是丽兹行...</div>
+												<div class="le_h uba uc-a">下载软件</div>
+										</div>
+								</div>	
+						</div>
+				</div>	
+				<div class="lzapp_all">
+						<div class="lzapp_a">   				
+							 	<div ontouchstart="getonearea();" onclick="getonearea();" class="lzapp_b"><div>商圈<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" style="width:15px;height"15px;"></div></div>
+							 	<div ontouchstart="showprice();" onclick="showprice();" class="lzapp_c"><div>均价<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" style="width:15px;height"15px;"></div></div>
+							 	<div ontouchstart="showtype();" onclick="showtype();" class="lzapp_c"><div>类型<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" style="width:15px;height"15px;"></div></div>
+							 	<div ontouchstart="showyear();" onclick="showyear();" class="lzapp_c"><div>年代<img class="lza_e" src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" style="width:15px;height"15px;"></div></div>
+						</div>
+						<div class="lzapp_d" style="z-index:8888;">
+								<div class="lzapp_f" style="">
+				<!--  			<div class="lzapp_h">
+												<div class="lzapp_i uba">阿斯达是的</div>	
+										</div>
+				-->
+								</div>
+								<div class="lzapp_g" style="background:#fff;">
+				<!--					<div class="lzapp_h1">
+												<div class="lzapp_j uba">撒旦飞洒</div>	
+												<div class="lzapp_k"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%'/></div>	
+										</div>	
+				-->						
+								</div>
+						</div>   <!-- 添加商圈的 -->
+						<div class="lzapp_l" style="background:#f0f0f0;z-index:8888;">
+								<div class="lzapp_l1" onclick="getprice('lzapp_l1');">
+										<div class="lzapp_l1_1">&nbsp;&nbsp;&nbsp;&nbsp;不限</div>
+										<div class="lzapp_l1_2"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%'/></div>		
+								</div>
+								<div class="lzapp_l2" onclick="getprice('lzapp_l2');">
+										<div class="lzapp_l1_1">&nbsp;&nbsp;&nbsp;&nbsp;3万-4万</div>
+										<div class="lzapp_l1_2"></div>		
+								</div>
+								<div class="lzapp_l3" onclick="getprice('lzapp_l3');">
+										<div class="lzapp_l1_1">&nbsp;&nbsp;&nbsp;&nbsp;4万-4万5</div>
+										<div class="lzapp_l1_2"></div>		
+								</div>		
+								<div class="lzapp_l4" onclick="getprice('lzapp_l4');">
+										<div class="lzapp_l1_1">&nbsp;&nbsp;&nbsp;&nbsp;4万5-5万</div>
+										<div class="lzapp_l1_2"></div>		
+								</div>
+								<div class="lzapp_l5" onclick="getprice('lzapp_l5');">
+										<div class="lzapp_l1_1">&nbsp;&nbsp;&nbsp;&nbsp;5万以上</div>
+										<div class="lzapp_l1_2"></div>		
+								</div>
+						</div>
+						<div class="lzapp_n" style="background:#f0f0f0;z-index:8888;">
+								<div class="lzapp_n1" onclick="getyear('lzapp_n1');">
+										<div class="lzapp_n1_1">&nbsp;&nbsp;&nbsp;&nbsp;不限</div>
+										<div class="lzapp_n1_2"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%'/></div>		
+								</div>
+								<div class="lzapp_n2" onclick="getyear('lzapp_n2');">
+										<div class="lzapp_n1_1">&nbsp;&nbsp;&nbsp;&nbsp;1995年前</div>
+										<div class="lzapp_n1_2"></div>		
+								</div>
+								<div class="lzapp_n3" onclick="getyear('lzapp_n3');">
+										<div class="lzapp_n1_1">&nbsp;&nbsp;&nbsp;&nbsp;1995-2000年</div>
+										<div class="lzapp_n1_2"></div>		
+								</div>
+								<div class="lzapp_n4" onclick="getyear('lzapp_n4');">
+										<div class="lzapp_n1_1">&nbsp;&nbsp;&nbsp;&nbsp;2000-2005年</div>
+										<div class="lzapp_n1_2"></div>		
+								</div>
+								<div class="lzapp_n5" onclick="getyear('lzapp_n5');">
+										<div class="lzapp_n1_1">&nbsp;&nbsp;&nbsp;&nbsp;2005-2010年</div>
+										<div class="lzapp_n1_2"></div>		
+								</div>
+								<div class="lzapp_n6" ontouchstart="getyear('lzapp_n6');" onclick="getyear('lzapp_n6');" style="">
+										<div class="lzapp_n1_1">&nbsp;&nbsp;&nbsp;&nbsp;2010年后</div>
+										<div class="lzapp_n1_2"></div>		
+								</div>
+						</div>
+						<div class="lzapp_t" style="background:#f0f0f0;overflow-y:scroll;z-index:8888;">
+		<!--				<div class="lzapp_t1" ontouchstart="gettype('lzapp_t1');" onclick="getyear('lzapp_t1');">
+										<div class="lzapp_t1_1">&nbsp;&nbsp;&nbsp;&nbsp;不限</div>
+										<div class="lzapp_t1_2"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width='100%'/></div>		
+								</div>
+		-->
+						</div>
+						<div class="lzapp_m" style="font-family:'SimHei';"></div>
+				</div>
+				<script>
+						var bd_id = "";			//商圈ID
+						var bbd_id = "";		//区域ID
+						var hd_id = "";			//类型ID
+						var appprice_min = "";		//最小价格
+						var appprice_max = "";		//最大价格
+						var build_min = "";				//最小年份
+						var build_max = "";				//最大年份
+						var StartNum = "0"
+						function getonearea(){				//获取一级商圈
+								$(".lzapp_l").css("display","none");
+								$(".lzapp_n").css("display","none");
+								$(".lzapp_d").css("display","block");
+								var lzapp_ajson = {
+								 	  "":""
+							  };
+						    $.ajax({
+						        type: "POST",
+						        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/district/retrieveDistrict",
+						        data: $.toJSON(lzapp_ajson),
+						        dataType: 'json',
+						        success: function(data){
+						        		var lzapp_a = "";			
+						        		for(var i=0;i<data.length;i++){
+						        				lzapp_a += "<div id='one"+data[i].bbd_id+"' onclick='changeB1("+data[i].bbd_id+");' class='lzapp_h'><div class='lzapp_i'>"+data[i].name+"</div></div>";
+						        		}
+						           	$(".lzapp_f").html(lzapp_a);	
+						           	$(".lzapp_f div:first").css("background","#fff");
+						           	var one_two = $(".lzapp_f div:first").attr("id").replace("one","");
+						           	bd_id = one_two;
+						           	changeB(one_two);
+						        },
+						        error: function(){}
+						    });			
+						}
+						function changeB(obj){				//点击一级商圈变化背景
+								$(".lzapp_h").css("background","#f0f0f0");
+								$("#one"+obj).css("background","#fff");
+								var lzapp_bjson = {
+								 	  "bbd_id":obj
+							  };
+						    $.ajax({
+						        type: "POST",
+						        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/district/retrieveCommunity",
+						        data: $.toJSON(lzapp_bjson),
+						        dataType: 'json',
+						        success: function(data){
+						        		var lzapp_b = "";			
+						        		for(var i=0;i<data.length;i++){
+						        				lzapp_b += "<div  id='two"+data[i].community_id+"' class='lzapp_h1' style='z-index:8888;' onclick='ADDMARK("+data[i].community_id+");'><div class='lzapp_j'>"+data[i].name+"</div><div class='lzapp_k'></div></div>";
+						        		}
+						           	$(".lzapp_g").html(lzapp_b);	
+						           	$(".lzapp_k:eq(0)").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+						           	var Ctwo = $(".lzapp_g div:first").attr("id").replace("two","");
+						           	gotozero1();
+						           	bbd_id = Ctwo;
+						           	//alert(bd_id+bbd_id);
+						           	
+						        },
+						        error: function(){}
+						     });
+						}
+						
+						function changeB1(obj){
+								$(".lzapp_h").css("background","#f0f0f0");
+								$("#one"+obj).css("background","#fff");
+								bd_id = obj;
+								changeB(obj);
+						}
+						function ADDMARK(obj){				//商圈二级添加Mark
+								$(".lzapp_k").html("");
+								$("#two"+obj+" .lzapp_k").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+								$(".lzapp_d").css("display","none");
+								StartNum = "0";
+								bbd_id = obj;
+								$(".lzapp_m").html("");
+								gethouse();
+						}
+						function showprice(){
+								$(".lzapp_d").css("display","none");
+								$(".lzapp_n").css("display","none");
+								$(".lzapp_l").css("display","block");
+						}
+						function showtype(){
+								$(".lzapp_d").css("display","none");
+								$(".lzapp_n").css("display","none");
+								$(".lzapp_l").css("display","none");
+								$(".lzapp_t").css("display","block");
+								var lzapp_tjson = {
+						 	  		"":""
+							  };
+						    $.ajax({
+						        type: "POST",
+						        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/community/type",
+						        data: $.toJSON(lzapp_tjson),
+						        dataType: 'json',
+						        success: function(data){
+						        		var lzapp_t = "";
+						        		for(var t=0;t<data.length;t++){
+						        				lzapp_t += "<div id='three"+data[t].HD_ID+"' class='lzapp_t1' onclick=\"gettype('"+data[t].HD_ID+"');\"><div class='lzapp_t1_1'>&nbsp;&nbsp;&nbsp;&nbsp;"+data[t].DECORATION_NAME+"</div><div class='lzapp_t1_2'></div></div>";
+						        		}
+						        		$(".lzapp_t").html(lzapp_t);
+						        		$(".lzapp_t1_2:eq(0)").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+						           	var hd_id1 = $(".lzapp_t div:first").attr("id").replace("three","");
+						           	gotozero();
+						           	hd_id = hd_id1;
+						        },
+						        error: function(){}
+						     });
+						}
+						function getprice(obj){
+								$(".lzapp_l1_2").html("");
+								$("."+obj+" .lzapp_l1_2").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+								$(".lzapp_l").css("display","none");
+								gotozero();
+								if(obj == "lzapp_l1"){
+										appprice_min = "";
+										appprice_max = "";				
+								}else if(obj == "lzapp_l2"){
+										appprice_min = 30000;
+										appprice_max = 40000;
+								}else if(obj == "lzapp_l3"){
+										appprice_min = 40000;
+										appprice_max = 45000;	
+								}else if(obj == "lzapp_l4"){
+										appprice_min = 45000;
+										appprice_max = 50000;	
+								}else if(obj == "lzapp_l5"){
+										appprice_min = 50000;
+										appprice_max = 10000000;	
+								}
+								StartNum = "0";
+								$(".lzapp_m").html("");
+								gethouse();
+								//alert(appprice_min+appprice_max);
+						}
+						function gettype(obj){
+								$(".lzapp_t1_2").html("");
+								$(".three"+obj+" .lzapp_t1_2").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+								$(".lzapp_t").css("display","none");
+								gotozero();
+								hd_id = obj;
+								StartNum = "0";
+								$(".lzapp_m").html("");
+								gethouse();
+						}
+						function getyear(obj){
+								$(".lzapp_n1_2").html("");
+								$("."+obj+" .lzapp_n1_2").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+								$(".lzapp_n").css("display","none");
+								gotozero();
+								if(obj == "lzapp_n1"){
+										build_min = "";
+										build_max = "";
+								}else if(obj == "lzapp_n2"){
+										build_min = 0;
+										build_max = 1995;	
+								}else if(obj == "lzapp_n3"){
+										build_min = 1995;
+										build_max = 2000;	
+								}else if(obj == "lzapp_n4"){
+										build_min = 2000;
+										build_max = 2005;	
+								}else if(obj == "lzapp_n5"){
+										build_min = 2005;
+										build_max = 2010;	
+								}else if(obj == "lzapp_n6"){
+										build_min = 2010;
+										build_max = 9999;	
+								}
+								StartNum = "0";
+								$(".lzapp_m").html("");
+								gethouse();
+								//alert(build_min+build_max);
+						}
+						function showyear(){
+								$(".lzapp_d").css("display","none");
+								$(".lzapp_l").css("display","none");	
+								$(".lzapp_n").css("display","block");	
+						}
+						
+						function gethouse(){
+								//$(".lzapp_m").html("");
+								//alert(bbd_id+"==="+bd_id+"==="+hd_id+"==="+build_min+"==="+build_max+"==="+appprice_min+"==="+appprice_max);
+								//alert(hd_id);
+								var HL5json = {
+								 	  "community_id":bbd_id,									//地区
+								 	  "bbd_id":bd_id,							//建筑类型
+								 	  "hd_id":hd_id,
+								 	  "build_year_min":build_min,
+								 	  "build_year_max":build_max,
+								 	  "revprice_min":appprice_min,
+								 	  "revprice_max":appprice_max,
+								 	  "start":StartNum,
+								 	  "num":10
+							  };	
+							  $.ajax({
+						        type: "POST",
+						        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/community/retrieveByFilter",
+						        data: $.toJSON(HL5json),
+						        dataType: 'json',
+						        success: function(data){
+						        		var la_list2 = "";
+	     		        			for(var i=0;i<data.length;i++){
+					        			la_list2 += "<div class='la_f ubb' onclick=\"gotail('"+data[i].COMMUNITY_ID+"');\"><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+							           		+data[i].PIC_LIST_PATH+
+							           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1'>"
+							           		+data[i].COMMUNITY_NAME+
+							           		"</div><div class='la_k'><div class='la_m1' style='width:60%;'>"
+							           		+"均价：<span style='color:red;'>"+data[i].ranking_unit_price+"元/㎡<span>"+
+								           	"</div></div><div class='la_l'><div class='' style='float:left;width:70%;'>"
+								           	+"商圈:"+data[i].BUSINESS_DISTRICT_NAME+
+								           	"</div><div style='float:left;width:28%'></div></div></div></div></div>";
+						        		}
+						        		//$(".lzapp_m").html("");
+						           	$(".lzapp_m").append(la_list2);
+								    },
+								    error: function(){}
+								});	
+						}
+						gethouse();
+						function gotail(obj){
+								window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/communityinfo/"+obj;
+						}
+						function gotozero(){
+								bd_id = "";			
+								bbd_id = "";		
+								//hd_id = "";			
+								//appprice_min = "";
+								//appprice_max = "";	
+								//build_min = "";			
+								//build_max = "";			
+						}
+						function gotozero1(){	
+								bbd_id = "";		
+								hd_id = "";			
+								//appprice_min = "";
+								//appprice_max = "";	
+								//build_min = "";			
+								//build_max = "";			
+						}
+						$(window).scroll(function(){
+								var scrollTop = $(this).scrollTop();
+								var scrollHeight = $(document).height();
+								var windowHeight = $(this).height();
+								if(scrollTop + windowHeight == scrollHeight){
+										var tempnum = parseInt(StartNum);
+										StartNum = tempnum+10;
+										gethouse();
+								}	
+						});
+				</script>
+		</body>	
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

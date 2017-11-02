@@ -1,0 +1,344 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+var KEYWORD = "";
+var START = 0;
+var ISREST = "0";
+</script>
+<script src="{{ asset('js/page.js') }}"></script> 
+<script>
+var domain = "http//eie.club/";
+
+function reloadList(current){
+	$("#order_list").html("");
+	var current = current;
+	pageTemp(currentPage,"{}","preshow");
+  	var json = {
+  		  	'start':START,
+  		  	'num':20
+			};
+  	ajaxPost(
+            'app_dev.php/api/publish/publishAll',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+                  if(data[i].appeal_id == 2){	
+					$("#order_list").append("<tr id='"+data[i].id+"'><td><img width='75px' src='"+data[i].image_url+"' />"+
+					"</td><td>"+data[i].username+
+					"</td><td>"+data[i].price+
+					"</td><td>"+data[i].category+
+					"</td><td>"+data[i].appeal+
+					"</td><td>"+getLocalTime(data[i].creation_date)+
+					"</td><td><a href='#' onclick='info("+data[i].id+")'>详情</a>/<a href='#' onclick='del("+data[i].id+")'>删除</a></td></tr>"); 
+                  }else{
+            	  $("#order_list").append("<tr id='"+data[i].id+"'><td><img width='75px' src='"+data[i].image_url+"' />"+
+  					"</td><td>"+data[i].username+
+  					"</td><td>"+data[i].price+
+  					"</td><td>"+data[i].category+
+  					"</td><td>"+data[i].appeal+
+  					"</td><td>"+getLocalTime(data[i].creation_date)+
+  					"</td><td><a href='#' onclick='info("+data[i].id+")'>详情</a>/<a href='#' onclick='del("+data[i].id+")'>删除</a></td></tr>"); 
+                      }
+
+				 }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function follow(id){
+	var json = {
+			"id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/publish/appealSale',
+            json,
+            function(data, textStatus){
+                $("#newMessage").val("");
+                $("#message").html("");
+            	for(var i=0;i<data.length;i++){
+            		   $("#message").append("<li class='list-group-item'>"+data[i].message+"</li>");
+                	}
+            	$("#myFollow").modal('show');
+            	$("#btnAddMessage").attr("onclick","addNewMessage("+id+")");;
+			},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+function info(id){
+    $("#images").html("");
+    $("#count").html("");
+	var json = {
+			"id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/publish/info',
+            json,
+            function(data, textStatus){
+            	count(id);
+            	$("#username").text(data.username);
+            	$("#price").text((data.price)+"元");
+            	$("#category").text(data.category);
+            	$("#appeal").text((data.appeal));
+            	$("#creationDate").text(data.creation_date);
+            	$("#showContent").html(data.content);
+            	$("#diaModal").modal('show');
+
+            	for(var i=0;i<data.image_urls.length;i++){
+            		   $("#images").append("<img width='75px' src='"+data.image_urls[i].url+"' />");
+                	}
+			},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+$(function(){
+    reloadList(0);
+    $("#add_btn").click(function(){
+	location.href="addpublish";
+	});
+  
+});//function 主函数结束
+
+function del(id){
+	
+	var json = {
+			"recommended_id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/recommended/del',
+            json,
+            function(data, textStatus){
+            	$("#"+id).remove();
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+function addNewMessage(id){
+
+	var newMessage = $("#newMessage").val();
+	var json = {
+			"id":id,
+			"message":newMessage
+			};
+	ajaxPost(
+            'app_dev.php/api/publish/addMessage',
+            json,
+            function(data, textStatus){
+            	$("#myFollow").modal('hide');
+            	follow(id);
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+	//alert(newMessage);
+	
+}
+
+function count(id){
+	var json = {
+			"id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/publish/count',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+                	if(data[i].appeal_id==6){
+                    		if(data[i].count==1){
+							    var status = "<span style='padding-left:30px;'><a href='../order'>处理订单</a></span>";
+                    		}else{
+                    			var status = "<span style='padding-left:30px;'><a href='#' onclick='showModal("+data[i].user_id+","+data[i].recommended_id+")'>生成订单</a></span>";
+                        		}
+	                    }else{
+							var status = "";
+                        	}
+                	$("#count").append(data[i].username+"<span style='padding-left:30px;'>"+data[i].appeal+"</span>"+status+"<br>");
+            	}
+			},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    
+			}
+        );
+}
+
+function showModal(uid,id){
+	$("#btnCreate").attr("onClick","createOrder("+uid+","+id+")");
+	$("#createOrderModal").modal("show");
+}
+function createOrder(user_id,publish_id){
+	var json = {
+  			'user_id':user_id,
+  			'publish_id':publish_id,
+  			'money':$("#money").val()
+			};
+  	ajaxPost(
+            'app_dev.php/api/user/createOrder',
+            json,
+            function(data, textStatus){
+                alert("订单生成成功");
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+    <div class="col-sm-12"><a type="button" class="btn col-sm-1 btn-default" href="#" id="add_btn" >新增</a></div>
+    <div style="padding-top:20px;" class="col-sm-12">
+    
+    <table class="table table-hover">
+  	<thead>
+  	<tr>
+    <th>封面图</th>
+    <th>发布人</th>
+    <th>价钱</th>
+    <th>商品类型</th>
+    <th>诉求类型</th>
+    <th>发布时间</th>
+	<th colspan=8>操作</th>
+    </tr>
+  	</thead>
+  	<tbody id="order_list"></tbody>	
+    </table>
+    
+    </div>
+  	
+  </div>
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>  
+    </div><!--分页结束-->
+</div> <!--content结束-->
+
+
+<!-- Modal -->
+<div id="diaModal" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">详细信息</h4>
+      </div>
+      <div class="modal-body" id="myModalContent">
+        <div class="panel panel-default">
+	      <div class="panel-heading">发布人</div>
+	      <div class="panel-body">
+	          <span id="username"></span>            
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">价钱</div>
+	      <div class="panel-body">
+	          <span id="price"></span>            
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">商品类型</div>
+	      <div class="panel-body">
+	          <span id="category"></span>            
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">诉讼类型</div>
+	      <div class="panel-body">
+	          <span id="appeal"></span>            
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">发布时间</div>
+	      <div class="panel-body">
+	          <span id="creationDate"></span>            
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">拍卖信息</div>
+	      <div class="panel-body">
+	          <span id="showContent"></span>            
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">图片</div>
+	      <div class="panel-body">
+	          <span id="images"></span>            
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">统计</div>
+	      <div class="panel-body">
+	          <span id="count"></span>            
+	      </div>
+	    </div>
+	    
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="createOrderModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">生成订单</h4>
+      </div>
+      <div class="modal-body" id="myModalContent">
+      
+      <form class="form-horizontal">
+          <div class="form-group">
+            <div class="col-sm-12">
+              
+              <input type="text" class="form-control" id="money" placeholder="输入定金">
+            </div>
+          </div>
+          
+         
+          <div class="form-group">
+            <div class="col-sm-12">
+              <button type="submit" class="btn btn-default" id="btnCreate">确认</button>
+            </div>
+          </div>
+      </form>
+    
+	    
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myFollow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">商品跟进</h4>
+      </div>
+      <div class="modal-body" id="myModalContent">
+        <ul class="list-group" id="message"></ul>
+        
+	   
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="输入新的商品进度" id="newMessage">
+      <span class="input-group-btn">
+        <button id="btnAddMessage" class="btn btn-default" type="button">添加</button>
+      </span>
+        </div><!-- /input-group -->
+    
+	    
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

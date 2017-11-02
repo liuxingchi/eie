@@ -1,0 +1,205 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<style>
+a{cursor:pointer;}
+</style>
+<script>
+var KEYWORD = "";
+var START = 0;
+var ISREST = "0";
+</script>
+<script src="{{ asset('js/page.js') }}"></script>
+<script>
+function reloadList(current){
+	$("#order_list").html("");
+	var current = current;
+	videopage(current);
+  	var json = {
+  		  	'keyword':KEYWORD,
+  		  	'isrest':ISREST,
+  		  	'start':START,
+  		  	'num':20
+			};
+  	ajaxPost(
+            '/app_dev.php/api/video/getAllVideoList',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+					$("#order_list").append("<tr><td width='50%' id='video"+data[i].id+"'>"+data[i].name+"</td><td><a onclick='addvideo("+data[i].id+")'>添加</a></td></tr>"); 
+		      }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function getOldPlan(){
+	var json = {
+			"plan_id":{{ plan_id }}
+			};
+	ajaxPost(
+            'app_dev.php/api/plan/getDayListByPlan',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+            	   $("#oldplan").append("<tr><td>第"+data[i].day+"天</td><td><a onclick='reloadListRight("+data[i].day+")'>添加</a></td></tr>");
+            	}
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+function category(id){
+	ISREST = ""+id;
+	START = 0;
+	reloadList(0);
+}
+function addvideo(id){
+	var name = $("#video"+id).html();
+	//alert(name);
+	$("#sortable").append("<li index='"+id+"' class='list-group-item'><span class='col-sm-8'>"+name+"</span><span><a class='delThis'>删除</a></span><span style='float:right;' class='glyphicon glyphicon-resize-vertical' aria-hidden='true'></span></li>");
+}
+function reloadListRight(day){
+  	
+	var json = {
+  		  	'plan_id':{{ plan_id }},
+  		  	'day':day
+			};
+  	ajaxPost(
+            '/app_dev.php/api/plan/getVideoList',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.videolist.length;i++){
+					 $("#sortable").append("<li index='"+data.videolist[i].id+"' class='list-group-item'><span class='col-sm-8'>"+data.videolist[i].name+"</span><span><a href='#' class='delThis'>删除</a></span><span style='float:right;' class='glyphicon glyphicon-resize-vertical' aria-hidden='true'></span></li>");
+		      }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+
+function savelist(){
+	$("#back").attr("disabled","disabled");
+	var arrayObj = new Array();
+	$("#sortable li").each(function(){
+	var id = $(this).attr("index");
+	//alert(id);
+	arrayObj.push(id);
+   });
+   //alert(arrayObj[0]);
+   //alert(arrayObj[arrayObj.length-1]);
+   //print_array(arrayObj);
+   var data = JSON.stringify({"list":arrayObj,"plan_id":{{ plan_id }},"day":{{ day }}});
+	$.ajax({
+		   type: "post",
+		   url: "/app_dev.php/api/plan/changePlan",
+		   data:data,
+		   success: function(data,textStatus){
+			  alert("修改成功");
+			  $("#back").removeAttr("disabled");
+		   },
+		   error: function(XMLHttpRequest, textStatus, errorThrown) {
+		    	  switch(XMLHttpRequest.status)
+		  		{
+		  			case 400: //没数据
+		  				break;
+		  			default:
+		  				alert('加载数据出现错误，请重试');
+		  		}
+			}	
+		   
+		});	
+}
+function clearlist(){
+	$("#sortable li").each(function(){
+		$(this).remove();
+	});
+}
+function copylist(){
+	var arrayObj = new Array();
+	$("#sortable li").each(function(){
+	var id = $(this).attr("index");
+	var name = $(this).children().html();
+	$("#sortable").append("<li index='"+id+"' class='list-group-item'><span class='col-sm-8'>"+name+"</span><span><a href='#' class='delThis'>删除</a></span><span style='float:right;' class='glyphicon glyphicon-resize-vertical' aria-hidden='true'></span></li>");
+   });
+	   
+}
+
+$(function(){
+	getOldPlan();
+	reloadList(0);
+	reloadListRight({{ day }});
+	$("#sortable").on("click",".delThis",function(){
+		$(this).parent().parent().remove();
+	});
+	$(".btn_left").click(function(){
+		   $(".btn_right").removeClass('active');
+		   $(".btn_left").addClass('active');
+		});
+    $(".btn_right").click(function(){
+		  $(".btn_left").removeClass('active');	
+		  $(".btn_right").addClass('active');  
+		});
+    $( "#sortable" ).sortable();
+    $( "#sortable" ).disableSelection();
+    
+    //搜索
+    $("#search_btn").click(function(){
+    	var keyword = $("#search_box").val();
+    	KEYWORD = keyword;
+    	//alert(KEYWORD);
+    	reloadList(0);
+    	});
+    document.getElementById("search_box").onkeyup = function(e){
+    				var me = this;
+    				e = e|| window.event;
+    				var keycode = e.keyCode;
+    				if(keycode === 13){
+    				var keyword = $("#search_box").val();
+    				KEYWORD = keyword;
+    				reloadList("",0);
+    				}
+    			};
+
+});//function 主函数结束
+
+
+</script>
+  <div class="col-sm-12" style="margin-top:15px; padding:0;">
+    <div class="col-sm-7" style="">
+        <div class="col-sm-12" style="padding:0;border-bottom:1px black solid;">
+            <h1>已有计划 </h1>
+            <table class="table table-hover" id="oldplan">
+           </table>
+        </div>
+        <div class="col-sm-12" style="padding:0;">
+        <h1 style="padding-left:0;" class="col-sm-12"><div class="col-sm-3" style="padding-left:0;">视频库</div><div class="col-sm-6"><input type="text" id="search_box" class="form-control" onKeyUp="search_box();" maxlength="100" autocomplete="off" placeholder="关键词搜索"></div><div><button type="button" class="btn col-sm-1 btn-default" id="search_btn" >搜索</button></div></h1>
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active btn_left"><a style='color:black' onclick='category(0)'>运动视频</a></li>
+              <li role="presentation" class="btn_right"><a style='color: black' onclick='category(1)'>休息视频</a></li>
+            </ul>
+           <table class="table table-hover">
+           <thead><th>视频名称</th><th>操作</th></thead>
+           <tbody id="order_list"></tbody>
+           </table>
+            <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+            <ul class="pagination" id="pagebar"></ul>
+            <input type="hidden" id="currentPage" style="width:500px;"/>  
+            </div><!--分页结束-->
+        </div>
+    </div><!-- left end -->
+    
+    
+    <div class="col-sm-5" style="border-left: 1px black solid;">
+        <h1>已选择</h1>
+        <button type="button" class="btn col-sm-2 btn-default" onclick="savelist()" >保存</button>
+        <button type="button" class="btn col-sm-2 btn-default" id="back" onclick="history.back()" >返回</button>
+        <button type="button" class="btn col-sm-2 btn-default" onclick="copylist()" >复制</button>
+        <button type="button" class="btn col-sm-2 btn-default" onclick="clearlist()" >清空</button>
+        
+        <ul id="sortable" class="list-group col-sm-12"></ul>
+    
+    </div><!-- right end -->
+    
+  <div>  
+  	
+</div> <!--content结束-->
+{% endblock %}

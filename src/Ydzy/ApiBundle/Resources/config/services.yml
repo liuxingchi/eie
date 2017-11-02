@@ -1,0 +1,32 @@
+parameters:
+   my_datebase.class:     Ydzy\ApiBundle\Service\Datebase
+   login.class:      Ydzy\ApiBundle\Service\Login
+   vpn_datebase.class:     Ydzy\ApiBundle\Service\VpnDatebase
+   json_parser.class:     Ydzy\ApiBundle\Service\JsonParser
+   json_encode.class:     Ydzy\ApiBundle\Service\JsonEncode
+   location.class:		  Ydzy\ApiBundle\Service\Location
+   push.class:      Ydzy\ApiBundle\Service\Push
+   mymail.class:      Ydzy\ApiBundle\Service\MyMail
+   jpushmy.class:      Ydzy\ApiBundle\Service\JPushMy
+   validate.class:      Ydzy\ApiBundle\Service\Validate
+services:
+   my_datebase:
+      class:     %my_datebase.class%
+   login:
+      class:     %login.class%
+   vpn_datebase:
+      class:     %vpn_datebase.class%
+   json_parser:
+      class:    %json_parser.class%
+   json_encode:
+      class:    %json_encode.class%
+   location:
+      class:    %location.class%
+   push:
+      class:    %push.class%
+   jpush:
+      class:    %jpushmy.class%
+   mymail:
+      class:    %mymail.class%
+   validate:
+      class:    %validate.class%

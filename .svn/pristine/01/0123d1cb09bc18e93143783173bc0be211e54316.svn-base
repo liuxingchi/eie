@@ -1,0 +1,7 @@
+parameters:
+
+services:
+    json_parser:
+         class: Ydzy\UserBundle\Service\JsonParser
+    create_user:
+         class: Ydzy\UserBundle\Service\CreateUser

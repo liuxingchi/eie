@@ -1,0 +1,43 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+{% if error %}
+    <div>{{ error|trans }}</div>
+{% endif %}
+
+<!--<form action="{{ path("fos_user_security_check") }}" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+
+    <label for="username">{{ 'security.login.username'|trans }}</label>
+    <input type="text" id="username" name="_username" value="{{ last_username }}" required="required" />
+
+    <label for="password">{{ 'security.login.password'|trans }}</label>
+    <input type="password" id="password" name="_password" required="required" />
+
+    <input type="checkbox" id="remember_me" name="_remember_me" value="on" />
+    <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>
+
+    <input type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" />
+</form>-->
+<form action="{{ path("fos_user_security_check") }}" method="post">
+			<input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+			<div style="float:left;">
+				<div id="all_3_2" style="height:51px;width:310px;margin-top:18px;">
+					<div id="all_3_2_1" style="height:50px;width:305px;background:url({{ asset('bundles/Ydzytest/images/4.png')}});">
+						<div style="height:60px;">
+							<input id="username" type="text" name="_username" style="background-color:transparent;border-style:none;border-bottom:none;font-size:22px;height:50px;width:300px;color:#fff;" value="{{ last_username }}" class="input_phone" />
+						</div>
+					</div>
+				</div>
+				<div id="all_3_3" style="height:51px;width:310px;margin-top:14px;">
+					<div id="all_3_3_1" style="height:51px;width:306px;background:url({{ asset('bundles/Ydzytest/images/5.png')}});">
+						<input id="password" name="_password" type="password" style="background-color:transparent;border-style:none;border-bottom:none;font-size:22px;height:50px;width:300px;color:#fff;" value="" class="input_mima" />
+					</div>
+				</div>
+				<!--<a href="/admin/register" target="_self"><div style="margin-top:15px;color:#fff;cursor:pointer;"><image src="{{ asset('bundles/Ydzytest/images/register.png')}}" /></div></a>-->
+			</div>
+		<input type="submit" id="_submit" name="_submit" value="" style="border:none;float:lefagt;height:56px;width:103px;margin-top:80px;margin-left:12px;cursor:pointer;background:url({{ asset('bundles/Ydzytest/images/7.png')}});" />
+	</form>
+{% endblock fos_user_content %}

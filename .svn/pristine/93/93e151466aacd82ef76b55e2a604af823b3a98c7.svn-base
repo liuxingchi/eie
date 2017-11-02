@@ -1,0 +1,172 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+var KEYWORD = "";
+var START = 0;
+</script>
+
+<style>
+</style>
+<script src="{{ asset('js/page.js') }}"></script>
+<script>
+var domain = "http//eie.club/";
+function reloadList(current){
+	$("#order_list").html("");
+	var current = current;
+	//page(current);
+  	var json = {
+  		  	'start':START,
+  		  	'num':20
+			};
+  	ajaxPost(
+            'app_dev.php/api/order/retrieve',
+            json,
+            function(data, textStatus){
+            	for(var i=0;i<data.length;i++){
+                	if(data[i].status == 3 || data[i].status == 4){
+							var statusStr = "<a href='#' onclick='follow("+data[i].id+")'>商品跟进</a>/";
+                    	}else{
+							var statusStr = "<a href='#' onclick='follow("+data[i].id+")'>商品跟进</a>/<a href='#' onclick='del("+data[i].id+","+data[i].status+")'>终止</a>/";
+                        	}
+                	 $("#order_list").append("<tr id='"+data[i].id+"'><td>"+data[i].order_num+"</td><td>"+data[i].money+"</td><td>"+data[i].username+"</td><td>"+data[i].status_message+"</td><td>"+statusStr+"<a href='#' onclick='detailInfo("+data[i].id+")'>详情</a></td></tr>"); 
+		      }//结束循环
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+function detailInfo(id){
+	location.href="orderdetail/"+id;
+}
+function del(id,status){
+	//如果是status = 1 ===>turn 3s
+	//if status = 0 or 2 ====>turn 4 
+	var json = {
+			"id":id,
+			"status":status
+			};
+	ajaxPost(
+            'app_dev.php/api/order/postBack',
+            json,
+            function(data, textStatus){
+            	reloadList(0);
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){}
+        );
+}
+$(function(){
+reloadList(0);
+
+$("#add_btn").click(function(){
+	location.href="addgoods";
+	});
+
+});//function 主函数结束
+
+function print_array(arr){
+	for(var key in arr){
+		if(typeof(arr[key])=='array'||typeof(arr[key])=='object'){//递归调用  
+			print_array(arr[key]);
+		}else{
+			document.write(key + ' = ' + arr[key] + '<br>');
+		}
+	}
+}
+function follow(id){
+	var json = {
+			"id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/order/followMessages',
+            json,
+            function(data, textStatus){
+                $("#newMessage").val("");
+                $("#message").html("");
+            	for(var i=0;i<data.length;i++){
+            		   $("#message").append("<li class='list-group-item'>"+data[i].message+"</li>");
+                	}
+            	$("#myFollow").modal('show');
+            	$("#btnAddMessage").attr("onclick","addNewMessage("+id+")");;
+			},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+function addNewMessage(id){
+
+	var newMessage = $("#newMessage").val();
+	var json = {
+			"id":id,
+			"message":newMessage
+			};
+	ajaxPost(
+            'app_dev.php/api/order/addMessage',
+            json,
+            function(data, textStatus){
+            	$("#myFollow").modal('toggle');
+            	follow(id);
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+	//alert(newMessage);
+	
+}
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+{#     <div class="col-sm-12"><div class="col-sm-6"><input type="text" id="search_box" class="form-control" onKeyUp="search_box();" maxlength="100" autocomplete="off" placeholder="关键词搜索"></div><div><button type="button" class="btn col-sm-1 btn-default" id="search_btn" >搜索</button></div>#}
+    
+    </div>
+    
+    <div style="padding-top:20px;" class="col-sm-12">
+    <table class="table table-hover">
+  	<thead>
+  	<tr>
+    <th>订单编号</th>
+    <th>价格</th>
+    <th>购买者</th>
+    <th>状态</th>
+	<th>操作</th>
+    </tr>
+  	</thead>
+  	<tbody id="order_list"></tbody>	
+    </table>
+    </div>
+  	
+  </div>
+  
+  <!--分页开始-->
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> 
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>
+    </div>
+    <!--分页结束-->
+</div> <!--content结束-->
+
+<!-- Modal -->
+<div class="modal" id="myFollow" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:500px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">商品跟进</h4>
+      </div>
+      <div class="modal-body" id="myModalContent">
+        <ul class="list-group" id="message"></ul>
+        
+	   
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="输入新的商品进度" id="newMessage">
+      <span class="input-group-btn">
+        <button id="btnAddMessage" class="btn btn-default" type="button">添加</button>
+      </span>
+        </div><!-- /input-group -->
+    
+	    
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

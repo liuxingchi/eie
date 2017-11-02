@@ -1,0 +1,286 @@
+{% extends 'YdzyJxBundle:Default:layout.html.twig' %}
+{% block body %}
+<style>
+tr { line-height:30px;}
+.myButton{
+    padding: 14px;
+    width: 73px;
+    float: left;
+    height: 73px;
+    border-radius: 8px;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+}
+.myButtonColor1{
+	background-color:  rgb(70, 52, 30);
+}
+.myButtonColor2{
+	background-color:  rgb(112, 65, 35);
+}
+.myButtonColor3{
+	background-color:  rgb(157, 110, 56);
+}
+</style>
+<script>
+var browser = navigator.userAgent;
+var category = {{ category }};
+var prefix = "http://eie.ren"; 
+function news(){
+	var json = 
+    {
+      "news_id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/news/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+          $("#title").html(data.title);
+          document.title=data.title;
+          $("#creation_date").html("发布时间："+data.creation_date);
+          if(data.image_url){
+        	  $("#pic").html("<img src='"+data.image_url+"' width='100%'/>");
+              }
+          $("#content").html(data.content);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function preshow(){
+	var json = 
+    {
+      "preshow_id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/preshow/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+          $("#preshow_title").html(data.title);
+          document.title=data.title;
+          $("#showtime").html(data.showtime);
+          $("#showaddress").html(data.showaddress);
+          $("#auctiontime").html(data.auctiontime);
+          $("#auctionaddress").html(data.auctionaddress);
+          $("#creation_date").html("发布时间："+data.creation_date);         
+          $("#preshow_content").html(data.content);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function market(){
+	var json = 
+    {
+      "market_id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/market/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	$("#title").html(data.title);
+            document.title=data.title;
+            $("#creation_date").html("发布时间："+data.creation_date);
+            if(data.image_url){
+          	  $("#pic").html("<img src='"+data.image_url+"' width='100%'/>");
+                }
+            $("#content").html(data.content);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+function goods(){
+	var json = 
+    {
+      "id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	$(".goods_appeal").html(data.appeal);
+            document.title="发布的商品详情";
+            $("#goods_date").html(data.creation_date);
+            $("#goods_content").html(data.content);
+            //alert(data.image_urls[0].url);
+            if(data.appeal_id==2){
+              $("#buy_result").append("价格："+data.price);
+               appealSale(); 
+                }
+            if(data.appeal_id==1){
+     		   appealNum();
+     		   }
+            for(var i = 0;i<data.image_urls.length;i++){
+                $("#goods_images").append("<img src='"+data.image_urls[i].url+"' width='100%'/>");
+                }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+
+function appealNum(){
+	var json = 
+    {
+      "id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/appealNum',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	//$("#goods_result").html(data);
+        	for(var i = 0;i<data.length;i++){
+        	    $("#buy_result").append(data[i].num+"人认为："+data[i].name+"<br>");
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function appealSale(){
+	var json = 
+    {
+      "id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/appealSale',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	//$("#goods_result").html(data);
+        	for(var i = 0;i<data.length;i++){
+        	    $("#timelist").append("<li><b></b><span>"+data[i].creation_date+"</span><p>"+data[i].message+"</p></li>");
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+
+
+$(function(){
+	if(category==1){
+		 news();
+		 $("#news").show();
+		}
+	if(category==2){
+		 preshow();
+		 $("#preshow").show();
+		}
+	if(category==3){
+		  market();
+		  $("#news").show();
+		}
+	if(category==4){
+		   goods();
+		   $("#goods").show();
+		}
+	if(category==5){
+		   $("#recommend").show();
+		}
+
+});
+</script>
+<div id="news" style="display:none;">
+<div id="title" class="col-sm-12 news_title"></div>
+<div id="creation_date" class="col-sm-12"></div>
+<div id="pic" class="col-sm-12" style="padding-top: 8px;"></div>
+<div id="content" class="col-sm-12" style="padding-top: 8px;"></div>
+</div>
+<div id="preshow" style='display:none;'>
+<div id="preshow_title" class="col-sm-12 news_title"></div>
+<ul id="preshow_ul">
+<li>预展信息</li>
+时间：<span id="showtime"></span></br>
+地点:<span id="showaddress"></span>
+<li>拍卖信息</li>
+时间：<span id="auctiontime"></span></br>
+地点:<span id="auctionaddress"></span>
+<li>拍卖展品</li>
+<span id="preshow_content"></span>
+</ul>
+</div>
+<div id="goods" class="col-sm-12" style="display: none;"><!-- 商品详情 -->
+<div class="col-sm-12 news_title">当前状态:<span class="goods_appeal"></span></div>
+<div id="goods_date" class="col-sm-12" style="text-align: right;"></div>
+<div id="goods_content" class="col-sm-12"></div>
+<div id="goods_images" class="col-sm-12"></div>
+<div id="goods_result" class="col-sm-12" style="border:2px solid rgb(51,51,51);padding:0;margin:15px;">
+<div class="news_title" style="width:100%;height:50px;line-height:50px;background-color:rgb(51,51,51);color:white;">诉求：<span class="goods_appeal"></apan></div>
+<div style="padding:10px;">
+<br><span id="buy_result"></span>
+</div>
+</div>
+<div class="times">
+    <ul id="timelist">
+        
+    </ul>
+</div>
+</div>
+
+<div id="recommend" class="col-sm-12" style="display: none;"><!-- 推荐给我的商品详情，其实也就是商品详情，只是增加功能项 -->
+<div class="col-sm-12 news_title">当前状态:<span class="goods_appeal"></span></div>
+<div id="recommend_date" class="col-sm-12" style="text-align: right;"></div>
+<div id="recommend_content" class="col-sm-12"></div>
+<div id="recommend_images" class="col-sm-12"></div>
+
+<div id="buttonArea">
+<a class="myButton myButtonColor1">不感兴趣</a>
+<a class="myButton myButtonColor2">假的</a>
+<a class="myButton myButtonColor3">真品</a>
+</div>
+
+</div>
+
+
+
+
+</div>
+{% endblock %}

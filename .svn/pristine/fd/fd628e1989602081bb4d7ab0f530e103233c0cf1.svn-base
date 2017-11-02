@@ -1,0 +1,97 @@
+<?php
+namespace Ydzy\ApiBundle\Service;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use JPush\Model as M;
+use JPush\JPushClient;
+
+class JPushMy
+{
+    public $appKey = "fb39a117e2ad79ea30288081";
+    public $masterSecret = '9f857a81771b4bf4a680936c';
+    public $alert = "JPush Test - alert";
+    public $title = "JPUsh Test - title";
+    public $extras = array("key1" => "value1", "key2" => "value2");
+    public $msg_content = '{"uid":"1","touid":"1","content":"喜欢你吗2","status":"1","icon":""}';
+    public $tag1 = "tag1";
+    public $tag2 = "tag2";
+    public $tag_all = "tag_all";
+    public $tag_no = "tag_no";
+    public $alias1 = "alias1";
+    public $alias2 = "alias2";
+    public $alias_no = "alias_no";
+    public $registration_id1 = "0009c0bc9ce";
+    public $registration_id2 = "0a04ad7d8b4";
+    
+
+    public function pushurl($registration_id,$content,$url) {
+    	$client = new JPushClient($this->appKey, $this->masterSecret);
+    	$msg_content = array(
+    			'alert'=>$content,
+    			"android" =>array(
+    					"extras"=>array(
+    							"url"=>$url
+    					)
+    			),
+    			 
+    	);
+        $client->push()->setPlatform(M\all)
+        ->setAudience(M\audience(M\registration_id(array($registration_id))))
+        ->setNotification(M\notification($msg_content))
+        ->send();
+    }
+    
+    public function push($registration_id,$login_uid,$touid,$content,$icon) {
+        $client = new JPushClient($this->appKey, $this->masterSecret);
+        $msg_content = '{uid":"'.$login_uid.'","touid":"'.$touid.'","content":"'.$content.'","status":"1","icon":"'.$icon.'"}';
+        $client->push()->setPlatform(M\all)
+        ->setAudience(M\audience(M\registration_id(array($registration_id))))
+        ->setMessage(M\message($msg_content))
+        ->send();
+    }
+    public function push_one($registration_id,$content) {
+        $client = new JPushClient($this->appKey, $this->masterSecret);
+        
+        $client->push()->setPlatform(M\all)
+        ->setAudience(M\audience(M\registration_id(array($registration_id))))
+        ->setNotification(M\notification($content))
+        ->send();
+    }
+    public function android_push($registration_id,$login_uid,$touid,$content,$icon) {
+       $client = new JPushClient($this->appKey, $this->masterSecret);
+        $msg_content = '{uid":"'.$login_uid.'","touid":"'.$touid.'","content":"'.$content.'","status":"1","icon":"'.$icon.'"}';
+        $client->push()->setPlatform(M\all)
+        ->setAudience(M\audience(M\registration_id(array($registration_id))))
+        ->setMessage(M\message($msg_content))
+        ->send();
+    }	
+    public function ios_push($registration_id,$login_uid,$touid,$content,$icon) {
+        $client = new JPushClient($this->appKey, $this->masterSecret);
+        $msg_content = array(
+            'uid'=>$login_uid,
+            'touid'=>$touid,
+            'content'=>$content,
+            'status'=>1,
+            'icon'=>$icon
+        );
+        //$msg_content = '{uid":"'.$login_uid.'","touid":"'.$touid.'","content":"'.$content.'","status":"1","icon":"'.$icon.'"}';
+        $client->push()->setPlatform(M\platform("ios"))
+        ->setAudience(M\audience(M\registration_id(array($registration_id))))
+        ->setNotification(M\notification(null, M\ios($content, '', 1, true, $msg_content)))
+        //->setMessage(M\message("haha"))
+        ->send();
+    }
+    public function pushall($title,$alert) {
+    	//echo $alert;
+        $client = new JPushClient($this->appKey, $this->masterSecret);
+    
+        $client->push()->setPlatform(M\all)
+        ->setAudience(M\all)
+        ->setNotification(M\notification($alert,$title))
+        ->send();
+    }
+	
+}

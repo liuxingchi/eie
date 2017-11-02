@@ -1,0 +1,113 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+$(function(){
+	
+	
+    ajaxPost(
+             'app_dev.php/manage/rolelist',
+             {},
+             function(data, textStatus){
+            	 for(var i=0;i<data.length;i++){
+  				   $("#radio").append("<input type='radio' name='radio' value='"+data[i].id+"'>"+data[i].name+" ");
+  		      }//结束循环
+                 getInfo();
+                 },
+             function(XMLHttpRequest, textStatus, errorThrown){}
+         );
+              
+        
+});//function 主函数结束
+function post(){
+	 var radio = $("input[name='radio']:checked").val();
+	 if($("#phone").val().length!=11){
+		    alert("手机号码格式不正确");
+		    return false;
+		    }
+	 if($("#phone").val()==''||radio==''||$("#truename").val()==''){
+		    alert("必填项请填写完整");
+		    return false;
+			}
+      var json = {
+    	      "uid":{{ id }},
+    		  "roleid":radio,
+    		  "username":$("#truename").val(),
+    		  "phone":$("#phone").val(),
+    		  "newpwd":$("#password").val()
+    	     };
+ 	
+     ajaxPost(
+              'app_dev.php/manage/changeprofile',
+              json,
+              function(data, textStatus){
+              	 alert("更新成功");
+             	 window.location.href="../manage";
+                  },
+              function(XMLHttpRequest, textStatus, errorThrown){
+                	  switch(XMLHttpRequest.status)
+      		  		{
+      		  			case 416: //没数据
+          		  			alert("手机号已经被注册过");
+      		  				break;
+      		  			default:
+      		  				alert('加载数据出现错误，请重试');
+      		  		}
+               }
+          );
+     //str.split(",");
+     //alert(str[0]);  
+}
+
+function getInfo(){
+    var json = {
+    	    "uid":{{ id }}
+    	    };
+	ajaxPost(
+            'app_dev.php/manage/userprofilebyid',
+            json,
+            function(data, textStatus){
+            	   $("#truename").val(data.username);
+            	   $("#phone").val(data.phone);
+            	   $("input[name='radio'][value="+data.roleid+"]").attr("checked",true);
+                },
+            function(XMLHttpRequest, textStatus, errorThrown){
+              	  switch(XMLHttpRequest.status)
+    		  		{
+    		  			default:
+    		  				alert('加载数据出现错误，请重试');
+    		  		}
+             }
+        );
+    
+}
+
+
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+            
+                  <div class="form-group">
+                    <label>姓名</label>
+                    <input type="text" class="form-control" id="truename" placeholder="输入真实姓名">
+                  </div>
+                  <div class="form-group">
+                    <label>手机号</label>
+                    <input type="text" class="form-control" id="phone" disabled placeholder="输入手机号码，可以登录使用">
+                  </div>
+                 <div class="form-group">
+                    <label>登录密码</label>
+                    <input type="password" class="form-control" id="password" placeholder="若更改密码请填写密码，不更改留空">
+                  </div>
+                  
+                  
+                  <div id="radio"></div><br>
+                  <button onclick="post()" class="btn btn-default">保存</button>
+           
+          
+  </div>
+  	
+  
+</div> <!--content结束-->
+
+
+{% endblock %}

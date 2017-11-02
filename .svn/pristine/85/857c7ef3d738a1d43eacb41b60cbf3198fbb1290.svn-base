@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	</head>
+	<body>
+		 	<div class="container" style="">
+     			<div class="row">
+						  <div class="col-xs-12" id="ptitle" style="text-align:center;padding:0px;">
+						  		{{ content }}
+						  </div>
+					</div>
+    	</div>
+	</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

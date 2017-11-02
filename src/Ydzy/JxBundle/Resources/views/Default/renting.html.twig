@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html class="">
+		<head>
+				<title>待租豪宅</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-ui.js')}}"></script>
+				<style>
+						.Sell_a{
+								height:56px;
+								width:100%;	
+								border-bottom:1px solid #ccc;
+						}	
+								.Sell_b,.Sell_c,.Sell_d{
+										height:56px;
+										width:33%;	
+										float:left;
+								}
+								.Sell_c,.Sell_d{
+										border-left:1px solid #ccc;	
+								}
+										.Sell_e,.Sell_f{
+												height:26px;	
+												font-size:16px;
+												margin-top:15px;
+												float:left;
+										}
+										.Sell_e{
+												width:65%;
+												margin-left:10%;
+												line-height:26px;
+												white-space:nowrap;  
+												overflow:hidden;	  
+												text-overflow:ellipsis;
+												text-align:center;
+										}
+										.Sell_f{
+												width:20px;	
+												margin-top:18px;
+										}
+										
+						.Sell_P{    /* 价格的show Div */
+								height:300px;
+								position:absolute;
+								top:56px;
+								left:0px;
+								width:100%;
+								overflow-y:scroll;
+								z-index:8500;
+								background:#f0f0f0;
+						}
+								.Sell_P_a,.Sell_P_a1{
+										height:50px;
+										width:100%;	
+								}
+										.Sell_P_b{
+												height:50px;
+												width:98%;
+												margin-left:2%;	
+										}
+												.Sell_P_c{
+														height:50px;
+														width:70%;
+														float:left;	
+														white-space:nowrap;  
+														overflow:hidden;	  
+														text-overflow:ellipsis;
+														line-height:50px;
+														font-family:'SimHei';	
+														font-size:20px;
+												}
+												.Sell_P_d{
+														height:21px;
+														width:35px;	
+														float:left;	
+														margin-top:15px;
+												}
+							.Sell_A,.Sell_M{   /* 商圈 */
+									height:300px;
+									position:absolute;
+									top:56px;
+									left:0px;
+									width:100%;
+									z-index:8500;
+									background:#f0f0f0;
+							}
+									.Sell_A_a,.Sell_A_b,.Sell_M_a,.Sell_M_b{
+											height:300px;
+											overflow-y:scroll;
+											float:left;	
+									}
+									.Sell_A_a,.Sell_A_b,.Sell_M_a,.Sell_M_b{
+											width:50%;	
+									}
+											.Sell_A_a_t,.Sell_A_a_t1,.Sell_A_a_t2,.Sell_A_a_t3,.Sell_A_b_t,.Sell_M_a_t,.Sell_A_b_t1,.Sell_A_b_t2,.Sell_A_b_t3,.Sell_A_b_t4,.Sell_A_b_t5,.Sell_A_b_t6,.Sell_A_b_t7,.Sell_A_b_t8,.Sell_A_b_t9,.Sell_A_b_t10,.Sell_A_b_t11,.Sell_A_b_t12,.Sell_A_b_t13,.Sell_A_b_t14,.Sell_A_b_t15,.Sell_A_b_t16,.Sell_A_b_t17,.Sell_A_b_t18,.Sell_A_b_t19,.Sell_A_b_t20,.Sell_A_b_t21,.Sell_A_b_t22,.Sell_A_b_t23,.Sell_A_b_t24,.Sell_A_b_t25,.Sell_A_b_t26,.Sell_A_b_t27,.Sell_A_b_t28,.Sell_A_b_t29,.Sell_A_b_t30,.Sell_A_b_t31,.Sell_A_b_t32,.Sell_A_b_t33,.Sell_A_b_t34,.Sell_A_b_t35,.Sell_A_b_t36{
+													height:55px;
+													width:100%;	
+											}
+													.Sell_A_a1,.Sell_A_b1,.Sell_M_a1{
+															height:55px;
+															width:98%;
+															margin-left:2%;			
+													}
+													.Sell_A_a1,.Sell_M_a1{
+															line-height:55px;	
+															white-space:nowrap;  
+															overflow:hidden;	  
+															text-overflow:ellipsis;	
+													}
+									.Sell_A_b{
+											background:#fff;	
+									}
+											.Sell_A_b2,.Sell_A_b3,.Sell_A_b4,.Sell_A_b5,.Sell_A_b6{
+													float:left;	
+											}
+											.Sell_A_b2{
+													height:55px;
+													width:70%;
+													line-height:55px;	
+													white-space:nowrap;  
+													overflow:hidden;	  
+													text-overflow:ellipsis;
+											}
+											.Sell_A_b3,.Sell_A_b4,.Sell_A_b5,.Sell_A_b6{
+														height:21px;
+														width:35px;	
+														float:left;	
+														margin-top:15px;	
+											}
+				</style>
+		</head>
+		<body style="background:#f0f0f0;">
+				<div class="selling" style="position:relative;">    <!-- 在售的 -->
+						<div class="Sell_a">
+								<div class="Sell_b" onclick="showAll('Sell_b');">
+										<div class="Sell_e">商圈</div>
+										<div class="Sell_f"><img src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" width="100%"></div>
+								</div>	
+								<div class="Sell_c" onclick="showAll('Sell_c');">
+										<div class="Sell_e">租金</div>
+										<div class="Sell_f"><img src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" width="100%"></div>	
+								</div>	
+								<div class="Sell_d" onclick="showAll('Sell_d');">
+										<div class="Sell_e">更多</div>
+										<div class="Sell_f"><img src="{{ asset('bundles/lzh/css/img/lzh_15.png')}}" width="100%"></div>	
+								</div>	
+						</div>
+						<div class="Sell_P" style="display:none;">
+								<div class="Sell_P_a" onclick="changV('Sell_P_a');">
+										<div class="Sell_P_b ubb">
+												<div class="Sell_P_c">不限</div>
+												<div class="Sell_P_d"><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%"></div>		
+										</div>
+								</div>
+								<div class="Sell_P_a1" onclick="changV('Sell_P_a1');"><div class="Sell_P_b ubb"><div class="Sell_P_c">8000以下</div><div class="Sell_P_d"></div></div></div>
+								<div class="Sell_P_a2" onclick="changV('Sell_P_a2');"><div class="Sell_P_b ubb"><div class="Sell_P_c">800-12000元</div><div class="Sell_P_d"></div></div></div>
+								<div class="Sell_P_a3" onclick="changV('Sell_P_a3');"><div class="Sell_P_b ubb"><div class="Sell_P_c">12000-16000元</div><div class="Sell_P_d"></div></div></div>
+								<div class="Sell_P_a4" onclick="changV('Sell_P_a4');"><div class="Sell_P_b ubb"><div class="Sell_P_c">16000-20000元</div><div class="Sell_P_d"></div></div></div>
+								<div class="Sell_P_a5" onclick="changV('Sell_P_a5');"><div class="Sell_P_b ubb"><div class="Sell_P_c">20000-30000元</div><div class="Sell_P_d"></div></div></div>
+								<div class="Sell_P_a6" onclick="changV('Sell_P_a6');"><div class="Sell_P_b ubb"><div class="Sell_P_c">30000-40000元</div><div class="Sell_P_d"></div></div></div>
+								<div class="Sell_P_a7" onclick="changV('Sell_P_a7');"><div class="Sell_P_b ubb"><div class="Sell_P_c">40000-60000元</div><div class="Sell_P_d"></div></div></div>
+								<div class="Sell_P_a36" onclick="changV('Sell_P_a36');"><div class="Sell_P_b ubb"><div class="Sell_P_c">60000以上</div><div class="Sell_P_d"></div></div></div>
+						</div>
+						<div class="Sell_M" style="display:none;">
+								<div class="Sell_M_a">
+										<div class='Sell_M_a_t' style="background:#fff;" onclick="getTailC('Sell_M_a_t')">
+												<div class='Sell_M_a1'>户型</div>	
+										</div>
+										<div class='Sell_M_a_t1' onclick="getTailC('Sell_M_a_t1')">
+												<div class='Sell_M_a1'>面积</div>	
+										</div>		
+										<div class='Sell_M_a_t2' onclick="getTailC('Sell_M_a_t2')">
+												<div class='Sell_M_a1'>特色</div>	
+										</div>	
+										<div class='Sell_M_a_t3' onclick="getTailC('Sell_M_a_t3')">
+												<div class='Sell_M_a1'>类型</div>	
+										</div>	
+								</div>
+								<div class="Sell_M_b" style="background:#fff;">
+										<div id="Sell_t_1" style="">		<!-- 居室 Sell_A_b3-->
+												<div class='Sell_A_b_t36' onclick="changjushi('Sell_A_b_t36',"");">
+														<div class='Sell_A_b1'>
+																<div class='Sell_A_b2'>不限</div>	
+																<div class='Sell_A_b3'><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%"></div>	
+														</div>	
+												</div>
+												<div class='Sell_A_b_t1' onclick="changjushi('Sell_A_b_t1',1);"><div class='Sell_A_b1'><div class='Sell_A_b2'>一居</div><div class='Sell_A_b3'></div></div></div>
+												<div class='Sell_A_b_t2' onclick="changjushi('Sell_A_b_t2',2);"><div class='Sell_A_b1'><div class='Sell_A_b2'>二居</div><div class='Sell_A_b3'></div></div></div>
+												<div class='Sell_A_b_t3' onclick="changjushi('Sell_A_b_t3',3);"><div class='Sell_A_b1'><div class='Sell_A_b2'>三居</div><div class='Sell_A_b3'></div></div></div>
+												<div class='Sell_A_b_t4' onclick="changjushi('Sell_A_b_t4',4);"><div class='Sell_A_b1'><div class='Sell_A_b2'>四居</div><div class='Sell_A_b3'></div></div></div>
+												<div class='Sell_A_b_t5' onclick="changjushi('Sell_A_b_t5',5);"><div class='Sell_A_b1'><div class='Sell_A_b2'>五居</div><div class='Sell_A_b3'></div></div></div>
+										</div>
+										<div id="Sell_t_2" style="display:none;">		<!-- 面积 Sell_A_b4-->
+												<div class='Sell_A_b_t6' onclick="changarea2('Sell_A_b_t6');">
+														<div class='Sell_A_b1'>
+																<div class='Sell_A_b2'>不限</div>	
+																<div class='Sell_A_b4'><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%"></div>	
+														</div>	
+												</div>
+												<div class='Sell_A_b_t7' onclick="changarea2('Sell_A_b_t7');"><div class='Sell_A_b1'><div class='Sell_A_b2'>90㎡-110㎡</div><div class='Sell_A_b4'></div></div></div>
+												<div class='Sell_A_b_t8' onclick="changarea2('Sell_A_b_t8');"><div class='Sell_A_b1'><div class='Sell_A_b2'>110㎡-140㎡</div><div class='Sell_A_b4'></div></div></div>
+												<div class='Sell_A_b_t9' onclick="changarea2('Sell_A_b_t9');"><div class='Sell_A_b1'><div class='Sell_A_b2'>140㎡-170㎡</div><div class='Sell_A_b4'></div></div></div>
+												<div class='Sell_A_b_t10' onclick="changarea2('Sell_A_b_t10');"><div class='Sell_A_b1'><div class='Sell_A_b2'>170㎡-200㎡</div><div class='Sell_A_b4'></div></div></div>
+												<div class='Sell_A_b_t11' onclick="changarea2('Sell_A_b_t11');"><div class='Sell_A_b1'><div class='Sell_A_b2'>200㎡-260㎡</div><div class='Sell_A_b4'></div></div></div>
+												<div class='Sell_A_b_t12' onclick="changarea2('Sell_A_b_t12');"><div class='Sell_A_b1'><div class='Sell_A_b2'>260㎡-320㎡</div><div class='Sell_A_b4'></div></div></div>
+												<div class='Sell_A_b_t13' onclick="changarea2('Sell_A_b_t13');"><div class='Sell_A_b1'><div class='Sell_A_b2'>320㎡-400㎡</div><div class='Sell_A_b4'></div></div></div>
+												<div class='Sell_A_b_t14' onclick="changarea2('Sell_A_b_t14');"><div class='Sell_A_b1'><div class='Sell_A_b2'>400㎡-500㎡</div><div class='Sell_A_b4'></div></div></div>
+												<div class='Sell_A_b_t15' onclick="changarea2('Sell_A_b_t15');"><div class='Sell_A_b1'><div class='Sell_A_b2'>500㎡以上</div><div class='Sell_A_b4'></div></div></div>
+										</div>	
+										<div id="Sell_t_3" style="display:none;">		<!-- 特色 Sell_A_b5-->
+												<div class='Sell_A_b_t16' onclick="changespical('Sell_A_b_t16');">
+														<div class='Sell_A_b1'>
+																<div class='Sell_A_b2'>不限</div>	
+																<div class='Sell_A_b5'><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%"></div>	
+														</div>	
+												</div>
+												<div class='Sell_A_b_t17' onclick="changespical('Sell_A_b_t17');"><div class='Sell_A_b1'><div class='Sell_A_b2'>学区房</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t18' onclick="changespical('Sell_A_b_t18');"><div class='Sell_A_b1'><div class='Sell_A_b2'>南北通透</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t19' onclick="changespical('Sell_A_b_t19');"><div class='Sell_A_b1'><div class='Sell_A_b2'>全新房</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t20' onclick="changespical('Sell_A_b_t20');"><div class='Sell_A_b1'><div class='Sell_A_b2'>景观房</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t21' onclick="changespical('Sell_A_b_t21');"><div class='Sell_A_b1'><div class='Sell_A_b2'>急售</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t22' onclick="changespical('Sell_A_b_t22');"><div class='Sell_A_b1'><div class='Sell_A_b2'>花园</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t23' onclick="changespical('Sell_A_b_t23');"><div class='Sell_A_b1'><div class='Sell_A_b2'>露台</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t24' onclick="changespical('Sell_A_b_t24');"><div class='Sell_A_b1'><div class='Sell_A_b2'>免税</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t25' onclick="changespical('Sell_A_b_t25');"><div class='Sell_A_b1'><div class='Sell_A_b2'>钥匙房</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t26' onclick="changespical('Sell_A_b_t26');"><div class='Sell_A_b1'><div class='Sell_A_b2'>地暖</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t27' onclick="changespical('Sell_A_b_t27');"><div class='Sell_A_b1'><div class='Sell_A_b2'>明厨明卫</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t28' onclick="changespical('Sell_A_b_t28');"><div class='Sell_A_b1'><div class='Sell_A_b2'>复式</div><div class='Sell_A_b5'></div></div></div>
+												<div class='Sell_A_b_t29' onclick="changespical('Sell_A_b_t29');"><div class='Sell_A_b1'><div class='Sell_A_b2'>观景阳台</div><div class='Sell_A_b5'></div></div></div>
+										</div>	
+										<div id="Sell_t_4" style="display:none;">		<!-- 类型 Sell_A_b6-->
+												<div class='Sell_A_b_t30' onclick="changeType('Sell_A_b_t30');">
+														<div class='Sell_A_b1'>
+																<div class='Sell_A_b2'>不限</div>	
+																<div class='Sell_A_b6'><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%"></div>	
+														</div>	
+												</div>
+												<div class='Sell_A_b_t31' onclick="changeType('Sell_A_b_t31');"><div class='Sell_A_b1'><div class='Sell_A_b2'>公寓</div><div class='Sell_A_b6'></div></div></div>
+												<div class='Sell_A_b_t32' onclick="changeType('Sell_A_b_t32');"><div class='Sell_A_b1'><div class='Sell_A_b2'>别墅</div><div class='Sell_A_b6'></div></div></div>
+												<div class='Sell_A_b_t33' onclick="changeType('Sell_A_b_t33');"><div class='Sell_A_b1'><div class='Sell_A_b2'>商铺</div><div class='Sell_A_b6'></div></div></div>
+												<div class='Sell_A_b_t34' onclick="changeType('Sell_A_b_t34');"><div class='Sell_A_b1'><div class='Sell_A_b2'>写字楼</div><div class='Sell_A_b6'></div></div></div>
+												<div class='Sell_A_b_t35' onclick="changeType('Sell_A_b_t35');"><div class='Sell_A_b1'><div class='Sell_A_b2'>车位</div><div class='Sell_A_b6'></div></div></div>
+										</div>			
+								</div>
+						</div>
+						<div class="lzapp_m"></div>  <!-- 列表 -->
+						<div class="Sell_A" style="display:none;">
+								<div class="Sell_A_a">		<!-- 一级菜单 -->
+		<!--						<div class='Sell_A_a_t'>
+												<div class='Sell_A_a1 uba'>asdas</div>	
+										</div>
+		-->			
+								</div>
+								<div class="Sell_A_b">		<!-- 二级菜单 -->
+		<!--						<div class='Sell_A_b_t'>
+												<div class='Sell_A_b1 uba'>
+														<div class='Sell_A_b2'>a</div>	
+														<div class='Sell_A_b3'><img src="{{ asset('bundles/lzh/css/img/lzh_16.png')}}" width="100%"></div>	
+												</div>	
+										</div>
+		-->	
+								</div>
+						</div>
+						<div id="TEMP1" style="display:none;"></div>
+						<script>
+								var rent_price_min = "";
+								var rent_price_max = "";
+								var community = "";
+								var bbd_id = "";
+								var bedroom_num = "";
+								var area_min = "";
+								var area_max = "";
+								var special = "";
+								var category = "";
+								var StartNum = "0"
+								function changeType(obj){
+										$(".Sell_A_b6").html("");	
+										if(obj == "Sell_A_b_t30"){category = "";}
+										if(obj == "Sell_A_b_t31"){category = "1";}
+										if(obj == "Sell_A_b_t32"){category = "2";}
+										if(obj == "Sell_A_b_t33"){category = "3";}
+										if(obj == "Sell_A_b_t34"){category = "4";}
+										if(obj == "Sell_A_b_t35"){category = "5";}
+										$("."+obj+" .Sell_A_b1 .Sell_A_b6").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+										
+										StartNum = "0";
+										$(".lzapp_m").html("");
+										GetLastList();
+										$(".Sell_M").css("display","none");
+								}
+								function changespical(obj){		//选择特色
+										$(".Sell_A_b5").html("");
+										$("."+obj+" .Sell_A_b1 .Sell_A_b5").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+										
+										StartNum = "0";
+										$(".lzapp_m").html("");
+										GetLastList();
+										special = $("."+obj+" .Sell_A_b1 .Sell_A_b2").html();
+										$(".Sell_M").css("display","none");
+								}
+								function changarea2(obj){		//选择面积
+										$(".Sell_A_b4").html("");
+										if(obj == "Sell_A_b_t6"){area_min = "";area_max = "";}
+										if(obj == "Sell_A_b_t7"){area_min = "90";area_max = "110";}
+										if(obj == "Sell_A_b_t8"){area_min = "110";area_max = "140";}
+										if(obj == "Sell_A_b_t9"){area_min = "140";area_max = "170";}
+										if(obj == "Sell_A_b_t10"){area_min = "170";area_max = "200";}
+										if(obj == "Sell_A_b_t11"){area_min = "200";area_max = "260";}
+										if(obj == "Sell_A_b_t12"){area_min = "260";area_max = "320";}
+										if(obj == "Sell_A_b_t13"){area_min = "320";area_max = "400";}
+										if(obj == "Sell_A_b_t14"){area_min = "400";area_max = "500";}
+										if(obj == "Sell_A_b_t15"){area_min = "500";area_max = "10000";}
+										$("."+obj+" .Sell_A_b1 .Sell_A_b4").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+										
+										StartNum = "0";
+										$(".lzapp_m").html("");
+										GetLastList();
+										$(".Sell_M").css("display","none");
+								}
+								function changjushi(obj,obj1){   //选中居室
+										$(".Sell_A_b3").html("");
+										bedroom_num = obj1;
+										$("."+obj+" .Sell_A_b1 .Sell_A_b3").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+										
+										StartNum = "0";
+										$(".lzapp_m").html("");
+										GetLastList();
+										$(".Sell_M").css("display","none");
+								}
+								function showAll(obj){   		//价格的
+										if(obj == "Sell_c"){		//显示价格DIV
+												$(".Sell_M").css("display","none");
+												$(".Sell_A").css("display","none");
+												$(".Sell_P").css("display","block");
+										}
+										if(obj == "Sell_b"){			//商圈
+												$(".Sell_M").css("display","none");
+												$(".Sell_P").css("display","none");
+												$(".Sell_A").css("display","block");
+												getDistrict();				//调用商圈
+										}
+										if(obj == "Sell_d"){			//更多
+												$(".Sell_A").css("display","none");
+												$(".Sell_P").css("display","none");
+												$(".Sell_M").css("display","block");
+										}
+								}
+								function changV(obj){			//价格的
+										$(".Sell_P_d").html("");
+										$("."+obj+" .Sell_P_b .Sell_P_d").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");	
+										$(".Sell_P").css("display","none");
+										$(".Sell_c .Sell_e").html($("."+obj+" .Sell_P_b .Sell_P_c").html());
+										if(obj == "Sell_P_a"){rent_price_min = "";rent_price_max = "";}
+										if(obj == "Sell_P_a1"){rent_price_min = "0";rent_price_max = "8000";}
+										if(obj == "Sell_P_a2"){rent_price_min = "8000";rent_price_max = "12000";}
+										if(obj == "Sell_P_a3"){rent_price_min = "12000";rent_price_max = "16000";}
+										if(obj == "Sell_P_a4"){rent_price_min = "16000";rent_price_max = "20000";}
+										if(obj == "Sell_P_a5"){rent_price_min = "20000";rent_price_max = "30000";}
+										if(obj == "Sell_P_a6"){rent_price_min = "30000";rent_price_max = "40000";}
+										if(obj == "Sell_P_a7"){rent_price_min = "40000";rent_price_max = "50000";}
+										if(obj == "Sell_P_a36"){rent_price_min = "50000";rent_price_max = "10000000";}
+										
+										StartNum = "0";
+										$(".lzapp_m").html("");
+										GetLastList();
+								}
+								
+								function getDistrict(){  		//获得一级商圈		
+										var ln_j3json = {
+										 	  "":""
+									  };
+								    $.ajax({
+								        type: "POST",
+								        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/district/retrieveDistrict",
+								        data: $.toJSON(ln_j3json),
+								        dataType: 'json',
+								        success: function(data){
+								        		var ln_j3a = "";			
+								        		for(var i=0;i<data.length;i++){
+								        				//ln_j3a += "<div class='ln_j3aa' id='tail"+data[i].bbd_id+"' onclick='ln_j3changeB("+data[i].bbd_id+")'>"+data[i].name+"</div>";
+								        				ln_j3a += "<div class='Sell_A_a_t' id='tail"+data[i].bbd_id+"' onclick=\"changONEaREA('"+data[i].bbd_id+"')\"><div class='Sell_A_a1'>"+data[i].name+"</div></div>";
+								        		}
+								           	$(".Sell_A_a").html(ln_j3a);	
+								           	$(".Sell_A_a div:first").css("background","#fff");
+								           	var TailT1 = $(".Sell_A_a div:first").attr("id").replace("tail","");  //获取第一个值de ID
+								           	//var onearea = $(".Sell_A_a1:first").html();   //获取第一个值
+								           	bbd_id = TailT1;
+								           	getTailDistrict(TailT1);
+								        },
+								        error: function(){}
+								    });
+								}
+								function getTailDistrict(obj){						//获取二级商圈 
+										var ln_j3ajson = {
+										 	  "bbd_id":obj
+									  };
+								    $.ajax({
+								        type: "POST",
+								        url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/district/retrieveCommunity",
+								        data: $.toJSON(ln_j3ajson),
+								        dataType: 'json',
+								        success: function(data){
+								        		var ln_j3c = "";			
+								        		for(var i=0;i<data.length;i++){
+								        				if(i == 0){
+								        						$("#TEMP1").html(data[i].community_id);
+								        				}
+								        				//ln_j3c += "<div class='ln_j3c' onclick='ln_j3changeM("+data[i].community_id+")'><div class='ln_j3d' id='tail2"+data[i].community_id+"'>"+data[i].name+"</div><div class='ln_j3e' id='tail1"+data[i].community_id+"'></div></div>";
+								        				ln_j3c += "<div class='Sell_A_b_t' id='tail1"+data[i].community_id+"' onclick=\"changTWOaREA('"+data[i].community_id+"')\"><div class='Sell_A_b1'><div class='Sell_A_b2'>"+data[i].name+"</div><div class='Sell_A_b3' id='twoarea"+data[i].community_id+"'></div></div></div>";
+								        		}
+								        		$(".Sell_A_b").html("");	
+								           	$(".Sell_A_b").html(ln_j3c);	
+								           	$("#twoarea"+$("#TEMP1").html()).html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");	
+								           	//ln3_buszone2 = $(".ln_j3b div:eq(1)").html();	
+								           	community = $("#TEMP1").html();
+								           	//ln_all_buszone2 = ln3_buszone2;
+								        },
+								        error: function(){}
+								    });
+								}
+								function changONEaREA(obj){			//点击一级商圈
+										$(".Sell_A_a_t").css("background","#f0f0f0");
+										$("#tail"+obj).css("background","#fff");
+										bbd_id = obj;
+										getTailDistrict(obj);
+								}
+								function changTWOaREA(obj){			//点击二级商圈
+										$(".Sell_A_b3").html("");	
+										$("#tail1"+obj+" .Sell_A_b1 .Sell_A_b3").html("<img src='../../../../../../bundles/lzh/css/img/lzh_16.png' width='100%' />");
+										community = obj;
+										$(".Sell_A").css("display","none");
+										StartNum = "0";
+										$(".lzapp_m").html("");
+										GetLastList();
+								}
+								function getTailC(obj){			//点击更多左边  效果
+										$(".Sell_M_a_t,.Sell_M_a_t1,.Sell_M_a_t2,.Sell_M_a_t3").css("background","#f0f0f0");
+										$("."+obj).css("background","#fff");
+										if(obj == "Sell_M_a_t"){
+												$("#Sell_t_1").css("display","block");
+												$("#Sell_t_2,#Sell_t_3,#Sell_t_4").css("display","none");
+										}
+										if(obj == "Sell_M_a_t1"){
+												$("#Sell_t_2").css("display","block");
+												$("#Sell_t_1,#Sell_t_3,#Sell_t_4").css("display","none");
+										}
+										if(obj == "Sell_M_a_t2"){
+												$("#Sell_t_3").css("display","block");
+												$("#Sell_t_1,#Sell_t_2,#Sell_t_4").css("display","none");
+										}
+										if(obj == "Sell_M_a_t3"){
+												$("#Sell_t_4").css("display","block");
+												$("#Sell_t_1,#Sell_t_2,#Sell_t_3").css("display","none");
+										}
+								}
+								function GetLastList(){
+										//alert("最低价格:"+rent_price_min+"最高价格:"+rent_price_max+"区域ID："+community+"商圈ID："+bbd_id+"居室数："+bedroom_num+"最小面积："+area_min+"最大面积："+area_max+"特色:"+special+"类型："+category)	
+										var HL2json = {
+												"rent_price_min":rent_price_min,
+												"rent_price_max":rent_price_max,		
+												"community":community,
+												"bedroom_num":bedroom_num,
+											 	"bbd_id":bbd_id,
+											 	"area_min":area_min,
+											 	"area_max":area_max,
+											 	"special":special,
+											 	"category":category,
+											 	"agent_id":"",
+											 	"area_sort":0,
+											 	"rent_price_sort":0,
+										 	  "start":StartNum,		//开始
+										 	  "num":"10"			//条数
+									  };
+									  $.ajax({
+									      type: "POST",
+									      url: "http://landz.yingdongzhuoyue.cn/app_dev.php/api/rent/retrieveByFilter",
+									      data: $.toJSON(HL2json),
+									      dataType: 'json',
+									      success: function(data){
+									      		var la_list2 = "";
+			     		        			for(var i=0;i<data.length;i++){
+							        			la_list2 += "<div class='la_f ubb' onclick='gotorent("+data[i].landz_id+")'><div class='la_h'><div class='la_g'><img class='uc-a' src='http://image.landzestate.com/"
+									           		+data[i].pic+
+									           		"' width='100%' height='100%'></div><div class='la_i'><div class='la_j ulev1'>"
+									           		+data[i].title+
+									           		"</div><div class='la_j'>"+data[i].BUSINESS_DISTRICT_NAME+"&nbsp;&nbsp;&nbsp;&nbsp;"+data[i].COMMUNITY_NAME+"</div><div class='la_k'><div class='la_m1'>"
+									           		+data[i].bedroom_num+
+									           		"室"
+										           	+data[i].hall_num+
+										           	"厅</div><div class='la_m2'>"
+										           	+data[i].area+
+										           	"㎡</div><div class='la_m3' style='color:red;'>"
+										           	+data[i].rent_price+
+										           	"元</div></div>";
+									           		la_list2 += "</div></div></div></div>";
+								        		}
+								        		//$(".lzapp_m").html("");
+								           	$(".lzapp_m").append(la_list2);
+										    },
+										    error: function(){}
+										});	
+								}
+								GetLastList();
+								function gotorent(obj){		//出租情页  
+										window.location.href="http://landz.yingdongzhuoyue.cn/app_dev.php/jx/rentinfo/"+obj;
+								}
+								$(window).scroll(function(){
+										var scrollTop = $(this).scrollTop();
+										var scrollHeight = $(document).height();
+										var windowHeight = $(this).height();
+										if(scrollTop + windowHeight == scrollHeight){
+												var tempnum = parseInt(StartNum);
+												StartNum = tempnum+10;
+												GetLastList();
+										}	
+								});
+						</script>
+				</div>
+				
+		</body>	
+</html>

@@ -1,0 +1,255 @@
+{% extends 'YdzyJxBundle:Default:layout.html.twig' %}
+{% block body %}
+<style>
+tr { line-height:30px;}
+.times {display:block;margin:15px 0;}/*首先，我们要创建一个容器class*/
+.times ul {margin-left:27px;border-left:2px solid #000;}/*利用ul标签的特性，设置外边框左移25px，左边边框是2px粗的实心线，颜色一般要浅一点*/
+.times ul li {width:100%;margin-left:-47px;line-height:22px;list-style:none;font-weight:narmal;}/*一般情况，通过li标签控制圆点回到时间线上，然后控制要出现的文字大小和是否粗体*/
+.times ul li b {width:12px;height:12px;background:#fff;border:2px solid #000;border-radius:6px;-webkit-border-radius:6px;-moz-border-radius:6px;overflow:hidden;display:inline-block;float:left;}/*利用处理加粗以外没有其它特别属性b标签做时间轴的圆点。*/
+.times ul li span {padding-left:7px;font-size:14px;color:#000;}/*设置span标签的属性，让它来做时间显示，加一点边距，使时间显示离时间线远一点*/
+.times ul li:hover b {border:2px solid #ff6600;}/*注意这一行，前面的li标签后面加了一个:hover伪属性，意思是鼠标移上来，激活后面的属性，这样可以设置鼠标移动到整个时间范围的时候，时间点和时间显示会变色*/
+.times ul li:hover span {color:#ff6600;}/*同上*/
+.times ul li p {padding-left:15px;font-size:14px;line-height:25px;}/*这里利用段落标签p做文字介绍*/
+</style>
+<script>
+var browser = navigator.userAgent;
+var category = {{ category }};
+
+function news(){
+	var json = 
+    {
+      "news_id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/news/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+          $("#title").html(data.title);
+          document.title=data.title;
+          $("#creation_date").html("发布时间："+data.creation_date);
+          if(data.image_url){
+        	  $("#pic").html("<img src='http://eie.club"+data.image_url+"' width='100%'/>");
+              }
+          $("#content").html(data.content);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function preshow(){
+	var json = 
+    {
+      "preshow_id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/preshow/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+          $("#preshow_title").html(data.title);
+          document.title=data.title;
+          $("#showtime").html(data.showtime);
+          $("#showaddress").html(data.showaddress);
+          $("#auctiontime").html(data.auctiontime);
+          $("#auctionaddress").html(data.auctionaddress);
+          $("#creation_date").html("发布时间："+data.creation_date);         
+          $("#preshow_content").html(data.content);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function market(){
+	var json = 
+    {
+      "market_id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/market/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	$("#title").html(data.title);
+            document.title=data.title;
+            $("#creation_date").html("发布时间："+data.creation_date);
+            if(data.image_url){
+          	  $("#pic").html("<img src='http://eie.club"+data.image_url+"' width='100%'/>");
+                }
+            $("#content").html(data.content);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+function goods(){
+	var json = 
+    {
+      "id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/info',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	$(".goods_appeal").html(data.appeal);
+            document.title="发布的商品详情";
+            $("#goods_date").html(data.creation_date);
+            $("#goods_content").html(data.content);
+            //alert(data.image_urls[0].url);
+            if(data.appeal_id==2){
+              $("#buy_result").append("价格："+data.price);
+               appealSale(); 
+                }
+            if(data.appeal_id==1){
+     		   appealNum();
+     		   }
+            for(var i = 0;i<data.image_urls.length;i++){
+                $("#goods_images").append("<img src='http://eie.club"+data.image_urls[i].url+"' width='100%'/>");
+                }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+
+function appealNum(){
+	var json = 
+    {
+      "id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/appealNum',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	//$("#goods_result").html(data);
+        	for(var i = 0;i<data.length;i++){
+        	    $("#buy_result").append(data[i].num+"人认为："+data[i].name+"<br>");
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+function appealSale(){
+	var json = 
+    {
+      "id": {{ id }}
+    };
+
+     $.ajax({
+        type:"POST",
+        url:'/app_dev.php/api/publish/appealSale',
+        dataType:"json",
+        data:$.toJSON(json),
+        timeout:5000,
+        cache:true,
+        async:true,
+        success: function (data, textStatus) {
+        	//$("#goods_result").html(data);
+        	for(var i = 0;i<data.length;i++){
+        	    $("#timelist").append("<li><b></b><span>"+data[i].creation_date+"</span><p>"+data[i].message+"</p></li>");
+        	}
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+        	alert("出现错误，稍后请重试");
+        }
+      });
+}
+
+
+
+$(function(){
+	if(category==1){
+		 news();
+		 $("#news").show();
+		}
+	if(category==2){
+		 preshow();
+		 $("#preshow").show();
+		}
+	if(category==3){
+		  market();
+		  $("#news").show();
+		}
+	if(category==4){
+		   goods();
+		   $("#goods").show();
+		}
+
+});
+</script>
+<div id="news" style="display:none;">
+<div id="title" class="col-sm-12 news_title"></div>
+<div id="creation_date" class="col-sm-12"></div>
+<div id="pic" class="col-sm-12" style="padding-top: 8px;"></div>
+<div id="content" class="col-sm-12" style="padding-top: 8px;"></div>
+</div>
+<div id="preshow" style='display:none;'>
+<div id="preshow_title" class="col-sm-12 news_title"></div>
+<ul id="preshow_ul">
+<li>预展信息</li>
+时间：<span id="showtime"></span></br>
+地点:<span id="showaddress"></span>
+<li>拍卖信息</li>
+时间：<span id="auctiontime"></span></br>
+地点:<span id="auctionaddress"></span>
+<li>拍卖展品</li>
+<span id="preshow_content"></span>
+</ul>
+</div>
+<div id="goods" class="col-sm-12" style="display: none;"><!-- 商品详情 -->
+<div class="col-sm-12 news_title">当前状态:<span class="goods_appeal"></span></div>
+<div id="goods_date" class="col-sm-12" style="text-align: right;"></div>
+<div id="goods_content" class="col-sm-12"></div>
+<div id="goods_images" class="col-sm-12"></div>
+<div id="goods_result" class="col-sm-12" style="border:2px solid rgb(51,51,51);padding:0;margin:15px;">
+<div class="news_title" style="width:100%;height:50px;line-height:50px;background-color:rgb(51,51,51);color:white;">诉求：<span class="goods_appeal"></apan></div>
+<div style="padding:10px;">
+<br><span id="buy_result"></span>
+</div>
+</div>
+<div class="times">
+    <ul id="timelist">
+        
+    </ul>
+</div>
+</div>
+
+</div>
+{% endblock %}

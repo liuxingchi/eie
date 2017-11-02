@@ -1,0 +1,70 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script type="text/javascript" src="{{ asset('js/swfupload.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/swfupload.queue.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/fileprogress.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/handlers.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/ckeditor/ckeditor.js') }}"></script>
+<script>
+var swfu;
+
+window.onload = function() {
+	
+      CKEDITOR.replace( 'content' );
+      
+};
+
+
+function dopost(){
+	var content=CKEDITOR.instances.content.getData();
+	if($("#price").val()==""){
+		alert("价格不能为空");
+		return;
+	}
+    var json = {
+		  "content":content,
+		  "price":$("#price").val()
+	     };
+ 	
+     ajaxPost(
+              'app_dev.php/api/order/createArticle',
+              json,
+              function(data, textStatus){
+             	 window.location.href="/app_dev.php/api/order/showOrder?id="+data;
+                  },
+              function(XMLHttpRequest, textStatus, errorThrown){
+                	  
+               }
+          );
+}
+
+</script>
+ 
+  <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+              
+              <div class="form-group">
+                <label>订单用户</label>
+                <select id="select"></select>
+              </div>
+              
+              <div class="form-group">
+                <label>价格</label>
+                <input type="text" class="form-control" id="price" placeholder="价格(必填)" />
+              </div>
+              
+              <div class="form-group">
+                <label>详情</label>
+                <textarea class="form-control" name="content" id="content" placeholder="详情（必填）"></textarea>
+              </div>
+              
+              
+              <button onclick="dopost()" class="btn btn-default">保存</button>
+       
+          
+  </div>
+  	
+  
+</div> <!--content结束-->
+
+
+{% endblock %}

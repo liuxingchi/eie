@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>API Test suites</title>
+
+<script src="{{ asset('js/jquery-1.7.2.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/jquery.json-2.3.min.js') }}" type="text/javascript"></script>
+
+<style type="text/css">
+
+.odd
+{
+	margin:5px 0px;
+	border: 1px solid #000000;
+	width: 100%;
+	background-color: #FFFFAA;
+}
+
+.even
+{
+	margin:5px 0px;
+	border: 1px solid #000000;
+	width:100%;
+	background-color: #CCCCFF;
+}
+</style>
+		
+<script>
+{% for param in params %}
+function test_{{ param.url | replace('/', '_') }}()
+{
+
+	var json = {
+		{% for k, v in param.params %}
+			{% if v is iterable %}
+				{{ k }}:[
+					{% for vl in v %}
+						$('#{{ vl }}_{{ param.url | replace('/', '_') }}').val()
+						{% if not loop.last %}
+						,
+						{% endif %}
+					{% endfor %}
+				]
+				{% if not loop.last %}
+				,
+				{% endif %}
+			{% else %}
+				{{ v }}:$('#{{ v }}_{{ param.url | replace('/', '_') }}').val()
+				{% if not loop.last %}
+				,
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+	};
+
+	$.ajax({
+		type:"POST", 
+		url:'/app_dev.php/{{ param.url }}', 
+		dataType:"json",
+		data:$.toJSON(json),
+		timeout:5000,
+		cache:true,
+		async:true,
+ 		beforeSend: function(request) {
+             request.setRequestHeader("token", "7ae2e5a456bafb547d13be92588a3b70b24228e2");
+         },
+		success: function (data, textStatus) {
+			alert($.toJSON(data));
+			$("#debugResult").html($.toJSON(data));
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown) {
+			if(XMLHttpRequest.status == 200)
+			{
+				//alert(XMLHttpRequest.responseText);
+				$("#debugResult").html(XMLHttpRequest.responseText);
+			}
+			else
+			{
+	
+			$("#debugResult").html(XMLHttpRequest.responseText);
+			alert("XMLHttpRequest.status="+XMLHttpRequest.status+"\ntextStatus="+textStatus+"\nerrorThrown="+errorThrown);
+			}
+		}
+	});
+}
+
+{% endfor %}
+
+</script>
+</head>
+
+<body>
+<div>
+{% for param in params %}
+<div class="{{ cycle(['odd', 'even'], loop.index) }}">
+	<div>
+		<div><b><font color="red">接口功能:&nbsp;</font></b>{{param.name}}</div>
+		<div><label><b><font color="red">请求地址:&nbsp;</font></b>{{param.url}}</label></div>
+		<div><b><font color="red">返回结果:&nbsp;</font></b>{{param.status}}</div>
+	</div>
+	<br>
+{% for k, v in param.params %}
+	<div>
+		{% if v is iterable %}
+			{% for vl in v %}
+				<div>
+					<label>{{ k }}::{{ vl }}</label>
+					<input id="{{ vl }}_{{ param.url | replace('/', '_') }}" name="{{ vl }}_{{ param.url | replace('/', '_') }}" type="text" value="" />
+				</div>
+			{% endfor %}
+		{% else %}
+			<label>{{ v }}</label>
+			<input id="{{ v }}_{{ param.url | replace('/', '_') }}" name="{{ v }}_{{ param.url | replace('/', '_') }}" type="text" value="" />
+			<label style='padding-left:10px;'>{{ k }}</label>
+		{% endif %}
+	</div>
+	{% endfor %}
+	<div class="item">
+		<input name="submit" type="submit" value="submit" onclick="test_{{ param.url | replace('/', '_') }}()"/>
+	</div>
+</div>
+
+{% endfor %}
+</div>
+<div id="debugResult" style="width: 100%;">
+</div>
+</body>
+</html>

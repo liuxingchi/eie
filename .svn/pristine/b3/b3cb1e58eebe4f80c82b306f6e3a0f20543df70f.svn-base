@@ -1,0 +1,132 @@
+{% extends 'YdzyAdminBundle:Default:layout.html.twig' %}
+{% block body %}
+<script>
+var START = 0;
+var PAY = "0";
+var WAY = "0";
+</script>
+<style>
+.postmoney{display:none;}
+.btn_down{float:right;}
+</style>
+<script src="{{ asset('bundles/jxbundle/js/page.js') }}"></script>
+<script>
+
+function reloadList(current){
+	$("#order_list").html("");
+	var current = current;
+	getchargepage(current);
+  	
+  	$.ajax({
+		   type: "get",
+		   url: "/app_dev.php/api/money/retrieveByFilter?pay="+PAY+"&way="+WAY+"&start="+START+"&num=20&mark=1&status=2",
+		   success: function(data,textStatus){
+			   for(var i=0;i<data.length;i++){
+				   if(data[i].pay=="0"){
+					   var status = "<a href='#' onclick='status("+data[i].id+")'>未打款</a>";
+					   }else{
+						    var status = "已打款";
+						   }
+				   $("#order_list").append("<tr><td>"+data[i].truename+"</td><td>"+data[i].way+"</td><td>"+data[i].money+"元</td><td>"+data[i].card+"</td><td>"+data[i].card2+"</td><td>"+data[i].creation_date+"</td><td class='postmoney'>"+data[i].updated_date+"</td><td id='status"+data[i].id+"'>"+status+"</td></tr>"); 
+		      }//结束循环
+			  PAY=="1"?($(".postmoney").show()):($(".postmoney").hide());
+		   },
+		   error: function(XMLHttpRequest, textStatus, errorThrown) {
+		    	  switch(XMLHttpRequest.status)
+		  		{
+		  			case 400: //没数据
+		  				break;
+		  			default:
+		  				alert('加载数据出现错误，请重试');
+		  		}
+			}	
+		   
+		});	
+}
+function category(id){
+	PAY = ""+id;
+	reloadList(0);
+}
+function way(id){
+	WAY = ""+id;
+	reloadList(0);
+}
+$(function(){
+	$(".btn_up").click(
+			function(){
+				$(".btn_up").addClass('btn-default');
+				$(".btn_up").removeClass('btn-primary');
+				$(this).removeClass('btn-default');
+				$(this).addClass('btn-primary');
+				}
+			);
+	$(".btn_left").click(function(){
+		   $(".btn_right").removeClass('active');
+		   $(".btn_left").addClass('active');
+		});
+	$(".btn_right").click(function(){
+		  $(".btn_left").removeClass('active');	
+		  $(".btn_right").addClass('active');  
+		});
+	$(".btn_down").click(
+			function(){
+				$(".btn_down").addClass('btn-default');
+				$(".btn_down").removeClass('btn-primary');
+				$(this).removeClass('btn-default');
+				$(this).addClass('btn-primary');
+				}
+			);
+reloadList(0);
+});
+function status(id){
+	//alert(id);将此提现记录的申请者的账户里的钱进行改变
+	var json = {
+			"id":id
+			};
+	ajaxPost(
+            'app_dev.php/api/money/status',
+            json,
+            function(data, textStatus){
+            	$("#status"+id).html("已打款");
+				},
+            function(XMLHttpRequest, textStatus, errorThrown){  
+				    alert("出现错误，请重试");
+			}
+        );
+}
+</script>
+
+
+
+ 
+ <button type="button" class="btn btn_down col-sm-1 btn-default" onclick='way(1)'">支付宝</button>
+ <button type="button" class="btn btn_down col-sm-1 btn-default" onclick='way(2)'">银行卡</button>
+ 
+   <div class="col-sm-12" id="" style="margin-top:15px; padding:0;">
+    <div style="padding-top:20px;" class="col-sm-12">
+    <table class="table table-hover">
+  	<thead>
+  	<tr>
+    <th>提现人</th>
+    <th>提现途径</th>
+    <th>提现金额</th>
+    <th>提现账号</th>
+    <th>银行开户支行</th>
+    <th>提现日期</th>
+    <th class="postmoney">打款日期</th>
+	<th>操作</th>
+    </tr>
+  	</thead>
+  	<tbody id="order_list"></tbody>	
+    </table>
+    
+    </div>
+  	
+  </div>
+  <div class="col-sm-12"  style="padding-top:30px;" align="center"> <!--分页开始-->
+  <ul class="pagination" id="pagebar"></ul>
+    <input type="hidden" id="currentPage" style="width:500px;"/>  
+    </div><!--分页结束-->
+</div> <!--content结束-->
+
+{% endblock %}

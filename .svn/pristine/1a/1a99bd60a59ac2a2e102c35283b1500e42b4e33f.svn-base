@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+		<head>
+				<title>待租豪宅</title>
+	    	<meta charset="utf-8">
+	    	<meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-tab.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-input.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-img.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-list.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-btn.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-base.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-box.css')}}">
+	    	<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-color.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/ui-res.css')}}">
+				<link rel="stylesheet" href="{{ asset('bundles/lzh/css/lzh_a.css')}}">
+	    	<script src="{{ asset('bundles/lzh/js/zy_control.js')}}"></script>
+	    	<script src="{{ asset('bundles/lzh/js/zy_click.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/zy_anim.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery-1.8.3.min.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/selling.js')}}"></script>
+				<script src="{{ asset('bundles/lzh/js/jquery.json-2.3.min.js')}}"></script>
+				
+				<script src="{{ asset('bundles/lzh/js/jquery-ui.js')}}"></script>
+				<style>
+				/* 
+			 	 * la_  表示在售豪宅列表页
+			   * 
+			   * */
+				
+				</style>
+				<script type="text/javascript">
+						
+				</script>
+		</head>
+	
+		<body style="background:#fff;">
+<!-- 登陆页 -->
+				<div class="lze_a">
+						<div class="le_a" style="display:none;">
+								<div class="le_b">
+										<div class="le_c">
+												<img class="uc-a" src="{{ asset('bundles/lzh/css/img/test_0.jpg')}}" width='100%'/>
+										</div>
+										<div class="ld_e">
+												<div class="le_f">标题该软件是...</div>
+												<div class="le_g">该软件是丽兹行...</div>
+												<div class="le_h uba uc-a">下载软件</div>
+										</div>
+								</div>	
+						</div>
+						<div class="le_i">
+								<div class="le_j">我是经纪人</div>
+								<div class="lf_l" style="">
+										<div class="lf_l1" style="width:15%;">&nbsp;&nbsp;&nbsp;&nbsp;账号</div>  <!-- 记得换  焦点事件 -->
+										<input id="" type="text" value="请输入手机号" style="outline:none;color:#ccc;border:0px;height:100%;width:67%;font-size:20px;" onblur="GetFocus1(this);" onfocus="LoseFocus1(this);"/>	
+								</div>
+								
+								<div class="lf_l">
+										<div class="lf_l1"  style="width:15%;">&nbsp;&nbsp;&nbsp;&nbsp;密码</div>
+										<input id="" type="text" value="请输入手机号" style="outline:none;color:#ccc;border:0px;height:100%;width:67%;font-size:20px;" onblur="GetFocus1(this);" onfocus="LoseFocus1(this);"/>	
+								</div>
+							
+							
+								<div class="le_m uba uc-a" style="">登陆</div>
+						<!--<div class="le_n" style="">注册</div>-->
+						</div>
+						<div class="le_o uc-a uba" style="display:none;">
+								<div class="le_p ubb">
+										<div class="le_q">我的收藏</div>
+										<div class="le_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+								<div class="le_p ubb">
+										<div class="le_q">我的分享</div>
+										<div class="le_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+								<div class="le_p">
+										<div class="le_q">浏览历史</div>
+										<div class="le_r">
+												<img src="{{ asset('bundles/lzh/css/img/lzh_20.png')}}" width='100%' />	
+										</div>		
+								</div>
+						</div>
+				</div>
+		</body>
+</html>

@@ -1,0 +1,136 @@
+ydzy_admin_homepage:
+    pattern:  /
+    defaults: { _controller: YdzyAdminBundle:Default:index }
+ydzy_admin_main:
+    pattern:  /main
+    defaults: { _controller: YdzyAdminBundle:Default:main }
+ydzy_admin_menu:
+    pattern:  /menu
+    defaults: { _controller: YdzyAdminBundle:Default:menu }
+ydzy_admin_preshow:
+    pattern:  /preshow
+    defaults: { _controller: YdzyAdminBundle:Default:preshow }
+ydzy_admin_news:
+    pattern:  /news
+    defaults: { _controller: YdzyAdminBundle:Default:news }
+ydzy_admin_okorder:
+    pattern:  /okorder/{id}
+    defaults: { _controller: YdzyAdminBundle:Default:okorder }
+ydzy_admin_user_top:
+    pattern:  /usertop/{id}/{day}
+    defaults: { _controller: YdzyAdminBundle:Default:usertop }
+ydzy_admin_order_top:
+    pattern:  /ordertop
+    defaults: { _controller: YdzyAdminBundle:Default:ordertop }
+ydzy_admin_push:
+    pattern:  /push
+    defaults: { _controller: YdzyAdminBundle:Default:push }
+ydzy_admin_market:
+    pattern:  /market
+    defaults: { _controller: YdzyAdminBundle:Default:market }
+ydzy_admin_role:
+    pattern:  /role
+    defaults: { _controller: YdzyAdminBundle:Default:role }
+ydzy_admin_addrole:
+    pattern:  /addrole
+    defaults: { _controller: YdzyAdminBundle:Default:addrole }
+ydzy_admin_userrole:
+    pattern:  /userrole
+    defaults: { _controller: YdzyAdminBundle:Default:userrole }
+ydzy_admin_upaterole:
+    pattern:  /updaterole/{id}
+    defaults: { _controller: YdzyAdminBundle:Default:updaterole }
+ydzy_admin_recharge:
+    pattern:  /recharge/{id}/{day}
+    defaults: { _controller: YdzyAdminBundle:Default:recharge }
+ydzy_admin_appeal:
+    pattern:  /appeal
+    defaults: { _controller: YdzyAdminBundle:Default:appeal }
+ydzy_admin_editone:
+    pattern:  /editone
+    defaults: { _controller: YdzyAdminBundle:Default:editone }
+ydzy_admin_member:
+    pattern:  /member
+    defaults: { _controller: YdzyAdminBundle:Default:member }
+ydzy_admin_memberinfo:
+    pattern:  /memberinfo/{id}
+    defaults: { _controller: YdzyAdminBundle:Default:memberinfo }
+ydzy_admin_manage:
+    pattern:  /manage
+    defaults: { _controller: YdzyAdminBundle:Default:manage }
+ydzy_admin_addmanage:
+    pattern:  /addmanage
+    defaults: { _controller: YdzyAdminBundle:Default:addmanage }
+ydzy_admin_adduser:
+    pattern:  /adduser
+    defaults: { _controller: YdzyAdminBundle:Default:adduser }
+ydzy_admin_updatemanage:
+    pattern:  /updatemanage/{id}
+    defaults: { _controller: YdzyAdminBundle:Default:updatemanage }
+push_htmlpage:
+    pattern:  /htmlpage
+    defaults: { _controller: YdzyAdminBundle:Push:save }
+ydzy_admin_version:
+    pattern:  /version
+    defaults: { _controller: YdzyAdminBundle:Version:add }
+ydzy_admin_config:
+    pattern:  /config
+    defaults: { _controller: YdzyAdminBundle:Config:list }
+ydzy_admin_createversion:
+    pattern:  /version/createversion
+    defaults: { _controller: YdzyAdminBundle:Version:Createversion }
+ydzy_admin_addversion:
+    pattern:  /version/addversion
+    defaults: { _controller: YdzyAdminBundle:Version:Addversion }
+ydzy_admin_tags:
+    pattern:  /tags
+    defaults: { _controller: YdzyAdminBundle:Push:Tags }
+ydzy_admin_pushdel:
+    pattern:  /pushdel
+    defaults: { _controller: YdzyAdminBundle:Push:del }
+ydzy_admin_publish:
+    pattern:  /publish
+    defaults: { _controller: YdzyAdminBundle:Default:publish }
+ydzy_admin_pic:
+    pattern:  /pic
+    defaults: { _controller: YdzyAdminBundle:Push:pic }
+ydzy_admin_noaccess:
+    pattern:  /noaccess
+    defaults: { _controller: YdzyAdminBundle:Default:noaccess }
+ydzy_admin_welcome:
+    pattern:  /welcome
+    defaults: { _controller: YdzyAdminBundle:Default:welcome }
+ydzy_admin_addgoods:
+    pattern:  /addgoods
+    defaults: { _controller: YdzyAdminBundle:Default:addgoods }
+ydzy_admin_goodsdetail:
+    pattern:  /goodsdetail/{id}
+    defaults: { _controller: YdzyAdminBundle:Default:goodsdetail }
+ydzy_admin_addnews:
+    pattern:  /addnews
+    defaults: { _controller: YdzyAdminBundle:Default:addnews }
+ydzy_admin_addmarket:
+    pattern:  /addmarket
+    defaults: { _controller: YdzyAdminBundle:Default:addmarket }
+ydzy_admin_addpreshow:
+    pattern:  /addpreshow
+    defaults: { _controller: YdzyAdminBundle:Default:addpreshow }   
+ydzy_admin_auction:
+    pattern:  /auction
+    defaults: { _controller: YdzyAdminBundle:Default:auction }   
+ydzy_admin_auctionResult:
+    pattern:  /auctionResult
+    defaults: { _controller: YdzyAdminBundle:Default:auctionResult }   
+ydzy_admin_system:
+    pattern:  /system
+    defaults: { _controller: YdzyAdminBundle:Default:system }   
+ydzy_admin_kefu:
+    pattern:  /kefu
+    defaults: { _controller: YdzyAdminBundle:Default:kefu }   
+ydzy_admin_order:
+    pattern:  /order
+    defaults: { _controller: YdzyAdminBundle:Default:order }   
+ydzy_admin_orderdetail:
+    pattern:  /orderdetail/{id}
+    defaults: { _controller: YdzyAdminBundle:Default:orderdetail }   
+             
